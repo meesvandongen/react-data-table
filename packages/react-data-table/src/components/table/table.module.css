@@ -1,0 +1,529 @@
+/* RDT Table Component Styles */
+
+/* ============================================
+   Table Paper / Container Wrapper
+   ============================================ */
+
+.tablePaper {
+  background-color: var(--rdt-base-background-color);
+  border-radius: var(--rdt-border-radius);
+  overflow: hidden;
+  transition: all 100ms ease-in-out;
+}
+
+.tablePaper:focus-visible {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 2px;
+}
+
+.tablePaperFullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  margin: 0;
+  padding: 0;
+  max-width: 100dvw;
+  max-height: 100dvh;
+  width: 100dvw;
+  height: 100dvh;
+  border-radius: 0;
+}
+
+/* ============================================
+   Table Container
+   ============================================ */
+
+.tableContainer {
+  max-width: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+.tableContainerSticky {
+  max-height: clamp(
+    350px,
+    calc(100vh - var(--rdt-toolbar-height, 0px)),
+    9999px
+  );
+}
+
+/* ============================================
+   Table
+   ============================================ */
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  position: relative;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tableLayoutGrid {
+  display: grid;
+}
+
+/* ============================================
+   Loading Overlay
+   ============================================ */
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--rdt-row-background-color);
+  opacity: 0.7;
+  z-index: 3;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--rdt-border-color);
+  border-top-color: var(--rdt-primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+
+.progressBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 4;
+}
+
+.progressBarTrack {
+  height: 100%;
+  background-color: var(--rdt-border-color);
+  overflow: hidden;
+}
+
+.progressBarIndicator {
+  height: 100%;
+  background-color: var(--rdt-primary-color);
+  animation: progressIndeterminate 1.5s ease-in-out infinite;
+  transform-origin: left;
+}
+
+@keyframes progressIndeterminate {
+  0% {
+    transform: translateX(-100%) scaleX(0.5);
+  }
+  50% {
+    transform: translateX(0%) scaleX(0.5);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
+}
+
+/* ============================================
+   Table Head
+   ============================================ */
+
+.tableHead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  opacity: 0.97;
+}
+
+.tableHeadRow {
+  display: table-row;
+}
+
+.tableHeadCell {
+  background-color: var(--rdt-base-background-color);
+  border-bottom: 1px solid var(--rdt-border-color);
+  font-weight: 600;
+  padding: var(--rdt-cell-padding);
+  text-align: left;
+  vertical-align: top;
+  position: relative;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.tableHeadCellPinned {
+  position: sticky;
+  z-index: 1;
+}
+
+.tableHeadCellPinnedLeft {
+  left: var(--rdt-pinned-left-offset, 0);
+}
+
+.tableHeadCellPinnedRight {
+  right: var(--rdt-pinned-right-offset, 0);
+}
+
+.tableHeadCellGroup {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.tableHeadCellDragging {
+  border-left: 1px dashed var(--rdt-secondary-text-color);
+  border-right: 1px dashed var(--rdt-secondary-text-color);
+  border-top: 1px dashed var(--rdt-secondary-text-color);
+}
+
+.tableHeadCellDragTarget {
+  border-left: 2px dashed var(--rdt-primary-color);
+  border-right: 2px dashed var(--rdt-primary-color);
+  border-top: 2px dashed var(--rdt-primary-color);
+}
+
+.tableHeadCellContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  width: 100%;
+  position: relative;
+}
+
+.tableHeadCellLabels {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tableHeadCellLabelsSortable {
+  cursor: pointer;
+}
+
+.tableHeadCellLabelsSortable:hover .sortIcon {
+  opacity: 0.8;
+}
+
+.tableHeadCellLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 2ch;
+}
+
+.tableHeadCellLabel:hover {
+  text-overflow: clip;
+}
+
+.tableHeadCellActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* Show actions on hover */
+.tableHeadCell:hover .tableHeadCellActions button {
+  opacity: 1;
+}
+
+.tableHeadCellActions button {
+  opacity: 0.5;
+  transition: opacity 150ms ease;
+}
+
+/* ============================================
+   Table Body
+   ============================================ */
+
+.tableBody {
+  display: table-row-group;
+}
+
+.tableBodyRow {
+  display: table-row;
+  transition: background-color 150ms ease-in-out;
+}
+
+.tableBodyRow:hover {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.tableBodyRowSelected {
+  background-color: var(--rdt-selected-row-color);
+}
+
+.tableBodyRowPinned {
+  position: sticky;
+  z-index: 1;
+  background-color: var(--rdt-pinned-row-background-color);
+}
+
+.tableBodyRowPinnedTop {
+  top: var(--rdt-pinned-row-top, 0);
+}
+
+.tableBodyRowPinnedBottom {
+  bottom: var(--rdt-pinned-row-bottom, 0);
+}
+
+.tableBodyRowDragging {
+  opacity: 0.5;
+}
+
+.tableBodyRowDropTarget {
+  border: 2px dashed var(--rdt-primary-color);
+}
+
+/* ============================================
+   Table Body Cells
+   ============================================ */
+
+.tableBodyCell {
+  background-color: inherit;
+  border-bottom: 1px solid var(--rdt-border-color);
+  padding: var(--rdt-cell-padding);
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tableBodyCellPinned {
+  position: sticky;
+  z-index: 1;
+  background-color: var(--rdt-base-background-color);
+}
+
+.tableBodyCellPinnedLeft {
+  left: var(--rdt-pinned-left-offset, 0);
+}
+
+.tableBodyCellPinnedRight {
+  right: var(--rdt-pinned-right-offset, 0);
+}
+
+.tableBodyCellEditing {
+  padding: 0;
+}
+
+.tableBodyCellNoWrap {
+  white-space: nowrap;
+}
+
+.tableBodyCellWrap {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* ============================================
+   Table Footer
+   ============================================ */
+
+.tableFooter {
+  display: table-footer-group;
+}
+
+.tableFooterRow {
+  display: table-row;
+}
+
+.tableFooterCell {
+  background-color: var(--rdt-base-background-color);
+  border-top: 1px solid var(--rdt-border-color);
+  font-weight: 600;
+  padding: var(--rdt-cell-padding);
+  vertical-align: middle;
+}
+
+/* ============================================
+   Detail Panel
+   ============================================ */
+
+.detailPanel {
+  display: table-row;
+}
+
+.detailPanelCell {
+  padding: var(--rdt-cell-padding);
+  background-color: var(--rdt-row-background-color);
+  border-bottom: 1px solid var(--rdt-border-color);
+}
+
+.detailPanelCellCollapsed {
+  padding: 0;
+  border-bottom: none;
+}
+
+.detailPanelContent {
+  padding: 1rem;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.emptyRow {
+  display: table-row;
+}
+
+.emptyCell {
+  text-align: center;
+  padding: var(--rdt-cell-padding);
+  color: var(--rdt-text-secondary-color);
+}
+
+/* ============================================
+   Column Resize Handle
+   ============================================ */
+
+.resizeHandle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.resizeHandle:hover,
+.resizeHandleActive {
+  background-color: var(--rdt-primary-color);
+}
+
+/* ============================================
+   Drag Handle
+   ============================================ */
+
+.dragHandle {
+  cursor: grab;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.5;
+  transition: opacity 150ms ease-in-out;
+}
+
+.dragHandle:hover {
+  opacity: 1;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* ============================================
+   Sort Label
+   ============================================ */
+
+.sortLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.sortIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  transition: opacity 150ms ease-in-out;
+  opacity: 0.3;
+}
+
+.sortIcon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.sortIconActive {
+  opacity: 1;
+}
+
+.sortBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 14px;
+  height: 14px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  border-radius: 50%;
+  background-color: var(--rdt-primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   Filter Container
+   ============================================ */
+
+.filterContainer {
+  padding: 4px 0;
+}
+
+/* ============================================
+   Skeleton Loading
+   ============================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--rdt-border-color) 25%,
+    var(--rdt-row-hover-color) 50%,
+    var(--rdt-border-color) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  height: 1em;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================
+   Virtualization
+   ============================================ */
+
+.virtualPadding {
+  display: table-row;
+}
+
+.virtualPaddingCell {
+  padding: 0;
+  border: none;
+}
+
+/* ============================================
+   Match Highlight (for filter matching)
+   ============================================ */
+
+.matchHighlight {
+  background-color: var(--rdt-match-highlight-color, #ffff00);
+  border-radius: 2px;
+  padding: 2px 1px;
+}

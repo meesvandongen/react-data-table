@@ -1,0 +1,527 @@
+/* Toolbar base styles */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  background-color: var(--rdt-toolbar-bg, var(--rdt-base-background-color));
+  min-height: 3.5rem;
+  overflow: visible;
+  transition: all 150ms ease-in-out;
+  z-index: 1;
+}
+
+.toolbarTop {
+  border-bottom: 1px solid var(--rdt-table-border-color);
+}
+
+.toolbarBottom {
+  border-top: 1px solid var(--rdt-table-border-color);
+  box-shadow: 0 -1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.toolbarFullScreen {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.toolbarFullScreenBottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.toolbarContent {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-sizing: border-box;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.toolbarContentStacked {
+  position: relative;
+}
+
+.toolbarContentAbsolute {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap-reverse;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.75rem 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.paginationTop {
+  margin-top: 3rem;
+}
+
+.paginationRowsPerPage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.paginationRowsPerPageLabel {
+  font-size: var(--rdt-font-size-sm);
+  color: var(--rdt-secondary-text-color);
+  white-space: nowrap;
+}
+
+.paginationRowsPerPageSelect {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  background-color: var(--rdt-base-background-color);
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-sm);
+  cursor: pointer;
+  min-width: 4rem;
+}
+
+.paginationRowsPerPageSelect:focus {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 1px;
+}
+
+.paginationInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--rdt-font-size-sm);
+  color: var(--rdt-primary-text-color);
+  text-align: center;
+  min-width: 8ch;
+}
+
+.paginationButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.paginationButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-primary-text-color);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.paginationButton:focus-visible {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 1px;
+}
+
+.paginationButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginationButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Pages pagination (numbered) */
+.paginationPages {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.paginationPageButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-sm);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.paginationPageButton:hover:not(:disabled) {
+  background-color: var(--rdt-row-hover-color);
+  border-color: var(--rdt-table-border-color);
+}
+
+.paginationPageButton:focus-visible {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 1px;
+}
+
+.paginationPageButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginationPageButtonActive {
+  background-color: var(--rdt-primary-color);
+  color: white;
+  border-color: var(--rdt-primary-color);
+}
+
+.paginationPageButtonActive:hover:not(:disabled) {
+  background-color: var(--rdt-primary-color);
+  border-color: var(--rdt-primary-color);
+}
+
+/* Progress bar */
+.progressBarContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.progressBarContainerTop {
+  bottom: 0;
+}
+
+.progressBarContainerBottom {
+  top: 0;
+}
+
+.progressBarHidden {
+  display: none;
+}
+
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--rdt-row-hover-color);
+}
+
+.progressBarIndicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 30%;
+  background-color: var(--rdt-primary-color);
+  animation: progressAnimation 1.5s ease-in-out infinite;
+}
+
+@keyframes progressAnimation {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Alert banner */
+.alertBanner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--rdt-info-bg, #e3f2fd);
+  color: var(--rdt-info-text, #1976d2);
+  font-size: var(--rdt-font-size-sm);
+  border-radius: 0;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+.alertBannerHidden {
+  display: none;
+}
+
+.alertBannerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.alertBannerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alertBannerChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 1rem;
+  font-size: var(--rdt-font-size-xs);
+}
+
+.alertBannerChipDelete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  margin-left: 0.25rem;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.alertBannerChipDelete:hover {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.alertBannerChipDelete svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.clearSelectionButton {
+  padding: 0.125rem 0.5rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: inherit;
+  font-size: var(--rdt-font-size-sm);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.clearSelectionButton:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.clearSelectionButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* Toolbar drop zone */
+.dropZone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border: 2px dashed var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-secondary-text-color);
+  font-size: var(--rdt-font-size-sm);
+  text-align: center;
+  margin: 0.5rem;
+}
+
+.dropZoneHidden {
+  display: none;
+}
+
+.dropZoneActive {
+  border-color: var(--rdt-primary-color);
+  background-color: rgba(var(--rdt-primary-color-rgb, 25, 118, 210), 0.08);
+}
+
+/* Global filter / search input */
+.globalFilter {
+  position: relative;
+  z-index: 2;
+}
+
+.globalFilterInput {
+  padding: 0.5rem 0.75rem;
+  padding-left: 2.25rem;
+  border: 1px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  background-color: var(--rdt-base-background-color);
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-sm);
+  min-width: 12rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.globalFilterInput::placeholder {
+  color: var(--rdt-secondary-text-color);
+}
+
+.globalFilterInput:focus {
+  outline: none;
+  border-color: var(--rdt-primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--rdt-primary-color-rgb, 25, 118, 210), 0.1);
+}
+
+.globalFilterIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--rdt-secondary-text-color);
+  pointer-events: none;
+}
+
+.globalFilterIcon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.globalFilterClear {
+  position: absolute;
+  right: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.globalFilterClear:hover {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.globalFilterClear svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Toolbar buttons */
+.toolbarButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-primary-text-color);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.toolbarButton:hover {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.toolbarButton:focus-visible {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 1px;
+}
+
+.toolbarButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.toolbarButtonActive {
+  background-color: var(--rdt-selected-row-color);
+  color: var(--rdt-primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 720px) {
+  .pagination {
+    justify-content: center;
+  }
+
+  .paginationRowsPerPage {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .paginationInfo {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .paginationButtons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .globalFilterInput {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .toolbarContent {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbarActions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .alertBanner {
+    background-color: var(--rdt-info-bg, #0d47a1);
+    color: var(--rdt-info-text, #90caf9);
+  }
+
+  .alertBannerChip {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .alertBannerChipDelete:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .clearSelectionButton:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .dropZoneActive {
+    background-color: rgba(var(--rdt-primary-color-rgb, 25, 118, 210), 0.16);
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "name": "react-data-table",
+  "version": "0.1.0",
+  "description": "A fully featured React table component built on TanStack Table and React Aria Components",
+  "keywords": [
+    "react",
+    "table",
+    "data-table",
+    "tanstack-table",
+    "react-aria",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KevinVandy/material-react-table.git",
+    "directory": "packages/react-data-table"
+  },
+  "license": "MIT",
+  "author": "Kevin Van Cott",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/index.css",
+    "./locales/*": {
+      "types": "./dist/locales/*.d.ts",
+      "import": "./dist/locales/*.js"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "locales"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/match-sorter-utils": "^8.19.4",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.18",
+    "clsx": "^2.1.1",
+    "highlight-words": "^2.0.0"
+  },
+  "peerDependencies": {
+    "lucide-react": ">=0.263.0",
+    "react": ">=18.0.0",
+    "react-aria-components": ">=1.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^1.7.2",
+    "@rslib/core": "^0.19.3",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "lucide-react": "^0.562.0",
+    "react": "^19.2.3",
+    "react-aria-components": "^1.14.0",
+    "react-dom": "^19.2.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

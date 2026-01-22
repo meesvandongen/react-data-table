@@ -1,0 +1,142 @@
+/* Modal styles */
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 150ms ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  position: relative;
+  background-color: var(--rdt-base-background-color);
+  border-radius: var(--rdt-border-radius);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 150ms ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalSmall {
+  width: 100%;
+  max-width: 400px;
+}
+
+.modalMedium {
+  width: 100%;
+  max-width: 500px;
+}
+
+.modalLarge {
+  width: 100%;
+  max-width: 700px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--rdt-border-color);
+}
+
+.modalTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--rdt-primary-text-color);
+  margin: 0;
+}
+
+.modalCloseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.modalCloseButton:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.modalCloseButton:focus-visible {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 2px;
+}
+
+.modalCloseButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.modalContent {
+  flex: 1;
+  padding: 1.25rem;
+  overflow-y: auto;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--rdt-border-color);
+}
+
+/* Edit row modal specific */
+.editRowModal {
+  min-width: 350px;
+}
+
+.editRowModalTitle {
+  text-align: center;
+}
+
+.editRowModalFields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 0.5rem;
+}

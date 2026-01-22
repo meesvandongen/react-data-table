@@ -1,0 +1,90 @@
+/**
+ * CSS Custom Properties for react-data-table
+ * Inspired by shadcn/ui with minimal, semantic tokens
+ */
+
+:root {
+  /* Core colors - using HSL for easy theming */
+  --rdt-background: 0 0% 100%;
+  --rdt-foreground: 240 10% 3.9%;
+
+  --rdt-muted: 240 4.8% 95.9%;
+  --rdt-muted-foreground: 240 3.8% 46.1%;
+
+  --rdt-border: 240 5.9% 90%;
+  --rdt-input: 240 5.9% 90%;
+
+  --rdt-primary: 240 5.9% 10%;
+  --rdt-primary-foreground: 0 0% 98%;
+
+  --rdt-secondary: 240 4.8% 95.9%;
+  --rdt-secondary-foreground: 240 5.9% 10%;
+
+  --rdt-accent: 240 4.8% 95.9%;
+  --rdt-accent-foreground: 240 5.9% 10%;
+
+  --rdt-destructive: 0 84.2% 60.2%;
+  --rdt-destructive-foreground: 0 0% 98%;
+
+  --rdt-ring: 240 5.9% 10%;
+  --rdt-ring-offset: 0 0% 100%;
+
+  /* Functional tokens */
+  --rdt-radius: 0.5rem;
+
+  /* Density multiplier - 0.5 = compact, 1 = comfortable, 1.5 = spacious */
+  --rdt-density: 1;
+
+  /* Table-specific */
+  --rdt-row-hover: 240 4.8% 95.9%;
+  --rdt-row-selected: 240 5.9% 90%;
+  --rdt-cell-pinned: 240 4.8% 97%;
+}
+
+.dark {
+  --rdt-background: 240 10% 3.9%;
+  --rdt-foreground: 0 0% 98%;
+
+  --rdt-muted: 240 3.7% 15.9%;
+  --rdt-muted-foreground: 240 5% 64.9%;
+
+  --rdt-border: 240 3.7% 15.9%;
+  --rdt-input: 240 3.7% 15.9%;
+
+  --rdt-primary: 0 0% 98%;
+  --rdt-primary-foreground: 240 5.9% 10%;
+
+  --rdt-secondary: 240 3.7% 15.9%;
+  --rdt-secondary-foreground: 0 0% 98%;
+
+  --rdt-accent: 240 3.7% 15.9%;
+  --rdt-accent-foreground: 0 0% 98%;
+
+  --rdt-destructive: 0 62.8% 30.6%;
+  --rdt-destructive-foreground: 0 0% 98%;
+
+  --rdt-ring: 240 4.9% 83.9%;
+  --rdt-ring-offset: 240 10% 3.9%;
+
+  --rdt-row-hover: 240 3.7% 12%;
+  --rdt-row-selected: 240 3.7% 18%;
+  --rdt-cell-pinned: 240 5% 8%;
+}
+
+/* Density variants */
+[data-density='compact'] {
+  --rdt-density: 0.5;
+}
+
+[data-density='comfortable'] {
+  --rdt-density: 1;
+}
+
+[data-density='spacious'] {
+  --rdt-density: 1.5;
+}
+
+/* Base reset for table elements */
+.rdt-table-container * {
+  box-sizing: border-box;
+}
