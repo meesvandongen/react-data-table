@@ -1,11 +1,10 @@
 import { type InputHTMLAttributes } from 'react';
-import { Checkbox } from 'react-aria-components';
-import clsx from 'clsx';
 import {
   type RDT_Column,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { RDT_Checkbox } from './RDT_Checkbox';
 import { RDT_Tooltip } from '../tooltip/RDT_Tooltip';
 import styles from './inputs.module.css';
 
@@ -52,39 +51,14 @@ export const RDT_FilterCheckbox = <TData extends RDT_RowData>({
   return (
     <RDT_Tooltip content={filterLabel}>
       <label className={styles.filterCheckboxLabel}>
-        <Checkbox
-          className={clsx(
-            styles.ariaCheckbox,
-            isCompact && styles.ariaCheckboxCompact,
-            className,
-          )}
-          isSelected={isChecked}
-          isIndeterminate={isIndeterminate}
+        <RDT_Checkbox
+          compact={isCompact}
+          checked={isChecked}
+          indeterminate={isIndeterminate}
           onChange={handleChange}
           aria-label={filterLabel}
-          slot={null}
-        >
-          <div className={styles.checkboxBox}>
-            <svg
-              viewBox="0 0 18 18"
-              aria-hidden="true"
-              className={styles.checkboxIcon}
-            >
-              {isIndeterminate ? (
-                <rect x={3} y={8} width={12} height={2} fill="currentColor" />
-              ) : (
-                <polyline
-                  points="3,9 7,13 15,5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              )}
-            </svg>
-          </div>
-        </Checkbox>
+          className={className}
+        />
         <span className={styles.filterCheckboxText}>{filterLabel}</span>
       </label>
     </RDT_Tooltip>

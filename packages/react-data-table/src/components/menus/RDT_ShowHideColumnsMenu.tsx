@@ -1,5 +1,13 @@
-import { useMemo, useState } from 'react';
-import { Dialog, DialogTrigger, Popover } from 'react-aria-components';
+import { useMemo } from 'react';
+import {
+  type Selection,
+  Dialog,
+  DialogTrigger,
+  Menu,
+  MenuItem,
+  Popover,
+} from 'react-aria-components';
+import { Check } from 'lucide-react';
 import clsx from 'clsx';
 import {
   type RDT_Column,
@@ -8,7 +16,6 @@ import {
   type RDT_VisibilityState,
 } from '../../types';
 import { getDefaultColumnOrderIds } from '../../utils/displayColumn.utils';
-import { RDT_ShowHideColumnsMenuItems } from './RDT_ShowHideColumnsMenuItems';
 import styles from './menus.module.css';
 
 export interface RDT_ShowHideColumnsMenuProps<TData extends RDT_RowData> {
@@ -44,10 +51,7 @@ export const RDT_ShowHideColumnsMenu = <TData extends RDT_RowData>({
     },
   } = table;
 
-  const { columnOrder, columnPinning } = getState();
-  const [hoveredColumn, setHoveredColumn] = useState<RDT_Column<TData> | null>(
-    null,
-  );
+  const { columnOrder, columnPinning, columnVisibility } = getState();
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -88,9 +92,35 @@ export const RDT_ShowHideColumnsMenu = <TData extends RDT_RowData>({
     getRightLeafColumns,
   ]) as RDT_Column<TData>[];
 
-  const isNestedColumns = allColumns.some(
-    (col) => col.columnDef.columnDefType === 'group',
-  );
+  // Filter to only show columns that should appear in the menu
+  const menuColumns = useMemo(() => {
+    return allColumns.filter(
+      (col) =>
+        col.columnDef.header && col.columnDef.visibleInShowHideMenu !== false,
+    );
+  }, [allColumns]);
+
+  // Compute selected keys (visible columns)
+  const selectedKeys = useMemo(() => {
+    return new Set(
+      menuColumns.filter((col) => col.getIsVisible()).map((col) => col.id),
+    );
+  }, [menuColumns, columnVisibility]);
+
+  const handleSelectionChange = (keys: Selection) => {
+    if (keys === 'all') {
+      // Show all columns
+      handleToggleAllColumns(true);
+    } else {
+      const newVisibility: RDT_VisibilityState = {};
+      menuColumns.forEach((col) => {
+        if (col.columnDef.enableHiding !== false) {
+          newVisibility[col.id] = keys.has(col.id);
+        }
+      });
+      table.setColumnVisibility((old) => ({ ...old, ...newVisibility }));
+    }
+  };
 
   const hasColumnOrderChanged = useMemo(
     () =>
@@ -171,20 +201,46 @@ export const RDT_ShowHideColumnsMenu = <TData extends RDT_RowData>({
             </div>
           </div>
 
-          {/* Column list */}
-          <div className={styles.showHideColumnsMenuList}>
-            {allColumns.map((column, index) => (
-              <RDT_ShowHideColumnsMenuItems
-                allColumns={allColumns}
-                column={column}
-                hoveredColumn={hoveredColumn}
-                isNestedColumns={isNestedColumns}
-                key={`${index}-${column.id}`}
-                setHoveredColumn={setHoveredColumn}
-                table={table}
-              />
-            ))}
-          </div>
+          {/* Column list using React Aria Menu with selection */}
+          <Menu
+            aria-label={localization.columns}
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={handleSelectionChange}
+            className={styles.showHideColumnsMenuList}
+          >
+            {menuColumns.map((column) => {
+              const { columnDef } = column;
+              const { columnDefType } = columnDef;
+              const canHide = column.getCanHide();
+
+              return (
+                <MenuItem
+                  key={column.id}
+                  id={column.id}
+                  textValue={String(columnDef.header)}
+                  isDisabled={!canHide}
+                  className={styles.showHideColumnsMenuItem}
+                >
+                  {({ isSelected }) => (
+                    <>
+                      <span className={styles.showHideColumnsMenuItemCheck}>
+                        {isSelected && <Check size={16} />}
+                      </span>
+                      <span
+                        className={styles.showHideColumnsMenuItemLabel}
+                        style={{
+                          opacity: columnDefType !== 'display' ? 1 : 0.5,
+                        }}
+                      >
+                        {columnDef.header}
+                      </span>
+                    </>
+                  )}
+                </MenuItem>
+              );
+            })}
+          </Menu>
         </Dialog>
       </Popover>
     </DialogTrigger>

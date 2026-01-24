@@ -149,7 +149,9 @@
 .tableHeadCell {
   background-color: var(--rdt-base-background-color);
   border-bottom: 1px solid var(--rdt-border-color);
-  font-weight: 600;
+  font-weight: var(--rdt-font-weight-semibold);
+  font-size: var(--rdt-font-size-sm);
+  line-height: var(--rdt-line-height-tight);
   padding: var(--rdt-cell-padding);
   text-align: left;
   vertical-align: top;
@@ -294,6 +296,7 @@
   vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: var(--rdt-line-height);
 }
 
 .tableBodyCellPinned {
@@ -338,7 +341,9 @@
 .tableFooterCell {
   background-color: var(--rdt-base-background-color);
   border-top: 1px solid var(--rdt-border-color);
-  font-weight: 600;
+  font-weight: var(--rdt-font-weight-semibold);
+  font-size: var(--rdt-font-size-sm);
+  line-height: var(--rdt-line-height-tight);
   padding: var(--rdt-cell-padding);
   vertical-align: middle;
 }
@@ -461,8 +466,9 @@
   right: -6px;
   min-width: 14px;
   height: 14px;
-  font-size: 0.65rem;
-  font-weight: 600;
+  font-size: var(--rdt-font-size-xs);
+  font-weight: var(--rdt-font-weight-semibold);
+  line-height: 1;
   border-radius: 50%;
   background-color: var(--rdt-primary-color);
   color: white;

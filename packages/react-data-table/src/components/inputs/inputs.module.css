@@ -332,6 +332,7 @@ select.filterInput[multiple] {
   background-color: var(--rdt-primary-color);
   color: white;
   font-size: var(--rdt-font-size-sm);
+  line-height: var(--rdt-line-height-tight);
   white-space: nowrap;
 }
 
@@ -493,83 +494,13 @@ select.filterInput[multiple] {
   cursor: pointer;
   color: var(--rdt-secondary-text-color);
   font-size: var(--rdt-font-size-sm);
-  font-weight: normal;
+  font-weight: var(--rdt-font-weight-normal);
+  line-height: var(--rdt-line-height);
   margin-top: -0.25rem;
 }
 
 .filterCheckboxLabel:hover {
   color: var(--rdt-primary-text-color);
-}
-
-.filterCheckbox {
-  position: relative;
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 2px solid var(--rdt-table-border-color);
-  border-radius: var(--rdt-border-radius);
-  background-color: var(--rdt-base-background-color);
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  transition: all 150ms ease;
-  flex-shrink: 0;
-}
-
-.filterCheckboxCompact {
-  width: 1rem;
-  height: 1rem;
-}
-
-.filterCheckbox:hover {
-  border-color: var(--rdt-primary-color);
-}
-
-.filterCheckbox:focus-visible {
-  outline: 2px solid var(--rdt-primary-color);
-  outline-offset: 2px;
-}
-
-.filterCheckbox:checked {
-  background-color: var(--rdt-primary-color);
-  border-color: var(--rdt-primary-color);
-}
-
-.filterCheckbox:checked::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  width: 0.35rem;
-  height: 0.65rem;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.filterCheckboxCompact:checked::after {
-  width: 0.25rem;
-  height: 0.5rem;
-  border-width: 0 1.5px 1.5px 0;
-}
-
-.filterCheckbox:indeterminate {
-  background-color: var(--rdt-secondary-text-color);
-  border-color: var(--rdt-secondary-text-color);
-}
-
-.filterCheckbox:indeterminate::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0.6rem;
-  height: 2px;
-  background-color: white;
-  transform: translate(-50%, -50%);
-}
-
-.filterCheckboxCompact:indeterminate::after {
-  width: 0.45rem;
 }
 
 .filterCheckboxText {
@@ -615,7 +546,8 @@ select.editInput {
 
 .editFieldLabel {
   font-size: var(--rdt-font-size-sm);
-  font-weight: 500;
+  font-weight: var(--rdt-font-weight-medium);
+  line-height: var(--rdt-line-height-tight);
   color: var(--rdt-primary-text-color);
 }
 
@@ -625,65 +557,6 @@ select.editInput {
     min-width: auto;
     width: 100%;
   }
-}
-
-/* React Aria Checkbox styles */
-.ariaCheckbox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  outline: none;
-}
-
-.ariaCheckbox[data-disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.ariaCheckboxCompact .checkboxBox {
-  width: 1rem;
-  height: 1rem;
-}
-
-.checkboxBox {
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 2px solid var(--rdt-table-border-color);
-  border-radius: var(--rdt-border-radius);
-  background-color: var(--rdt-base-background-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 150ms ease;
-}
-
-.ariaCheckbox:hover:not([data-disabled]) .checkboxBox {
-  border-color: var(--rdt-primary-color);
-}
-
-.ariaCheckbox[data-focus-visible] .checkboxBox {
-  outline: 2px solid var(--rdt-primary-color);
-  outline-offset: 2px;
-}
-
-.ariaCheckbox[data-selected] .checkboxBox,
-.ariaCheckbox[data-indeterminate] .checkboxBox {
-  background-color: var(--rdt-primary-color);
-  border-color: var(--rdt-primary-color);
-}
-
-.checkboxIcon {
-  width: 0.875rem;
-  height: 0.875rem;
-  color: white;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.ariaCheckbox[data-selected] .checkboxIcon,
-.ariaCheckbox[data-indeterminate] .checkboxIcon {
-  opacity: 1;
 }
 
 /* React Aria Slider styles */

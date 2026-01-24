@@ -61,6 +61,7 @@ export const RDT_TablePaper = <TData extends RDT_RowData>({
         }
       }}
       className={clsx(
+        'rdt-table-container',
         styles.tablePaper,
         isFullScreen && styles.tablePaperFullscreen,
         paperProps?.className,

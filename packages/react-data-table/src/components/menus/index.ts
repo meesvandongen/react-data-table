@@ -4,4 +4,3 @@ export * from './RDT_ColumnActionMenu';
 export * from './RDT_FilterOptionMenu';
 export * from './RDT_RowActionMenu';
 export * from './RDT_ShowHideColumnsMenu';
-export * from './RDT_ShowHideColumnsMenuItems';

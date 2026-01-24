@@ -10,3 +10,4 @@ export * from './RDT_ToggleDensePaddingButton';
 export * from './RDT_ToggleFiltersButton';
 export * from './RDT_ToggleFullScreenButton';
 export * from './RDT_ToggleGlobalFilterButton';
+export * from './RDT_ToggleRowActionMenuButton';

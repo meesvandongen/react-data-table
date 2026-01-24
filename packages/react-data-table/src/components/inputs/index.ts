@@ -1,3 +1,4 @@
+export * from './RDT_Checkbox';
 export * from './RDT_EditCellTextField';
 export * from './RDT_FilterCheckbox';
 export * from './RDT_FilterRangeFields';

@@ -1,8 +1,9 @@
-import { type MouseEvent, type ReactNode, useMemo } from 'react';
+import { type MouseEvent, useMemo } from 'react';
 import { Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 import clsx from 'clsx';
 import {
   type RDT_Row,
+  type RDT_RowActionMenuItem,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
@@ -44,20 +45,16 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
     setAnchorEl(null);
   };
 
-  const menuItems = useMemo(() => {
-    const items: Array<{
-      key: string;
-      icon: ReactNode;
-      label: string;
-      onClick: () => void;
-    }> = [];
+  const menuItems = useMemo((): RDT_RowActionMenuItem[] => {
+    const items: RDT_RowActionMenuItem[] = [];
+
+    // Add edit item if editing is enabled
     const canEdit =
       parseFromValuesOrFunc(enableEditing, row) &&
-      ['modal', 'row'].includes(editDisplayMode!);
+      ['modal', 'row'].includes(editDisplayMode ?? '');
 
     if (canEdit) {
       items.push({
-        key: 'edit',
         icon: <EditIcon />,
         label: localization.edit ?? 'Edit',
         onClick: () => {
@@ -67,19 +64,27 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
       });
     }
 
+    // Add custom items from renderRowActionMenuItems
     const customItems = renderRowActionMenuItems?.({
-      closeMenu: handleClose,
       row,
       staticRowIndex,
       table,
     });
 
-    // Handle custom items (they could be JSX elements from the user)
     if (customItems?.length) {
-      return { internalItems: items, customItems };
+      // Wrap custom onClick to auto-close menu
+      items.push(
+        ...customItems.map((item) => ({
+          ...item,
+          onClick: () => {
+            item.onClick();
+            handleClose();
+          },
+        })),
+      );
     }
 
-    return { internalItems: items, customItems: null };
+    return items;
   }, [
     editDisplayMode,
     enableEditing,
@@ -91,16 +96,13 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
     table,
   ]);
 
-  if (
-    (!menuItems.internalItems.length && !menuItems.customItems?.length) ||
-    !anchorEl
-  ) {
+  if (!menuItems.length || !anchorEl) {
     return null;
   }
 
   return (
     <MenuTrigger isOpen={!!anchorEl} onOpenChange={() => {}}>
-      {/* Hidden trigger */}
+      {/* Hidden trigger - we control open state externally */}
       <button style={{ display: 'none' }} aria-hidden>
         trigger
       </button>
@@ -118,27 +120,25 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
           aria-label={localization.rowActions ?? 'Row actions'}
           className={styles.menuInner}
         >
-          {menuItems.customItems ? (
-            <>{menuItems.customItems}</>
-          ) : (
-            <>
-              {menuItems.internalItems.map((item) => (
-                <MenuItem
-                  key={item.key}
-                  className={clsx(
-                    styles.menuItem,
-                    isDense && styles.menuItemDense,
-                  )}
-                  onAction={item.onClick}
-                >
-                  <span className={styles.menuItemContent}>
-                    <span className={styles.menuItemIcon}>{item.icon}</span>
-                    <span className={styles.menuItemLabel}>{item.label}</span>
-                  </span>
-                </MenuItem>
-              ))}
-            </>
-          )}
+          {menuItems.map((item, index) => (
+            <MenuItem
+              key={item.label + index}
+              className={clsx(
+                styles.menuItem,
+                isDense && styles.menuItemDense,
+                item.divider && styles.menuItemDivider,
+              )}
+              isDisabled={item.disabled}
+              onAction={item.onClick}
+            >
+              <span className={styles.menuItemContent}>
+                {item.icon && (
+                  <span className={styles.menuItemIcon}>{item.icon}</span>
+                )}
+                <span className={styles.menuItemLabel}>{item.label}</span>
+              </span>
+            </MenuItem>
+          ))}
         </Menu>
       </Popover>
     </MenuTrigger>

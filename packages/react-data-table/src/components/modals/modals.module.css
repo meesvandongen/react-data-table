@@ -31,6 +31,10 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 150ms ease;
+  font-family: var(--rdt-font-family);
+  font-size: var(--rdt-font-size);
+  line-height: var(--rdt-line-height);
+  color: var(--rdt-text-color);
 }
 
 @keyframes slideIn {
@@ -68,8 +72,9 @@
 }
 
 .modalTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: var(--rdt-font-size-lg);
+  font-weight: var(--rdt-font-weight-semibold);
+  line-height: var(--rdt-line-height-tight);
   color: var(--rdt-primary-text-color);
   margin: 0;
 }

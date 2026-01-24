@@ -46,64 +46,22 @@ export const RowActionsEnabled = () => (
     columns={columns}
     data={data}
     enableRowActions
-    renderRowActionMenuItems={({ closeMenu, row }) => [
-      <button
-        key={1}
-        onClick={() => {
-          console.info('View Profile', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <User size={16} /> View Profile
-      </button>,
-      <button
-        key={2}
-        onClick={() => {
-          console.info('Remove', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Trash2 size={16} /> Remove
-      </button>,
-      <button
-        key={3}
-        onClick={() => {
-          console.info('Share', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Share2 size={16} /> Share
-      </button>,
+    renderRowActionMenuItems={({ row }) => [
+      {
+        icon: <User size={16} />,
+        label: 'View Profile',
+        onClick: () => console.info('View Profile', row),
+      },
+      {
+        icon: <Trash2 size={16} />,
+        label: 'Remove',
+        onClick: () => console.info('Remove', row),
+      },
+      {
+        icon: <Share2 size={16} />,
+        label: 'Share',
+        onClick: () => console.info('Share', row),
+      },
     ]}
   />
 );
@@ -115,64 +73,22 @@ export const RowActionsEnabledConditionally = () => {
       columns={columns}
       data={data}
       enableRowActions={enabled}
-      renderRowActionMenuItems={({ closeMenu, row }) => [
-        <button
-          key={1}
-          onClick={() => {
-            console.info('View Profile', row);
-            closeMenu();
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem',
-            width: '100%',
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-          }}
-        >
-          <User size={16} /> View Profile
-        </button>,
-        <button
-          key={2}
-          onClick={() => {
-            console.info('Remove', row);
-            closeMenu();
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem',
-            width: '100%',
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-          }}
-        >
-          <Trash2 size={16} /> Remove
-        </button>,
-        <button
-          key={3}
-          onClick={() => {
-            console.info('Share', row);
-            closeMenu();
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem',
-            width: '100%',
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-          }}
-        >
-          <Share2 size={16} /> Share
-        </button>,
+      renderRowActionMenuItems={({ row }) => [
+        {
+          icon: <User size={16} />,
+          label: 'View Profile',
+          onClick: () => console.info('View Profile', row),
+        },
+        {
+          icon: <Trash2 size={16} />,
+          label: 'Remove',
+          onClick: () => console.info('Remove', row),
+        },
+        {
+          icon: <Share2 size={16} />,
+          label: 'Share',
+          onClick: () => console.info('Share', row),
+        },
       ]}
       renderTopToolbarCustomActions={() => (
         <button onClick={() => setEnabled(!enabled)}>Toggle Row Actions</button>
@@ -187,67 +103,25 @@ export const RowActionsEnabledConditionallyPerRow = () => {
       columns={columns}
       data={data}
       enableRowActions
-      renderRowActionMenuItems={({ closeMenu, row }) =>
+      renderRowActionMenuItems={({ row }) =>
         row.index % 2 === 0
-          ? undefined
+          ? []
           : [
-              <button
-                key={1}
-                onClick={() => {
-                  console.info('View Profile', row);
-                  closeMenu();
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.5rem',
-                  width: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-                <User size={16} /> View Profile
-              </button>,
-              <button
-                key={2}
-                onClick={() => {
-                  console.info('Remove', row);
-                  closeMenu();
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.5rem',
-                  width: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-                <Trash2 size={16} /> Remove
-              </button>,
-              <button
-                key={3}
-                onClick={() => {
-                  console.info('Share', row);
-                  closeMenu();
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.5rem',
-                  width: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-                <Share2 size={16} /> Share
-              </button>,
+              {
+                icon: <User size={16} />,
+                label: 'View Profile',
+                onClick: () => console.info('View Profile', row),
+              },
+              {
+                icon: <Trash2 size={16} />,
+                label: 'Remove',
+                onClick: () => console.info('Remove', row),
+              },
+              {
+                icon: <Share2 size={16} />,
+                label: 'Share',
+                onClick: () => console.info('Share', row),
+              },
             ]
       }
     />
@@ -260,64 +134,22 @@ export const RowActionsAndEditingEnabled = () => (
     data={data}
     enableEditing
     enableRowActions
-    renderRowActionMenuItems={({ closeMenu, row }) => [
-      <button
-        key={1}
-        onClick={() => {
-          console.info('View Profile', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <User size={16} /> View Profile
-      </button>,
-      <button
-        key={2}
-        onClick={() => {
-          console.info('Remove', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Trash2 size={16} /> Remove
-      </button>,
-      <button
-        key={3}
-        onClick={() => {
-          console.info('Share', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Share2 size={16} /> Share
-      </button>,
+    renderRowActionMenuItems={({ row }) => [
+      {
+        icon: <User size={16} />,
+        label: 'View Profile',
+        onClick: () => console.info('View Profile', row),
+      },
+      {
+        icon: <Trash2 size={16} />,
+        label: 'Remove',
+        onClick: () => console.info('Remove', row),
+      },
+      {
+        icon: <Share2 size={16} />,
+        label: 'Share',
+        onClick: () => console.info('Share', row),
+      },
     ]}
   />
 );
@@ -329,64 +161,22 @@ export const RowActionsAndEditingCellEnabled = () => (
     editDisplayMode="cell"
     enableEditing
     enableRowActions
-    renderRowActionMenuItems={({ closeMenu, row }) => [
-      <button
-        key={1}
-        onClick={() => {
-          console.info('View Profile', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <User size={16} /> View Profile
-      </button>,
-      <button
-        key={2}
-        onClick={() => {
-          console.info('Remove', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Trash2 size={16} /> Remove
-      </button>,
-      <button
-        key={3}
-        onClick={() => {
-          console.info('Share', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Share2 size={16} /> Share
-      </button>,
+    renderRowActionMenuItems={({ row }) => [
+      {
+        icon: <User size={16} />,
+        label: 'View Profile',
+        onClick: () => console.info('View Profile', row),
+      },
+      {
+        icon: <Trash2 size={16} />,
+        label: 'Remove',
+        onClick: () => console.info('Remove', row),
+      },
+      {
+        icon: <Share2 size={16} />,
+        label: 'Share',
+        onClick: () => console.info('Share', row),
+      },
     ]}
   />
 );
@@ -398,64 +188,74 @@ export const RowActionsLastColumn = () => (
     enableRowActions
     initialState={{ density: 'compact' }}
     positionActionsColumn="last"
-    renderRowActionMenuItems={({ closeMenu, row }) => [
-      <button
-        key={1}
-        onClick={() => {
-          console.info('View Profile', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <User size={16} /> View Profile
-      </button>,
-      <button
-        key={2}
-        onClick={() => {
-          console.info('Remove', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Trash2 size={16} /> Remove
-      </button>,
-      <button
-        key={3}
-        onClick={() => {
-          console.info('Share', row);
-          closeMenu();
-        }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.5rem',
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-        }}
-      >
-        <Share2 size={16} /> Share
-      </button>,
+    renderRowActionMenuItems={({ row }) => [
+      {
+        icon: <User size={16} />,
+        label: 'View Profile',
+        onClick: () => console.info('View Profile', row),
+      },
+      {
+        icon: <Trash2 size={16} />,
+        label: 'Remove',
+        onClick: () => console.info('Remove', row),
+      },
+      {
+        icon: <Share2 size={16} />,
+        label: 'Share',
+        onClick: () => console.info('Share', row),
+      },
+    ]}
+  />
+);
+
+export const RowActionsWithDivider = () => (
+  <DataTable
+    columns={columns}
+    data={data}
+    enableRowActions
+    renderRowActionMenuItems={({ row }) => [
+      {
+        icon: <User size={16} />,
+        label: 'View Profile',
+        onClick: () => console.info('View Profile', row),
+      },
+      {
+        icon: <Share2 size={16} />,
+        label: 'Share',
+        onClick: () => console.info('Share', row),
+        divider: true,
+      },
+      {
+        icon: <Trash2 size={16} />,
+        label: 'Delete',
+        onClick: () => console.info('Delete', row),
+      },
+    ]}
+  />
+);
+
+export const RowActionsWithDisabled = () => (
+  <DataTable
+    columns={columns}
+    data={data}
+    enableRowActions
+    renderRowActionMenuItems={({ row }) => [
+      {
+        icon: <User size={16} />,
+        label: 'View Profile',
+        onClick: () => console.info('View Profile', row),
+      },
+      {
+        icon: <Share2 size={16} />,
+        label: 'Share (Disabled)',
+        onClick: () => console.info('Share', row),
+        disabled: true,
+      },
+      {
+        icon: <Trash2 size={16} />,
+        label: 'Delete',
+        onClick: () => console.info('Delete', row),
+      },
     ]}
   />
 );

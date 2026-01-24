@@ -1,4 +1,4 @@
-import { type HTMLAttributes, useEffect, useRef } from 'react';
+import { type HTMLAttributes } from 'react';
 import clsx from 'clsx';
 import {
   type RDT_Row,
@@ -10,6 +10,7 @@ import {
   getRDT_RowSelectionHandler,
   getRDT_SelectAllHandler,
 } from '../../utils/row.utils';
+import { RDT_Checkbox } from './RDT_Checkbox';
 import { RDT_Tooltip } from '../tooltip/RDT_Tooltip';
 import styles from './inputs.module.css';
 
@@ -31,8 +32,6 @@ export const RDT_SelectCheckbox = <TData extends RDT_RowData>({
     options: { enableMultiRowSelection, localization, selectAllMode },
   } = table;
   const { density, isLoading } = getState();
-
-  const checkboxRef = useRef<HTMLInputElement>(null);
 
   const selectAll = !row;
 
@@ -72,13 +71,6 @@ export const RDT_SelectCheckbox = <TData extends RDT_RowData>({
     }
   };
 
-  // Handle indeterminate state (can only be set via JavaScript)
-  useEffect(() => {
-    if (checkboxRef.current) {
-      checkboxRef.current.indeterminate = !!isIndeterminate;
-    }
-  }, [isIndeterminate]);
-
   const isCompact = density === 'compact';
   const isMultiSelect = enableMultiRowSelection !== false;
 
@@ -106,15 +98,14 @@ export const RDT_SelectCheckbox = <TData extends RDT_RowData>({
     );
   }
 
-  // Multi-select mode uses native checkboxes
+  // Multi-select mode uses checkboxes
   return (
     <RDT_Tooltip content={label}>
       <div className={styles.checkboxContainer}>
-        <input
-          ref={checkboxRef}
-          type="checkbox"
-          className={clsx(styles.checkbox, isCompact && styles.checkboxCompact)}
+        <RDT_Checkbox
+          compact={isCompact}
           checked={isChecked}
+          indeterminate={isIndeterminate}
           disabled={isDisabled}
           onChange={handleChange}
           onClick={(e) => e.stopPropagation()}

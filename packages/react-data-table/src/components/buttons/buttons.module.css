@@ -59,7 +59,8 @@
   background-color: var(--rdt-base-background-color);
   color: var(--rdt-primary-text-color);
   font-size: var(--rdt-font-size-sm);
-  font-weight: 500;
+  font-weight: var(--rdt-font-weight-medium);
+  line-height: var(--rdt-line-height-tight);
   cursor: pointer;
   transition: all 150ms ease;
 }

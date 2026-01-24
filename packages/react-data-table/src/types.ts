@@ -89,6 +89,15 @@ export type RDT_DensityState = 'comfortable' | 'compact' | 'spacious';
 
 export type RDT_ColumnFilterFnsState = Record<string, RDT_FilterOption>;
 
+// Row action menu item type for renderRowActionMenuItems
+export interface RDT_RowActionMenuItem {
+  disabled?: boolean;
+  divider?: boolean;
+  icon?: ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
 export type RDT_RowData = Record<string, any>;
 
 // Re-exports from TanStack Table
@@ -959,11 +968,10 @@ export interface RDT_TableOptions<TData extends RDT_RowData>
     table: RDT_TableInstance<TData>;
   }) => ReactNode[];
   renderRowActionMenuItems?: (props: {
-    closeMenu: () => void;
     row: RDT_Row<TData>;
     staticRowIndex?: number;
     table: RDT_TableInstance<TData>;
-  }) => ReactNode[];
+  }) => RDT_RowActionMenuItem[];
   renderCreateRowModalContent?: (props: {
     internalEditComponents: ReactNode[];
     row: RDT_Row<TData>;

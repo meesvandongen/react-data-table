@@ -36,6 +36,7 @@ export type {
   RDT_Localization,
   RDT_PaginationState,
   RDT_Row,
+  RDT_RowActionMenuItem,
   RDT_RowData,
   RDT_RowModel,
   RDT_RowSelectionState,
