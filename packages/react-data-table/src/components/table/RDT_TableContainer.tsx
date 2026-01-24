@@ -41,11 +41,15 @@ export const RDT_TableContainer = <TData extends RDT_RowData>({
   } = table;
   const {
     creatingRow,
+    draggingColumn,
+    draggingRow,
     editingRow,
     isFullScreen,
     isLoading,
     showLoadingOverlay,
   } = getState();
+
+  const isDragging = !!(draggingColumn || draggingRow);
 
   const loading =
     showLoadingOverlay !== false && (isLoading || showLoadingOverlay);
@@ -94,6 +98,7 @@ export const RDT_TableContainer = <TData extends RDT_RowData>({
       className={clsx(
         styles.tableContainer,
         (enableStickyHeader || isFullScreen) && styles.tableContainerSticky,
+        isDragging && styles.tableContainerDragging,
         containerProps?.className,
         className,
       )}

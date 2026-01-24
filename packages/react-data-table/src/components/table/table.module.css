@@ -47,6 +47,12 @@
   );
 }
 
+/* During drag operations, prevent not-allowed cursor */
+.tableContainerDragging,
+.tableContainerDragging * {
+  cursor: grabbing !important;
+}
+
 /* ============================================
    Table
    ============================================ */
@@ -305,14 +311,6 @@
   opacity: 0.5;
 }
 
-.tableBodyRowDropZoneBefore {
-  position: relative;
-}
-
-.tableBodyRowDropZoneAfter {
-  position: relative;
-}
-
 /* ============================================
    Table Body Cells
    ============================================ */
@@ -354,13 +352,40 @@
   word-break: break-word;
 }
 
-/* Row drop zone indicators (applied to cells) */
+/* Row drop zone indicators (applied to cells using pseudo-elements) */
 .tableBodyCellDropZoneBefore {
-  border-top: 3px solid var(--rdt-primary-color);
+  position: relative;
+  overflow: visible; /* Override overflow:hidden to allow pseudo-element to show */
+}
+
+.tableBodyCellDropZoneBefore::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -2px; /* Position on top of the border from previous row */
+  height: 3px;
+  background-color: var(--rdt-primary-color);
+  z-index: 10;
+  pointer-events: none;
 }
 
 .tableBodyCellDropZoneAfter {
-  border-bottom: 3px solid var(--rdt-primary-color);
+  position: relative;
+  overflow: visible; /* Override overflow:hidden to allow pseudo-element to show */
+  z-index: 1; /* Create stacking context so ::after appears above next row */
+}
+
+.tableBodyCellDropZoneAfter::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px; /* Position to overlap with border-bottom */
+  height: 3px;
+  background-color: var(--rdt-primary-color);
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* ============================================
