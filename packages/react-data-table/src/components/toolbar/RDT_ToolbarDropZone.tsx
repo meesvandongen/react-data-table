@@ -1,4 +1,4 @@
-import { type HTMLAttributes } from 'react';
+import { type HTMLAttributes, useEffect, useRef } from 'react';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
 import styles from './toolbar.module.css';
 
@@ -14,12 +14,29 @@ export const RDT_ToolbarDropZone = <TData extends RDT_RowData>({
   const {
     getState,
     options: { enableGrouping, localization },
+    setShowToolbarDropZone,
   } = table;
   const { draggingColumn, grouping, hoveredColumn, showToolbarDropZone } =
     getState();
 
+  // Track the previous dragging state to detect changes
+  const prevDraggingColumnRef = useRef(draggingColumn);
+
+  // Automatically show/hide drop zone when dragging state changes
+  useEffect(() => {
+    // Only update if dragging state actually changed (to avoid overriding user-set initial state)
+    if (prevDraggingColumnRef.current !== draggingColumn) {
+      prevDraggingColumnRef.current = draggingColumn;
+      setShowToolbarDropZone(
+        !!enableGrouping &&
+          !!draggingColumn &&
+          draggingColumn.columnDef.enableGrouping !== false &&
+          !grouping.includes(draggingColumn.id),
+      );
+    }
+  }, [enableGrouping, draggingColumn, grouping]);
+
   const isVisible = showToolbarDropZone && enableGrouping;
-  const isDraggingColumn = !!draggingColumn;
   const isHovering = hoveredColumn?.id === 'drop-zone';
 
   const dropZoneClassName = [
@@ -30,35 +47,25 @@ export const RDT_ToolbarDropZone = <TData extends RDT_RowData>({
     .filter(Boolean)
     .join(' ');
 
+  const handleDragEnter = () => {
+    table.setHoveredColumn({ id: 'drop-zone' });
+  };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    if (isDraggingColumn) {
-      table.setHoveredColumn({ id: 'drop-zone' });
-    }
-  };
-
-  const handleDragLeave = () => {
-    table.setHoveredColumn(null);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (draggingColumn && !grouping.includes(draggingColumn.id)) {
-      table.setGrouping([...grouping, draggingColumn.id]);
-    }
-    table.setHoveredColumn(null);
-    table.setDraggingColumn(null);
   };
 
   return (
     <div
       className={dropZoneClassName}
+      onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
       {...rest}
     >
-      {localization.dropToGroupBy}
+      {localization.dropToGroupBy.replace(
+        '{column}',
+        draggingColumn?.columnDef?.header ?? '',
+      )}
     </div>
   );
 };

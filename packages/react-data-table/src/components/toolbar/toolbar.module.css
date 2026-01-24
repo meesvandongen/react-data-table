@@ -340,26 +340,34 @@
 
 /* Toolbar drop zone */
 .dropZone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  border: 2px dashed var(--rdt-table-border-color);
-  border-radius: var(--rdt-border-radius);
-  background-color: var(--rdt-row-hover-color);
-  color: var(--rdt-secondary-text-color);
+  border: 2px dashed var(--rdt-info-color, #1976d2);
+  box-sizing: border-box;
+  background-color: rgba(var(--rdt-info-color-rgb, 25, 118, 210), 0.1);
+  backdrop-filter: blur(4px);
+  color: var(--rdt-info-text, #1976d2);
   font-size: var(--rdt-font-size-sm);
+  font-style: italic;
   text-align: center;
-  margin: 0.5rem;
+  z-index: 4;
+  opacity: 1;
+  transition: opacity 150ms ease-in-out;
 }
 
 .dropZoneHidden {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .dropZoneActive {
-  border-color: var(--rdt-primary-color);
-  background-color: rgba(var(--rdt-primary-color-rgb, 25, 118, 210), 0.08);
+  background-color: rgba(var(--rdt-info-color-rgb, 25, 118, 210), 0.2);
 }
 
 /* Global filter / search input */
@@ -521,7 +529,13 @@
     background-color: rgba(255, 255, 255, 0.12);
   }
 
+  .dropZone {
+    background-color: rgba(var(--rdt-info-color-rgb, 25, 118, 210), 0.15);
+    color: var(--rdt-info-text, #90caf9);
+    border-color: var(--rdt-info-color, #90caf9);
+  }
+
   .dropZoneActive {
-    background-color: rgba(var(--rdt-primary-color-rgb, 25, 118, 210), 0.16);
+    background-color: rgba(var(--rdt-info-color-rgb, 25, 118, 210), 0.25);
   }
 }

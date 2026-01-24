@@ -33,6 +33,8 @@ export const RDT_TableBodyCellValue = <TData extends RDT_RowData>({
   const { globalFilter, globalFilterFn } = getState();
   const filterValue = column.getFilterValue();
 
+  const isDisplayColumn = columnDef.columnDefType === 'display';
+
   let renderedCellValue =
     cell.getIsAggregated() && columnDef.AggregatedCell
       ? columnDef.AggregatedCell({
@@ -43,7 +45,7 @@ export const RDT_TableBodyCellValue = <TData extends RDT_RowData>({
           staticColumnIndex,
           staticRowIndex,
         })
-      : row.getIsGrouped() && !cell.getIsGrouped()
+      : row.getIsGrouped() && !cell.getIsGrouped() && !isDisplayColumn
         ? null
         : cell.getIsGrouped() && columnDef.GroupedCell
           ? columnDef.GroupedCell({
