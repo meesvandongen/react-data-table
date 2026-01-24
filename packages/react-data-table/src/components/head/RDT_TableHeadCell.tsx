@@ -11,6 +11,7 @@ import {
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import { RDT_ColumnActionMenuButton } from '../buttons/RDT_ColumnActionMenuButton';
 import { RDT_GrabHandleButton } from '../buttons/RDT_GrabHandleButton';
@@ -46,7 +47,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       enableGrouping,
       enableMultiSort,
       enableSorting,
-      icons: { ArrowDownIcon, ArrowUpDownIcon },
+      icons: { ArrowDownwardIcon, SortIcon },
       localization,
     },
     refs: { tableHeadCellRefs },
@@ -198,8 +199,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         className,
       )}
       style={{
-        width: header.getSize(),
-        minWidth: columnDef.minSize,
+        ...getRDT_CellWidthStyles({ column, header, table }),
         maxWidth: columnDef.maxSize,
         ...(isPinned && {
           [isPinned === 'left'
@@ -246,12 +246,14 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                 >
                   {sortDirection ? (
                     sortDirection === 'asc' ? (
-                      <ArrowDownIcon style={{ transform: 'rotate(180deg)' }} />
+                      <ArrowDownwardIcon
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
                     ) : (
-                      <ArrowDownIcon />
+                      <ArrowDownwardIcon />
                     )
                   ) : (
-                    <ArrowUpDownIcon />
+                    <SortIcon />
                   )}
                   {/* Multi-sort index badge */}
                   {sorting.length > 1 && sortDirection && (

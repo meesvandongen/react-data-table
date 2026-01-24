@@ -1,22 +1,16 @@
-import {
-  type HTMLAttributes,
-  type MouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type MouseEvent, useState } from 'react';
+import { Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 import {
   type RDT_Header,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
-import { RDT_ActionMenuItem } from './RDT_ActionMenuItem';
 import { RDT_FilterOptionMenu } from './RDT_FilterOptionMenu';
 import styles from './menus.module.css';
 
-export interface RDT_ColumnActionMenuProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLDivElement> {
+export interface RDT_ColumnActionMenuProps<TData extends RDT_RowData> {
   anchorEl: HTMLElement | null;
+  className?: string;
   header: RDT_Header<TData>;
   setAnchorEl: (anchorEl: HTMLElement | null) => void;
   table: RDT_TableInstance<TData>;
@@ -28,8 +22,6 @@ export const RDT_ColumnActionMenu = <TData extends RDT_RowData>({
   setAnchorEl,
   table,
   className,
-  style,
-  ...rest
 }: RDT_ColumnActionMenuProps<TData>) => {
   const {
     getAllLeafColumns,
@@ -67,117 +59,59 @@ export const RDT_ColumnActionMenu = <TData extends RDT_RowData>({
 
   const { column } = header;
   const { columnDef } = column;
-  const { columnSizing, columnVisibility, showColumnFilters } = getState();
+  const { columnSizing, columnVisibility, density, showColumnFilters } =
+    getState();
   const columnFilterValue = column.getFilterValue();
 
-  const menuRef = useRef<HTMLDivElement>(null);
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] =
     useState<HTMLElement | null>(null);
-  const [menuPosition, setMenuPosition] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
 
-  // Calculate menu position when anchor changes
-  useEffect(() => {
-    if (anchorEl) {
-      const rect = anchorEl.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const menuWidth = 200; // Approximate menu width
-      const menuHeight = 300; // Approximate max menu height
+  const isDense = density === 'compact';
 
-      let left = rect.left;
-      let top = rect.bottom + 4;
-
-      // Adjust if menu would overflow right edge
-      if (left + menuWidth > viewportWidth) {
-        left = viewportWidth - menuWidth - 8;
-      }
-
-      // Adjust if menu would overflow bottom edge
-      if (top + menuHeight > viewportHeight) {
-        top = rect.top - menuHeight - 4;
-        if (top < 0) top = 8;
-      }
-
-      setMenuPosition({ top, left });
-    } else {
-      setMenuPosition(null);
-    }
-  }, [anchorEl]);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    if (!anchorEl) return;
-
-    const handleClickOutside = (event: Event) => {
-      const target = event.target as Node;
-      if (menuRef.current && !menuRef.current.contains(target)) {
-        setAnchorEl(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [anchorEl, setAnchorEl]);
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    if (!anchorEl) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setAnchorEl(null);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [anchorEl, setAnchorEl]);
-
-  if (!anchorEl || !menuPosition) return null;
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleClearSort = () => {
     column.clearSorting();
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleSortAsc = () => {
     column.toggleSorting(false);
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleSortDesc = () => {
     column.toggleSorting(true);
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleResetColumnSize = () => {
     setColumnSizingInfo((old) => ({ ...old, isResizingColumn: false }));
     column.resetSize();
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleHideColumn = () => {
     column.toggleVisibility(false);
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handlePinColumn = (pinDirection: 'left' | 'right' | false) => {
     column.pin(pinDirection);
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleGroupByColumn = () => {
     column.toggleGrouping();
     setColumnOrder((old: string[]) => ['rdt-row-expand', ...old]);
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleClearFilter = () => {
     column.setFilterValue(undefined);
-    setAnchorEl(null);
+    handleClose();
     if (['empty', 'notEmpty'].includes(columnDef._filterFn as string)) {
       const allowedOptions =
         columnDef?.columnFilterModeOptions ?? columnFilterModeOptions;
@@ -191,14 +125,14 @@ export const RDT_ColumnActionMenu = <TData extends RDT_RowData>({
   const handleFilterByColumn = () => {
     setShowColumnFilters(true);
     queueMicrotask(() => filterInputRefs.current?.[`${column.id}-0`]?.focus());
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleShowAllColumns = () => {
     getAllLeafColumns()
       .filter((col) => col.columnDef.enableHiding !== false)
       .forEach((col) => col.toggleVisibility(true));
-    setAnchorEl(null);
+    handleClose();
   };
 
   const handleOpenFilterModeMenu = (event: MouseEvent<HTMLButtonElement>) => {
@@ -216,213 +150,245 @@ export const RDT_ColumnActionMenu = <TData extends RDT_RowData>({
     (allowedColumnFilterOptions === undefined ||
       !!allowedColumnFilterOptions?.length);
 
+  // Build menu items for custom rendering
   const internalColumnMenuItems = [
     // Sorting options
     ...(enableSorting && column.getCanSort()
       ? [
-          enableSortingRemoval !== false && (
-            <RDT_ActionMenuItem
-              disabled={column.getIsSorted() === false}
-              icon={<ClearAllIcon />}
-              key="clear-sort"
-              label={localization.clearSort}
-              onClick={handleClearSort}
-              table={table}
-            />
-          ),
-          <RDT_ActionMenuItem
-            disabled={column.getIsSorted() === 'asc'}
-            icon={
+          enableSortingRemoval !== false && {
+            key: 'clear-sort',
+            disabled: column.getIsSorted() === false,
+            icon: <ClearAllIcon />,
+            label: localization.clearSort,
+            onClick: handleClearSort,
+          },
+          {
+            key: 'sort-asc',
+            disabled: column.getIsSorted() === 'asc',
+            icon: (
               <SortIcon style={{ transform: 'rotate(180deg) scaleX(-1)' }} />
-            }
-            key="sort-asc"
-            label={
+            ),
+            label:
               localization.sortByColumnAsc?.replace(
                 '{column}',
                 String(columnDef.header),
-              ) ?? `Sort by ${columnDef.header} ascending`
-            }
-            onClick={handleSortAsc}
-            table={table}
-          />,
-          <RDT_ActionMenuItem
-            disabled={column.getIsSorted() === 'desc'}
-            divider={
-              (enableColumnFilters && column.getCanFilter()) ||
-              (enableGrouping && column.getCanGroup()) ||
-              enableHiding
-            }
-            icon={<SortIcon />}
-            key="sort-desc"
-            label={
+              ) ?? `Sort by ${columnDef.header} ascending`,
+            onClick: handleSortAsc,
+          },
+          {
+            key: 'sort-desc',
+            disabled: column.getIsSorted() === 'desc',
+            icon: <SortIcon />,
+            label:
               localization.sortByColumnDesc?.replace(
                 '{column}',
                 String(columnDef.header),
-              ) ?? `Sort by ${columnDef.header} descending`
-            }
-            onClick={handleSortDesc}
-            table={table}
-          />,
+              ) ?? `Sort by ${columnDef.header} descending`,
+            onClick: handleSortDesc,
+            divider:
+              (enableColumnFilters && column.getCanFilter()) ||
+              (enableGrouping && column.getCanGroup()) ||
+              enableHiding,
+          },
         ].filter(Boolean)
       : []),
 
     // Filter options
     ...(enableColumnFilters && column.getCanFilter()
       ? [
-          <RDT_ActionMenuItem
-            disabled={
+          {
+            key: 'clear-filter',
+            disabled:
               !columnFilterValue ||
               (Array.isArray(columnFilterValue) &&
-                !columnFilterValue.filter((value) => value).length)
-            }
-            icon={<FilterListOffIcon />}
-            key="clear-filter"
-            label={localization.clearFilter}
-            onClick={handleClearFilter}
-            table={table}
-          />,
-          columnFilterDisplayMode === 'subheader' && (
-            <RDT_ActionMenuItem
-              disabled={showColumnFilters && !enableColumnFilterModes}
-              divider={
-                (enableGrouping && column.getCanGroup()) ||
-                enableColumnPinning ||
-                enableHiding
-              }
-              icon={<FilterListIcon />}
-              key="filter-by"
-              label={
-                localization.filterByColumn?.replace(
-                  '{column}',
-                  String(columnDef.header),
-                ) ?? `Filter by ${columnDef.header}`
-              }
-              onClick={
-                showColumnFilters
-                  ? handleOpenFilterModeMenu
-                  : handleFilterByColumn
-              }
-              onOpenSubMenu={
-                showFilterModeSubMenu ? handleOpenFilterModeMenu : undefined
-              }
-              table={table}
-            />
-          ),
+                !columnFilterValue.filter((value) => value).length),
+            icon: <FilterListOffIcon />,
+            label: localization.clearFilter,
+            onClick: handleClearFilter,
+          },
+          columnFilterDisplayMode === 'subheader' && {
+            key: 'filter-by',
+            disabled: showColumnFilters && !enableColumnFilterModes,
+            icon: <FilterListIcon />,
+            label:
+              localization.filterByColumn?.replace(
+                '{column}',
+                String(columnDef.header),
+              ) ?? `Filter by ${columnDef.header}`,
+            onClick: showColumnFilters
+              ? handleOpenFilterModeMenu
+              : handleFilterByColumn,
+            onOpenSubMenu: showFilterModeSubMenu
+              ? handleOpenFilterModeMenu
+              : undefined,
+            divider:
+              (enableGrouping && column.getCanGroup()) ||
+              enableColumnPinning ||
+              enableHiding,
+          },
         ].filter(Boolean)
       : []),
 
     // Grouping options
     ...(enableGrouping && column.getCanGroup()
       ? [
-          <RDT_ActionMenuItem
-            divider={enableColumnPinning || enableHiding}
-            icon={<ViewColumnIcon />}
-            key="group-by"
-            label={
+          {
+            key: 'group-by',
+            icon: <ViewColumnIcon />,
+            label:
               (column.getIsGrouped()
                 ? localization.ungroupByColumn
                 : localization.groupByColumn
               )?.replace('{column}', String(columnDef.header)) ??
-              `${column.getIsGrouped() ? 'Ungroup' : 'Group'} by ${columnDef.header}`
-            }
-            onClick={handleGroupByColumn}
-            table={table}
-          />,
+              `${column.getIsGrouped() ? 'Ungroup' : 'Group'} by ${columnDef.header}`,
+            onClick: handleGroupByColumn,
+            divider: enableColumnPinning || enableHiding,
+          },
         ]
       : []),
 
     // Pinning options
     ...(enableColumnPinning && column.getCanPin()
       ? [
-          <RDT_ActionMenuItem
-            disabled={column.getIsPinned() === 'left' || !column.getCanPin()}
-            icon={<PushPinIcon style={{ transform: 'rotate(90deg)' }} />}
-            key="pin-left"
-            label={localization.pinToLeft}
-            onClick={() => handlePinColumn('left')}
-            table={table}
-          />,
-          <RDT_ActionMenuItem
-            disabled={column.getIsPinned() === 'right' || !column.getCanPin()}
-            icon={<PushPinIcon style={{ transform: 'rotate(-90deg)' }} />}
-            key="pin-right"
-            label={localization.pinToRight}
-            onClick={() => handlePinColumn('right')}
-            table={table}
-          />,
-          <RDT_ActionMenuItem
-            disabled={!column.getIsPinned()}
-            divider={enableHiding || enableColumnResizing}
-            icon={<PushPinIcon />}
-            key="unpin"
-            label={localization.unpin}
-            onClick={() => handlePinColumn(false)}
-            table={table}
-          />,
+          {
+            key: 'pin-left',
+            disabled: column.getIsPinned() === 'left' || !column.getCanPin(),
+            icon: <PushPinIcon style={{ transform: 'rotate(90deg)' }} />,
+            label: localization.pinToLeft,
+            onClick: () => handlePinColumn('left'),
+          },
+          {
+            key: 'pin-right',
+            disabled: column.getIsPinned() === 'right' || !column.getCanPin(),
+            icon: <PushPinIcon style={{ transform: 'rotate(-90deg)' }} />,
+            label: localization.pinToRight,
+            onClick: () => handlePinColumn('right'),
+          },
+          {
+            key: 'unpin',
+            disabled: !column.getIsPinned(),
+            icon: <PushPinIcon />,
+            label: localization.unpin,
+            onClick: () => handlePinColumn(false),
+            divider: enableHiding || enableColumnResizing,
+          },
         ]
       : []),
 
     // Resizing options
     ...(enableColumnResizing && column.getCanResize()
       ? [
-          <RDT_ActionMenuItem
-            disabled={columnSizing[column.id] === undefined}
-            divider={enableHiding}
-            icon={<RestartAltIcon />}
-            key="reset-size"
-            label={localization.resetColumnSize}
-            onClick={handleResetColumnSize}
-            table={table}
-          />,
+          {
+            key: 'reset-size',
+            disabled: columnSizing[column.id] === undefined,
+            icon: <RestartAltIcon />,
+            label: localization.resetColumnSize,
+            onClick: handleResetColumnSize,
+            divider: enableHiding,
+          },
         ]
       : []),
 
     // Hiding options
     ...(enableHiding
       ? [
-          <RDT_ActionMenuItem
-            disabled={!column.getCanHide()}
-            icon={<VisibilityOffIcon />}
-            key="hide"
-            label={
+          {
+            key: 'hide',
+            disabled: !column.getCanHide(),
+            icon: <VisibilityOffIcon />,
+            label:
               localization.hideColumn?.replace(
                 '{column}',
                 String(columnDef.header),
-              ) ?? `Hide ${columnDef.header}`
-            }
-            onClick={handleHideColumn}
-            table={table}
-          />,
-          <RDT_ActionMenuItem
-            disabled={
-              !Object.values(columnVisibility).filter((visible) => !visible)
-                .length
-            }
-            icon={<ViewColumnIcon />}
-            key="show-all"
-            label={localization.showAllColumns}
-            onClick={handleShowAllColumns}
-            table={table}
-          />,
+              ) ?? `Hide ${columnDef.header}`,
+            onClick: handleHideColumn,
+          },
+          {
+            key: 'show-all',
+            disabled: !Object.values(columnVisibility).filter(
+              (visible) => !visible,
+            ).length,
+            icon: <ViewColumnIcon />,
+            label: localization.showAllColumns,
+            onClick: handleShowAllColumns,
+          },
         ]
       : []),
-  ].filter(Boolean);
+  ].filter(Boolean) as Array<{
+    key: string;
+    disabled?: boolean;
+    divider?: boolean;
+    icon?: React.ReactNode;
+    label: string;
+    onClick?: () => void;
+    onOpenSubMenu?: (event: MouseEvent<HTMLButtonElement>) => void;
+  }>;
 
-  // Allow custom rendering of menu items
-  const menuItems =
+  // Allow custom rendering of menu items (return JSX elements for backwards compatibility)
+  const customMenuItems =
     columnDef.renderColumnActionsMenuItems?.({
-      closeMenu: () => setAnchorEl(null),
+      closeMenu: handleClose,
       column,
-      internalColumnMenuItems,
+      internalColumnMenuItems: internalColumnMenuItems.map((item) => (
+        <MenuItem
+          key={item.key}
+          className={[
+            styles.menuItem,
+            isDense && styles.menuItemDense,
+            item.divider && styles.menuItemDivider,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          isDisabled={item.disabled}
+          onAction={item.onClick}
+        >
+          <span className={styles.menuItemContent}>
+            {item.icon && (
+              <span className={styles.menuItemIcon}>{item.icon}</span>
+            )}
+            <span className={styles.menuItemLabel}>{item.label}</span>
+          </span>
+          {item.onOpenSubMenu && (
+            <button
+              type="button"
+              className={styles.menuItemSubMenuIcon}
+              onClick={item.onOpenSubMenu}
+              onMouseEnter={item.onOpenSubMenu}
+              aria-label="Open submenu"
+            >
+              <table.options.icons.ArrowRightIcon />
+            </button>
+          )}
+        </MenuItem>
+      )),
       table,
     }) ??
     renderColumnActionsMenuItems?.({
-      closeMenu: () => setAnchorEl(null),
+      closeMenu: handleClose,
       column,
-      internalColumnMenuItems,
+      internalColumnMenuItems: internalColumnMenuItems.map((item) => (
+        <MenuItem
+          key={item.key}
+          className={[
+            styles.menuItem,
+            isDense && styles.menuItemDense,
+            item.divider && styles.menuItemDivider,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          isDisabled={item.disabled}
+          onAction={item.onClick}
+        >
+          <span className={styles.menuItemContent}>
+            {item.icon && (
+              <span className={styles.menuItemIcon}>{item.icon}</span>
+            )}
+            <span className={styles.menuItemLabel}>{item.label}</span>
+          </span>
+        </MenuItem>
+      )),
       table,
-    }) ??
-    internalColumnMenuItems;
+    });
 
   const menuClassName = [styles.menu, styles.columnActionMenu, className]
     .filter(Boolean)
@@ -430,25 +396,66 @@ export const RDT_ColumnActionMenu = <TData extends RDT_RowData>({
 
   return (
     <>
-      {/* Backdrop to capture clicks outside */}
-      <div
-        className={styles.menuBackdrop}
-        onClick={() => setAnchorEl(null)}
-        aria-hidden="true"
-      />
-      <div
-        ref={menuRef}
-        role="menu"
-        className={menuClassName}
-        style={{
-          top: menuPosition.top,
-          left: menuPosition.left,
-          ...style,
-        }}
-        {...rest}
-      >
-        {menuItems}
-      </div>
+      <MenuTrigger isOpen={!!anchorEl} onOpenChange={() => {}}>
+        {/* Hidden trigger - we control open state externally */}
+        <button style={{ display: 'none' }} aria-hidden>
+          trigger
+        </button>
+        <Popover
+          isOpen={!!anchorEl}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) handleClose();
+          }}
+          triggerRef={{ current: anchorEl }}
+          placement="bottom start"
+          className={menuClassName}
+        >
+          <Menu
+            onAction={() => {}}
+            aria-label={localization.columnActions}
+            className={styles.menuInner}
+          >
+            {customMenuItems ? (
+              <>{customMenuItems}</>
+            ) : (
+              <>
+                {internalColumnMenuItems.map((item) => (
+                  <MenuItem
+                    key={item.key}
+                    className={[
+                      styles.menuItem,
+                      isDense && styles.menuItemDense,
+                      item.divider && styles.menuItemDivider,
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    isDisabled={item.disabled}
+                    onAction={item.onClick}
+                  >
+                    <span className={styles.menuItemContent}>
+                      {item.icon && (
+                        <span className={styles.menuItemIcon}>{item.icon}</span>
+                      )}
+                      <span className={styles.menuItemLabel}>{item.label}</span>
+                    </span>
+                    {item.onOpenSubMenu && (
+                      <button
+                        type="button"
+                        className={styles.menuItemSubMenuIcon}
+                        onClick={item.onOpenSubMenu}
+                        onMouseEnter={item.onOpenSubMenu}
+                        aria-label="Open submenu"
+                      >
+                        <table.options.icons.ArrowRightIcon />
+                      </button>
+                    )}
+                  </MenuItem>
+                ))}
+              </>
+            )}
+          </Menu>
+        </Popover>
+      </MenuTrigger>
       {/* Filter mode submenu */}
       {showFilterModeSubMenu && filterMenuAnchorEl && (
         <RDT_FilterOptionMenu

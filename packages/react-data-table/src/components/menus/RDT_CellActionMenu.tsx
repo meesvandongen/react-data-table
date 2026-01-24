@@ -1,21 +1,19 @@
-import { type HTMLAttributes, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
+import { Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 import clsx from 'clsx';
-import { RDT_ActionMenuItem } from './RDT_ActionMenuItem';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
 import { openEditingCell } from '../../utils/cell.utils';
 import { parseFromValuesOrFunc } from '../../utils/utils';
 import styles from './menus.module.css';
 
-export interface RDT_CellActionMenuProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLDivElement> {
+export interface RDT_CellActionMenuProps<TData extends RDT_RowData> {
+  className?: string;
   table: RDT_TableInstance<TData>;
 }
 
 export const RDT_CellActionMenu = <TData extends RDT_RowData>({
   table,
   className,
-  style,
-  ...rest
 }: RDT_CellActionMenuProps<TData>) => {
   const {
     getState,
@@ -29,7 +27,7 @@ export const RDT_CellActionMenu = <TData extends RDT_RowData>({
     },
     refs: { actionCellRef },
   } = table;
-  const { actionCell } = getState();
+  const { actionCell, density } = getState();
 
   if (!actionCell) {
     return null;
@@ -38,6 +36,7 @@ export const RDT_CellActionMenu = <TData extends RDT_RowData>({
   const cell = actionCell;
   const { row, column } = cell;
   const { columnDef } = column;
+  const isDense = density === 'compact';
 
   const handleClose = (event?: React.MouseEvent) => {
     event?.stopPropagation();
@@ -47,7 +46,12 @@ export const RDT_CellActionMenu = <TData extends RDT_RowData>({
     }
   };
 
-  const internalMenuItems: ReactNode[] = [];
+  const internalMenuItems: Array<{
+    key: string;
+    icon: ReactNode;
+    label: string;
+    onClick: () => void;
+  }> = [];
 
   // Copy action for context menu
   const showCopy =
@@ -55,19 +59,15 @@ export const RDT_CellActionMenu = <TData extends RDT_RowData>({
     parseFromValuesOrFunc(columnDef.enableClickToCopy, cell) === 'context-menu';
 
   if (showCopy) {
-    internalMenuItems.push(
-      <RDT_ActionMenuItem
-        icon={<ContentCopyIcon />}
-        key="rdt-copy"
-        label={localization.copy ?? 'Copy'}
-        onClick={(event) => {
-          event.stopPropagation();
-          navigator.clipboard.writeText(cell.getValue() as string);
-          handleClose();
-        }}
-        table={table}
-      />,
-    );
+    internalMenuItems.push({
+      key: 'rdt-copy',
+      icon: <ContentCopyIcon />,
+      label: localization.copy ?? 'Copy',
+      onClick: () => {
+        navigator.clipboard.writeText(cell.getValue() as string);
+        handleClose();
+      },
+    });
   }
 
   // Edit action
@@ -75,25 +75,33 @@ export const RDT_CellActionMenu = <TData extends RDT_RowData>({
     parseFromValuesOrFunc(enableEditing, row) && editDisplayMode === 'cell';
 
   if (showEdit) {
-    internalMenuItems.push(
-      <RDT_ActionMenuItem
-        icon={<EditIcon />}
-        key="rdt-edit"
-        label={localization.edit ?? 'Edit'}
-        onClick={() => {
-          openEditingCell({ cell, table });
-          handleClose();
-        }}
-        table={table}
-      />,
-    );
+    internalMenuItems.push({
+      key: 'rdt-edit',
+      icon: <EditIcon />,
+      label: localization.edit ?? 'Edit',
+      onClick: () => {
+        openEditingCell({ cell, table });
+        handleClose();
+      },
+    });
   }
 
   const renderActionProps = {
     cell,
     closeMenu: handleClose,
     column,
-    internalMenuItems,
+    internalMenuItems: internalMenuItems.map((item) => (
+      <MenuItem
+        key={item.key}
+        className={clsx(styles.menuItem, isDense && styles.menuItemDense)}
+        onAction={item.onClick}
+      >
+        <span className={styles.menuItemContent}>
+          <span className={styles.menuItemIcon}>{item.icon}</span>
+          <span className={styles.menuItemLabel}>{item.label}</span>
+        </span>
+      </MenuItem>
+    )),
     row,
     table,
   };
@@ -108,32 +116,56 @@ export const RDT_CellActionMenu = <TData extends RDT_RowData>({
     return null;
   }
 
-  // Calculate position based on action cell ref
+  // Get position from action cell ref
   const anchorEl = actionCellRef?.current;
-  const rect = anchorEl?.getBoundingClientRect();
 
-  if (!rect) {
+  if (!anchorEl) {
     return null;
   }
 
   return (
-    <>
-      {/* Backdrop to close menu when clicking outside */}
-      <div className={styles.menuBackdrop} onClick={handleClose} />
-      <div
-        role="menu"
-        onClick={(event) => event.stopPropagation()}
-        {...rest}
-        className={clsx(styles.menu, styles.cellActionMenu, className)}
-        style={{
-          position: 'fixed',
-          top: rect.bottom + 4,
-          left: rect.right - 100,
-          ...style,
+    <MenuTrigger isOpen={!!actionCell} onOpenChange={() => {}}>
+      {/* Hidden trigger */}
+      <button style={{ display: 'none' }} aria-hidden>
+        trigger
+      </button>
+      <Popover
+        isOpen={!!actionCell}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) handleClose();
         }}
+        triggerRef={{ current: anchorEl }}
+        placement="bottom end"
+        className={clsx(styles.menu, styles.cellActionMenu, className)}
       >
-        {menuItems}
-      </div>
-    </>
+        <Menu
+          onAction={() => {}}
+          aria-label={localization.cellActions}
+          className={styles.menuInner}
+        >
+          {customMenuItems ? (
+            <>{customMenuItems}</>
+          ) : (
+            <>
+              {internalMenuItems.map((item) => (
+                <MenuItem
+                  key={item.key}
+                  className={clsx(
+                    styles.menuItem,
+                    isDense && styles.menuItemDense,
+                  )}
+                  onAction={item.onClick}
+                >
+                  <span className={styles.menuItemContent}>
+                    <span className={styles.menuItemIcon}>{item.icon}</span>
+                    <span className={styles.menuItemLabel}>{item.label}</span>
+                  </span>
+                </MenuItem>
+              ))}
+            </>
+          )}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
   );
 };

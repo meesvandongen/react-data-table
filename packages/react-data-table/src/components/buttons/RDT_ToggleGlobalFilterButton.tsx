@@ -1,16 +1,16 @@
-import { type HTMLAttributes } from 'react';
+import { ToggleButton } from 'react-aria-components';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import { RDT_Tooltip } from '../tooltip/RDT_Tooltip';
 import styles from './buttons.module.css';
 
-export interface RDT_ToggleGlobalFilterButtonProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLButtonElement> {
+export interface RDT_ToggleGlobalFilterButtonProps<TData extends RDT_RowData> {
   table: RDT_TableInstance<TData>;
+  title?: string;
 }
 
 export const RDT_ToggleGlobalFilterButton = <TData extends RDT_RowData>({
   table,
   title,
-  ...rest
 }: RDT_ToggleGlobalFilterButtonProps<TData>) => {
   const {
     getState,
@@ -23,9 +23,11 @@ export const RDT_ToggleGlobalFilterButton = <TData extends RDT_RowData>({
   } = table;
   const { globalFilter, showGlobalFilter } = getState();
 
-  const handleToggleSearch = () => {
-    setShowGlobalFilter(!showGlobalFilter);
-    queueMicrotask(() => searchInputRef.current?.focus());
+  const handleToggleSearch = (isSelected: boolean) => {
+    setShowGlobalFilter(isSelected);
+    if (isSelected) {
+      queueMicrotask(() => searchInputRef.current?.focus());
+    }
   };
 
   const label = title ?? localization.showHideSearch;
@@ -39,16 +41,16 @@ export const RDT_ToggleGlobalFilterButton = <TData extends RDT_RowData>({
     .join(' ');
 
   return (
-    <button
-      type="button"
-      className={buttonClassName}
-      aria-label={label}
-      title={label}
-      disabled={isDisabled}
-      onClick={handleToggleSearch}
-      {...rest}
-    >
-      {showGlobalFilter ? <SearchOffIcon /> : <SearchIcon />}
-    </button>
+    <RDT_Tooltip content={label} isDisabled={isDisabled}>
+      <ToggleButton
+        className={buttonClassName}
+        aria-label={label}
+        isSelected={showGlobalFilter}
+        onChange={handleToggleSearch}
+        isDisabled={isDisabled}
+      >
+        {showGlobalFilter ? <SearchOffIcon /> : <SearchIcon />}
+      </ToggleButton>
+    </RDT_Tooltip>
   );
 };

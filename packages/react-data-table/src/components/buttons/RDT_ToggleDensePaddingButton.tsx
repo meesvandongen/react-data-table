@@ -1,16 +1,16 @@
-import { type HTMLAttributes } from 'react';
+import { Button } from 'react-aria-components';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import { RDT_Tooltip } from '../tooltip/RDT_Tooltip';
 import styles from './buttons.module.css';
 
-export interface RDT_ToggleDensePaddingButtonProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLButtonElement> {
+export interface RDT_ToggleDensePaddingButtonProps<TData extends RDT_RowData> {
   table: RDT_TableInstance<TData>;
+  title?: string;
 }
 
 export const RDT_ToggleDensePaddingButton = <TData extends RDT_RowData>({
   table,
   title,
-  ...rest
 }: RDT_ToggleDensePaddingButtonProps<TData>) => {
   const {
     getState,
@@ -35,21 +35,20 @@ export const RDT_ToggleDensePaddingButton = <TData extends RDT_RowData>({
   const label = title ?? localization.toggleDensity;
 
   return (
-    <button
-      type="button"
-      className={styles.iconButton}
-      aria-label={label}
-      title={label}
-      onClick={handleToggleDensePadding}
-      {...rest}
-    >
-      {density === 'compact' ? (
-        <DensitySmallIcon />
-      ) : density === 'comfortable' ? (
-        <DensityMediumIcon />
-      ) : (
-        <DensityLargeIcon />
-      )}
-    </button>
+    <RDT_Tooltip content={label}>
+      <Button
+        className={styles.iconButton}
+        aria-label={label}
+        onPress={handleToggleDensePadding}
+      >
+        {density === 'compact' ? (
+          <DensitySmallIcon />
+        ) : density === 'comfortable' ? (
+          <DensityMediumIcon />
+        ) : (
+          <DensityLargeIcon />
+        )}
+      </Button>
+    </RDT_Tooltip>
   );
 };

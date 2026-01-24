@@ -626,3 +626,123 @@ select.editInput {
     width: 100%;
   }
 }
+
+/* React Aria Checkbox styles */
+.ariaCheckbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+}
+
+.ariaCheckbox[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ariaCheckboxCompact .checkboxBox {
+  width: 1rem;
+  height: 1rem;
+}
+
+.checkboxBox {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  background-color: var(--rdt-base-background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease;
+}
+
+.ariaCheckbox:hover:not([data-disabled]) .checkboxBox {
+  border-color: var(--rdt-primary-color);
+}
+
+.ariaCheckbox[data-focus-visible] .checkboxBox {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 2px;
+}
+
+.ariaCheckbox[data-selected] .checkboxBox,
+.ariaCheckbox[data-indeterminate] .checkboxBox {
+  background-color: var(--rdt-primary-color);
+  border-color: var(--rdt-primary-color);
+}
+
+.checkboxIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: white;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.ariaCheckbox[data-selected] .checkboxIcon,
+.ariaCheckbox[data-indeterminate] .checkboxIcon {
+  opacity: 1;
+}
+
+/* React Aria Slider styles */
+.ariaSlider {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  touch-action: none;
+}
+
+.ariaSliderTrack {
+  position: relative;
+  height: 1.5rem;
+  width: 100%;
+}
+
+.ariaSliderTrack::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  width: 100%;
+  background: var(--rdt-table-border-color);
+  border-radius: 2px;
+}
+
+.ariaSliderFill {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  background: var(--rdt-primary-color);
+  border-radius: 2px;
+}
+
+.ariaSliderThumb {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--rdt-primary-color);
+  border: 2px solid var(--rdt-base-background-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  top: 50%;
+  cursor: grab;
+  transition: transform 150ms ease;
+}
+
+.ariaSliderThumb[data-dragging] {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.ariaSliderThumb[data-focus-visible] {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: 2px;
+}
+
+.ariaSliderThumb:hover {
+  transform: scale(1.1);
+}

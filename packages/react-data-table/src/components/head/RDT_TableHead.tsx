@@ -1,16 +1,22 @@
 import { type HTMLAttributes } from 'react';
 import clsx from 'clsx';
-import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import {
+  type RDT_ColumnVirtualizer,
+  type RDT_RowData,
+  type RDT_TableInstance,
+} from '../../types';
 import { parseFromValuesOrFunc } from '../../utils/utils';
 import { RDT_TableHeadRow } from './RDT_TableHeadRow';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableHeadProps<TData extends RDT_RowData>
   extends HTMLAttributes<HTMLTableSectionElement> {
+  columnVirtualizer?: RDT_ColumnVirtualizer;
   table: RDT_TableInstance<TData>;
 }
 
 export const RDT_TableHead = <TData extends RDT_RowData>({
+  columnVirtualizer,
   table,
   className,
   ...rest
@@ -53,6 +59,7 @@ export const RDT_TableHead = <TData extends RDT_RowData>({
     >
       {getHeaderGroups().map((headerGroup) => (
         <RDT_TableHeadRow
+          columnVirtualizer={columnVirtualizer}
           headerGroup={headerGroup}
           key={headerGroup.id}
           table={table}

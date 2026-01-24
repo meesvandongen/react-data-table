@@ -100,9 +100,9 @@ const DensitySmallIcon = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
 DensitySmallIcon.displayName = 'DensitySmallIcon';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RDT_Icons = Record<string, any>;
+type IconComponent = React.ComponentType<any>;
 
-export const RDT_Default_Icons: RDT_Icons = {
+export const RDT_Default_Icons: Record<string, IconComponent> = {
   // Sorting & Navigation
   ArrowDownwardIcon: ArrowDown,
   ArrowRightIcon: ArrowRight,
@@ -159,4 +159,6 @@ export const RDT_Default_Icons: RDT_Icons = {
   DensityLargeIcon,
   DensityMediumIcon,
   DensitySmallIcon,
-} as const;
+};
+
+export type RDT_Icons = typeof RDT_Default_Icons;

@@ -1,4 +1,5 @@
-import { type HTMLAttributes, type MouseEvent, useRef } from 'react';
+import { type HTMLAttributes, useEffect, useRef } from 'react';
+import clsx from 'clsx';
 import {
   type RDT_Row,
   type RDT_RowData,
@@ -9,6 +10,7 @@ import {
   getRDT_RowSelectionHandler,
   getRDT_SelectAllHandler,
 } from '../../utils/row.utils';
+import { RDT_Tooltip } from '../tooltip/RDT_Tooltip';
 import styles from './inputs.module.css';
 
 export interface RDT_SelectCheckboxProps<TData extends RDT_RowData>
@@ -30,7 +32,7 @@ export const RDT_SelectCheckbox = <TData extends RDT_RowData>({
   } = table;
   const { density, isLoading } = getState();
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const checkboxRef = useRef<HTMLInputElement>(null);
 
   const selectAll = !row;
 
@@ -61,52 +63,65 @@ export const RDT_SelectCheckbox = <TData extends RDT_RowData>({
 
   const onSelectAllChange = getRDT_SelectAllHandler({ table });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     if (selectAll) {
-      onSelectAllChange(event);
+      onSelectAllChange(e);
     } else {
-      onSelectionChange!(event);
+      onSelectionChange?.(e);
     }
   };
 
-  const handleClick = (e: MouseEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-  };
+  // Handle indeterminate state (can only be set via JavaScript)
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = !!isIndeterminate;
+    }
+  }, [isIndeterminate]);
 
   const isCompact = density === 'compact';
   const isMultiSelect = enableMultiRowSelection !== false;
-
-  // Set indeterminate state via ref (can't be set via attribute)
-  if (inputRef.current && isMultiSelect) {
-    inputRef.current.indeterminate = !!isIndeterminate;
-  }
 
   const label = selectAll
     ? localization.toggleSelectAll
     : localization.toggleSelectRow;
 
-  const inputClassName = isMultiSelect
-    ? [styles.checkbox, isCompact && styles.checkboxCompact]
-        .filter(Boolean)
-        .join(' ')
-    : [styles.radio, isCompact && styles.radioCompact]
-        .filter(Boolean)
-        .join(' ');
+  // Single-select mode uses radio buttons
+  if (!isMultiSelect) {
+    return (
+      <RDT_Tooltip content={label}>
+        <div className={styles.checkboxContainer}>
+          <input
+            type="radio"
+            className={clsx(styles.radio, isCompact && styles.radioCompact)}
+            checked={isChecked}
+            disabled={isDisabled}
+            onChange={handleChange}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={label}
+            {...rest}
+          />
+        </div>
+      </RDT_Tooltip>
+    );
+  }
 
+  // Multi-select mode uses native checkboxes
   return (
-    <div className={styles.checkboxContainer} title={label}>
-      <input
-        ref={inputRef}
-        type={isMultiSelect ? 'checkbox' : 'radio'}
-        className={inputClassName}
-        checked={isChecked}
-        disabled={isDisabled}
-        onChange={handleChange}
-        onClick={handleClick}
-        aria-label={label}
-        {...rest}
-      />
-    </div>
+    <RDT_Tooltip content={label}>
+      <div className={styles.checkboxContainer}>
+        <input
+          ref={checkboxRef}
+          type="checkbox"
+          className={clsx(styles.checkbox, isCompact && styles.checkboxCompact)}
+          checked={isChecked}
+          disabled={isDisabled}
+          onChange={handleChange}
+          onClick={(e) => e.stopPropagation()}
+          aria-label={label}
+          {...rest}
+        />
+      </div>
+    </RDT_Tooltip>
   );
 };

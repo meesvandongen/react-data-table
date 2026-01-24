@@ -5,17 +5,20 @@ import {
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableFooterCellProps<TData extends RDT_RowData>
   extends ThHTMLAttributes<HTMLTableCellElement> {
   footer: RDT_Header<TData>;
+  staticColumnIndex?: number;
   table: RDT_TableInstance<TData>;
 }
 
 export const RDT_TableFooterCell = <TData extends RDT_RowData>({
   footer,
+  staticColumnIndex,
   table,
   className,
   style,
@@ -38,6 +41,7 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
     <th
       {...rest}
       colSpan={footer.colSpan}
+      data-index={staticColumnIndex}
       className={clsx(
         styles.tableFooterCell,
         isPinned && styles.tableHeadCellPinned, // reuse head pinned styles
@@ -46,8 +50,7 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
         className,
       )}
       style={{
-        width: footer.getSize(),
-        minWidth: columnDef.minSize,
+        ...getRDT_CellWidthStyles({ column, header: footer, table }),
         maxWidth: columnDef.maxSize,
         ...(isPinned && {
           [isPinned === 'left'

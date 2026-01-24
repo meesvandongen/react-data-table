@@ -39,3 +39,6 @@ export * from './menus';
 
 // Modal components
 export * from './modals';
+
+// Tooltip components
+export * from './tooltip';

@@ -1,16 +1,22 @@
 import { type HTMLAttributes } from 'react';
 import clsx from 'clsx';
-import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import {
+  type RDT_ColumnVirtualizer,
+  type RDT_RowData,
+  type RDT_TableInstance,
+} from '../../types';
 import { parseFromValuesOrFunc } from '../../utils/utils';
 import { RDT_TableFooterRow } from './RDT_TableFooterRow';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableFooterProps<TData extends RDT_RowData>
   extends HTMLAttributes<HTMLTableSectionElement> {
+  columnVirtualizer?: RDT_ColumnVirtualizer;
   table: RDT_TableInstance<TData>;
 }
 
 export const RDT_TableFooter = <TData extends RDT_RowData>({
+  columnVirtualizer,
   table,
   className,
   ...rest
@@ -49,6 +55,7 @@ export const RDT_TableFooter = <TData extends RDT_RowData>({
     >
       {getFooterGroups().map((footerGroup) => (
         <RDT_TableFooterRow
+          columnVirtualizer={columnVirtualizer}
           footerGroup={footerGroup}
           key={footerGroup.id}
           table={table}

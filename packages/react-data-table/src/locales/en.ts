@@ -5,6 +5,7 @@ export const RDT_Localization_EN: RDT_Localization = {
   actions: 'Actions',
   and: 'and',
   cancel: 'Cancel',
+  cellActions: 'Cell Actions',
   changeFilterMode: 'Change filter mode',
   changeSearchMode: 'Change search mode',
   clearFilter: 'Clear filter',

@@ -6,9 +6,10 @@ import {
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { parseFromValuesOrFunc } from '../../utils/utils';
-import { RDT_TableBodyCellValue } from './RDT_TableBodyCellValue';
 import { RDT_EditCellTextField } from '../inputs/RDT_EditCellTextField';
+import { RDT_TableBodyCellValue } from './RDT_TableBodyCellValue';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableBodyCellProps<TData extends RDT_RowData>
@@ -100,8 +101,7 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         className,
       )}
       style={{
-        width: column.getSize(),
-        minWidth: columnDef.minSize,
+        ...getRDT_CellWidthStyles({ column, table }),
         maxWidth: columnDef.maxSize,
         ...(isPinned && {
           [isPinned === 'left'

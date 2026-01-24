@@ -149,6 +149,7 @@ export interface RDT_Localization {
   actions: string;
   and: string;
   cancel: string;
+  cellActions: string;
   changeFilterMode: string;
   changeSearchMode: string;
   clearFilter: string;
@@ -934,19 +935,19 @@ export interface RDT_TableOptions<TData extends RDT_RowData>
     internalFilterOptions: RDT_InternalFilterOption[];
     onSelectFilterMode: (filterMode: RDT_FilterOption) => void;
     table: RDT_TableInstance<TData>;
-  }) => ReactNode;
+  }) => ReactNode[];
   renderColumnActionsMenuItems?: (props: {
     closeMenu: () => void;
     column: RDT_Column<TData>;
     internalColumnMenuItems: ReactNode[];
     table: RDT_TableInstance<TData>;
-  }) => ReactNode;
+  }) => ReactNode[];
   renderColumnFilterModeMenuItems?: (props: {
     column: RDT_Column<TData>;
     internalFilterOptions: RDT_InternalFilterOption[];
     onSelectFilterMode: (filterMode: RDT_FilterOption) => void;
     table: RDT_TableInstance<TData>;
-  }) => ReactNode;
+  }) => ReactNode[];
   renderCellActionMenuItems?: (props: {
     cell: RDT_Cell<TData>;
     closeMenu: () => void;

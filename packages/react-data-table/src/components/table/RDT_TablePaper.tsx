@@ -6,6 +6,8 @@ import {
 import clsx from 'clsx';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
 import { parseFromValuesOrFunc } from '../../utils/utils';
+import { RDT_BottomToolbar } from '../toolbar/RDT_BottomToolbar';
+import { RDT_TopToolbar } from '../toolbar/RDT_TopToolbar';
 import { RDT_TableContainer } from './RDT_TableContainer';
 import styles from './table.module.css';
 
@@ -74,14 +76,12 @@ export const RDT_TablePaper = <TData extends RDT_RowData>({
     >
       {enableTopToolbar &&
         (parseFromValuesOrFunc(renderTopToolbar, { table }) ?? (
-          // TODO: Replace with actual RDT_TopToolbar component
-          <div className={styles.toolbar}>Top Toolbar Placeholder</div>
+          <RDT_TopToolbar table={table} />
         ))}
       <RDT_TableContainer table={table} />
       {enableBottomToolbar &&
         (parseFromValuesOrFunc(renderBottomToolbar, { table }) ?? (
-          // TODO: Replace with actual RDT_BottomToolbar component
-          <div className={styles.toolbar}>Bottom Toolbar Placeholder</div>
+          <RDT_BottomToolbar table={table} />
         ))}
     </div>
   );

@@ -1,19 +1,17 @@
-import {
-  type ButtonHTMLAttributes,
-  type MouseEvent,
-  type ReactNode,
-} from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
+import { MenuItem } from 'react-aria-components';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
 import styles from './menus.module.css';
 
-export interface RDT_ActionMenuItemProps<TData extends RDT_RowData>
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
+export interface RDT_ActionMenuItemProps<TData extends RDT_RowData> {
   divider?: boolean;
   icon?: ReactNode;
   label: string;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onOpenSubMenu?: (event: MouseEvent<HTMLButtonElement>) => void;
   table: RDT_TableInstance<TData>;
+  disabled?: boolean;
+  'aria-selected'?: boolean;
 }
 
 export const RDT_ActionMenuItem = <TData extends RDT_RowData>({
@@ -23,7 +21,7 @@ export const RDT_ActionMenuItem = <TData extends RDT_RowData>({
   onClick,
   onOpenSubMenu,
   table,
-  className,
+  disabled,
   ...rest
 }: RDT_ActionMenuItemProps<TData>) => {
   const {
@@ -36,10 +34,6 @@ export const RDT_ActionMenuItem = <TData extends RDT_RowData>({
   const { density } = getState();
   const isDense = density === 'compact';
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    onClick?.(event);
-  };
-
   const handleSubMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     onOpenSubMenu?.(event);
@@ -49,16 +43,15 @@ export const RDT_ActionMenuItem = <TData extends RDT_RowData>({
     styles.menuItem,
     isDense && styles.menuItemDense,
     divider && styles.menuItemDivider,
-    className,
   ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <button
-      type="button"
+    <MenuItem
       className={itemClassName}
-      onClick={handleClick}
+      onAction={() => onClick?.({} as MouseEvent<HTMLDivElement>)}
+      isDisabled={disabled}
       {...rest}
     >
       <span className={styles.menuItemContent}>
@@ -76,6 +69,6 @@ export const RDT_ActionMenuItem = <TData extends RDT_RowData>({
           <ArrowRightIcon />
         </button>
       )}
-    </button>
+    </MenuItem>
   );
 };

@@ -1,11 +1,6 @@
-import {
-  type ReactNode,
-  useMemo,
-  type MouseEvent,
-  type HTMLAttributes,
-} from 'react';
+import { type MouseEvent, type ReactNode, useMemo } from 'react';
+import { Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 import clsx from 'clsx';
-import { RDT_ActionMenuItem } from './RDT_ActionMenuItem';
 import {
   type RDT_Row,
   type RDT_RowData,
@@ -14,8 +9,7 @@ import {
 import { parseFromValuesOrFunc } from '../../utils/utils';
 import styles from './menus.module.css';
 
-export interface RDT_RowActionMenuProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLDivElement> {
+export interface RDT_RowActionMenuProps<TData extends RDT_RowData> {
   anchorEl: HTMLElement | null;
   handleEdit: (event: MouseEvent) => void;
   row: RDT_Row<TData>;
@@ -31,11 +25,9 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
   setAnchorEl,
   staticRowIndex,
   table,
-  className,
-  style,
-  ...rest
 }: RDT_RowActionMenuProps<TData>) => {
   const {
+    getState,
     options: {
       editDisplayMode,
       enableEditing,
@@ -45,29 +37,34 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
     },
   } = table;
 
+  const { density } = getState();
+  const isDense = density === 'compact';
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const menuItems = useMemo(() => {
-    const items: ReactNode[] = [];
+    const items: Array<{
+      key: string;
+      icon: ReactNode;
+      label: string;
+      onClick: () => void;
+    }> = [];
     const canEdit =
       parseFromValuesOrFunc(enableEditing, row) &&
       ['modal', 'row'].includes(editDisplayMode!);
 
     if (canEdit) {
-      items.push(
-        <RDT_ActionMenuItem
-          key="edit"
-          icon={<EditIcon />}
-          label={localization.edit ?? 'Edit'}
-          onClick={(event) => {
-            handleEdit(event as any);
-            handleClose();
-          }}
-          table={table}
-        />,
-      );
+      items.push({
+        key: 'edit',
+        icon: <EditIcon />,
+        label: localization.edit ?? 'Edit',
+        onClick: () => {
+          handleEdit({} as MouseEvent);
+          handleClose();
+        },
+      });
     }
 
     const customItems = renderRowActionMenuItems?.({
@@ -77,11 +74,12 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
       table,
     });
 
+    // Handle custom items (they could be JSX elements from the user)
     if (customItems?.length) {
-      items.push(...customItems);
+      return { internalItems: items, customItems };
     }
 
-    return items;
+    return { internalItems: items, customItems: null };
   }, [
     editDisplayMode,
     enableEditing,
@@ -93,31 +91,56 @@ export const RDT_RowActionMenu = <TData extends RDT_RowData>({
     table,
   ]);
 
-  if (!menuItems.length || !anchorEl) {
+  if (
+    (!menuItems.internalItems.length && !menuItems.customItems?.length) ||
+    !anchorEl
+  ) {
     return null;
   }
 
-  // Calculate position based on anchor element
-  const rect = anchorEl.getBoundingClientRect();
-
   return (
-    <>
-      {/* Backdrop to close menu when clicking outside */}
-      <div className={styles.menuBackdrop} onClick={handleClose} />
-      <div
-        role="menu"
-        onClick={(event) => event.stopPropagation()}
-        {...rest}
-        className={clsx(styles.menu, styles.rowActionMenu, className)}
-        style={{
-          position: 'fixed',
-          top: rect.bottom + 4,
-          left: rect.left,
-          ...style,
+    <MenuTrigger isOpen={!!anchorEl} onOpenChange={() => {}}>
+      {/* Hidden trigger */}
+      <button style={{ display: 'none' }} aria-hidden>
+        trigger
+      </button>
+      <Popover
+        isOpen={!!anchorEl}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) handleClose();
         }}
+        triggerRef={{ current: anchorEl }}
+        placement="bottom start"
+        className={clsx(styles.menu, styles.rowActionMenu)}
       >
-        {menuItems}
-      </div>
-    </>
+        <Menu
+          onAction={() => {}}
+          aria-label={localization.rowActions ?? 'Row actions'}
+          className={styles.menuInner}
+        >
+          {menuItems.customItems ? (
+            <>{menuItems.customItems}</>
+          ) : (
+            <>
+              {menuItems.internalItems.map((item) => (
+                <MenuItem
+                  key={item.key}
+                  className={clsx(
+                    styles.menuItem,
+                    isDense && styles.menuItemDense,
+                  )}
+                  onAction={item.onClick}
+                >
+                  <span className={styles.menuItemContent}>
+                    <span className={styles.menuItemIcon}>{item.icon}</span>
+                    <span className={styles.menuItemLabel}>{item.label}</span>
+                  </span>
+                </MenuItem>
+              ))}
+            </>
+          )}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
   );
 };

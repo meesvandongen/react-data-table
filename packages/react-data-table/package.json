@@ -40,6 +40,8 @@
   "scripts": {
     "build": "rslib build",
     "dev": "rslib build --watch",
+    "storybook": "storybook dev -p 6007",
+    "storybook:build": "storybook build",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "typecheck": "tsc --noEmit"
@@ -58,16 +60,27 @@
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.2.0",
     "@rsbuild/core": "^1.7.2",
     "@rslib/core": "^0.19.3",
+    "@storybook/addon-a11y": "^10.2.0",
+    "@storybook/addon-essentials": "^10.2.0",
+    "@storybook/addon-links": "^10.2.0",
+    "@storybook/addon-storysource": "^10.2.0",
+    "@storybook/blocks": "^10.2.0",
+    "@storybook/react": "^10.2.0",
+    "@storybook/react-vite": "^10.2.0",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
-    "lucide-react": "^0.562.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "lucide-react": "^0.563.0",
     "react": "^19.2.3",
     "react-aria-components": "^1.14.0",
     "react-dom": "^19.2.3",
+    "storybook": "^10.2.0",
     "typescript": "^5.9.3",
+    "vite": "^7.3.1",
     "vitest": "^4.0.18"
   },
   "publishConfig": {

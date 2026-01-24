@@ -39,6 +39,44 @@
   --rdt-row-hover: 240 4.8% 95.9%;
   --rdt-row-selected: 240 5.9% 90%;
   --rdt-cell-pinned: 240 4.8% 97%;
+
+  /* Functional color variables used by components */
+  --rdt-base-background-color: hsl(var(--rdt-background));
+  --rdt-row-background-color: hsl(var(--rdt-background));
+  --rdt-text-color: hsl(var(--rdt-foreground));
+  --rdt-primary-text-color: hsl(var(--rdt-foreground));
+  --rdt-secondary-text-color: hsl(var(--rdt-muted-foreground));
+  --rdt-text-secondary-color: hsl(var(--rdt-muted-foreground));
+  --rdt-border-color: hsl(var(--rdt-border));
+  --rdt-table-border-color: hsl(var(--rdt-border));
+  --rdt-primary-color: hsl(var(--rdt-primary));
+  --rdt-primary-color-rgb: var(--rdt-primary);
+  --rdt-row-hover-color: hsl(var(--rdt-row-hover));
+  --rdt-selected-row-color: hsl(var(--rdt-row-selected));
+  --rdt-pinned-row-background-color: hsl(var(--rdt-cell-pinned));
+
+  /* Menu and toolbar backgrounds */
+  --rdt-menu-bg: hsl(var(--rdt-background));
+  --rdt-toolbar-bg: hsl(var(--rdt-background));
+  --rdt-info-bg: hsl(var(--rdt-muted));
+  --rdt-info-text: hsl(var(--rdt-muted-foreground));
+
+  /* Layout variables */
+  --rdt-cell-padding: calc(0.75rem * var(--rdt-density));
+  --rdt-border-radius: var(--rdt-radius);
+  --rdt-toolbar-height: calc(3rem * var(--rdt-density));
+  --rdt-match-highlight-color: hsl(60 100% 50%);
+
+  /* Font sizes */
+  --rdt-font-size: 0.875rem;
+  --rdt-font-size-sm: 0.8125rem;
+  --rdt-font-size-xs: 0.75rem;
+
+  /* Pinning offsets (dynamically set by JS) */
+  --rdt-pinned-left-offset: 0px;
+  --rdt-pinned-right-offset: 0px;
+  --rdt-pinned-row-top: 0px;
+  --rdt-pinned-row-bottom: 0px;
 }
 
 .dark {
@@ -69,6 +107,30 @@
   --rdt-row-hover: 240 3.7% 12%;
   --rdt-row-selected: 240 3.7% 18%;
   --rdt-cell-pinned: 240 5% 8%;
+
+  /* Functional color variables - inherit from dark HSL values */
+  --rdt-base-background-color: hsl(var(--rdt-background));
+  --rdt-row-background-color: hsl(var(--rdt-background));
+  --rdt-text-color: hsl(var(--rdt-foreground));
+  --rdt-primary-text-color: hsl(var(--rdt-foreground));
+  --rdt-secondary-text-color: hsl(var(--rdt-muted-foreground));
+  --rdt-text-secondary-color: hsl(var(--rdt-muted-foreground));
+  --rdt-border-color: hsl(var(--rdt-border));
+  --rdt-table-border-color: hsl(var(--rdt-border));
+  --rdt-primary-color: hsl(var(--rdt-primary));
+  --rdt-primary-color-rgb: var(--rdt-primary);
+  --rdt-row-hover-color: hsl(var(--rdt-row-hover));
+  --rdt-selected-row-color: hsl(var(--rdt-row-selected));
+  --rdt-pinned-row-background-color: hsl(var(--rdt-cell-pinned));
+
+  /* Menu and toolbar backgrounds */
+  --rdt-menu-bg: hsl(var(--rdt-background));
+  --rdt-toolbar-bg: hsl(var(--rdt-background));
+  --rdt-info-bg: hsl(var(--rdt-muted));
+  --rdt-info-text: hsl(var(--rdt-muted-foreground));
+
+  /* Match highlight - slightly different for dark mode */
+  --rdt-match-highlight-color: hsl(60 100% 35%);
 }
 
 /* Density variants */

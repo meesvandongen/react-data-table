@@ -1,4 +1,5 @@
 import { type InputHTMLAttributes, useEffect, useRef, useState } from 'react';
+import { Slider, SliderThumb, SliderTrack } from 'react-aria-components';
 import {
   type RDT_Header,
   type RDT_RowData,
@@ -49,6 +50,19 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
 
   const isMounted = useRef(false);
 
+  const handleChange = (values: number[]) => {
+    setFilterValues([values[0], values[1]]);
+  };
+
+  const handleChangeEnd = (values: number[]) => {
+    if (values[0] <= min && values[1] >= max) {
+      // If the user has selected the entire range, remove the filter
+      column.setFilterValue(undefined);
+    } else {
+      column.setFilterValue([values[0], values[1]]);
+    }
+  };
+
   // Prevent moving the focus to the next/prev cell when using the arrow keys
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -56,19 +70,18 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
     }
   };
 
-  const handleMinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMinInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMin = Number(event.target.value);
     setFilterValues((prev) => [newMin, prev[1]]);
   };
 
-  const handleMaxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMaxInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMax = Number(event.target.value);
     setFilterValues((prev) => [prev[0], newMax]);
   };
 
-  const handleCommit = () => {
+  const handleInputCommit = () => {
     if (filterValues[0] <= min && filterValues[1] >= max) {
-      // If the user has selected the entire range, remove the filter
       column.setFilterValue(undefined);
     } else {
       column.setFilterValue(filterValues);
@@ -86,10 +99,6 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
     isMounted.current = true;
   }, [columnFilterValue, min, max]);
 
-  const sliderClassName = [styles.filterRangeSlider, className]
-    .filter(Boolean)
-    .join(' ');
-
   return (
     <div className={styles.filterRangeSliderContainer}>
       <div className={styles.filterRangeSliderInputs}>
@@ -104,38 +113,49 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
           value={filterValues[0]}
           min={min}
           max={max}
-          onChange={handleMinChange}
-          onBlur={handleCommit}
+          onChange={handleMinInputChange}
+          onBlur={handleInputCommit}
           onKeyDown={(e) => {
             handleKeyDown(e);
-            if (e.key === 'Enter') handleCommit();
+            if (e.key === 'Enter') handleInputCommit();
           }}
           aria-label={localization.min}
           placeholder={localization.min}
           {...rest}
         />
-        <input
-          type="range"
-          className={sliderClassName}
-          value={filterValues[0]}
-          min={min}
-          max={max}
-          onChange={handleMinChange}
-          onMouseUp={handleCommit}
-          onKeyDown={handleKeyDown}
-          aria-label={`${localization.min} slider`}
-        />
-        <input
-          type="range"
-          className={sliderClassName}
-          value={filterValues[1]}
-          min={min}
-          max={max}
-          onChange={handleMaxChange}
-          onMouseUp={handleCommit}
-          onKeyDown={handleKeyDown}
-          aria-label={`${localization.max} slider`}
-        />
+        <Slider
+          className={styles.ariaSlider}
+          minValue={min}
+          maxValue={max}
+          value={filterValues}
+          onChange={handleChange}
+          onChangeEnd={handleChangeEnd}
+          aria-label={`${localization.min} - ${localization.max}`}
+        >
+          <SliderTrack className={styles.ariaSliderTrack}>
+            {({ state }) => (
+              <>
+                <div
+                  className={styles.ariaSliderFill}
+                  style={{
+                    left: `${state.getThumbPercent(0) * 100}%`,
+                    width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`,
+                  }}
+                />
+                <SliderThumb
+                  className={styles.ariaSliderThumb}
+                  index={0}
+                  aria-label={localization.min}
+                />
+                <SliderThumb
+                  className={styles.ariaSliderThumb}
+                  index={1}
+                  aria-label={localization.max}
+                />
+              </>
+            )}
+          </SliderTrack>
+        </Slider>
         <input
           ref={(node) => {
             if (node && filterInputRefs.current) {
@@ -147,11 +167,11 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
           value={filterValues[1]}
           min={min}
           max={max}
-          onChange={handleMaxChange}
-          onBlur={handleCommit}
+          onChange={handleMaxInputChange}
+          onBlur={handleInputCommit}
           onKeyDown={(e) => {
             handleKeyDown(e);
-            if (e.key === 'Enter') handleCommit();
+            if (e.key === 'Enter') handleInputCommit();
           }}
           aria-label={localization.max}
           placeholder={localization.max}

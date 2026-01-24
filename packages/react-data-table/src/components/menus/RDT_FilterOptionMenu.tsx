@@ -1,4 +1,6 @@
-import { type HTMLAttributes, useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
+import { Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
+import clsx from 'clsx';
 import {
   type RDT_FilterOption,
   type RDT_Header,
@@ -7,7 +9,6 @@ import {
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
-import { RDT_ActionMenuItem } from './RDT_ActionMenuItem';
 import styles from './menus.module.css';
 
 /**
@@ -107,9 +108,9 @@ const emptyModes = ['empty', 'notEmpty'];
 const arrModes = ['arrIncludesSome', 'arrIncludesAll', 'arrIncludes'];
 const rangeVariants = ['range-slider', 'date-range', 'datetime-range', 'range'];
 
-export interface RDT_FilterOptionMenuProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLDivElement> {
+export interface RDT_FilterOptionMenuProps<TData extends RDT_RowData> {
   anchorEl: HTMLElement | null;
+  className?: string;
   header?: RDT_Header<TData>;
   onSelect?: () => void;
   setAnchorEl: (anchorEl: HTMLElement | null) => void;
@@ -125,8 +126,6 @@ export const RDT_FilterOptionMenu = <TData extends RDT_RowData>({
   setFilterValue,
   table,
   className,
-  style,
-  ...rest
 }: RDT_FilterOptionMenuProps<TData>) => {
   const {
     getState,
@@ -141,12 +140,11 @@ export const RDT_FilterOptionMenu = <TData extends RDT_RowData>({
     setGlobalFilterFn,
   } = table;
 
-  const { globalFilterFn } = getState();
+  const { density, globalFilterFn } = getState();
   const { column } = header ?? {};
   const { columnDef } = column ?? {};
   const currentFilterValue = column?.getFilterValue();
-
-  const menuRef = useRef<HTMLDivElement>(null);
+  const isDense = density === 'compact';
 
   let allowedColumnFilterOptions =
     columnDef?.columnFilterModeOptions ?? columnFilterModeOptions;
@@ -178,54 +176,11 @@ export const RDT_FilterOptionMenu = <TData extends RDT_RowData>({
     ],
   );
 
-  // Calculate menu position
-  const menuPosition = useMemo(() => {
-    if (!anchorEl) return null;
-    const rect = anchorEl.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const menuWidth = 200;
+  if (!anchorEl) return null;
 
-    let left = rect.right + 4;
-    const top = rect.top;
-
-    // Adjust if menu would overflow right edge
-    if (left + menuWidth > viewportWidth) {
-      left = rect.left - menuWidth - 4;
-    }
-
-    return { top, left };
-  }, [anchorEl]);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    if (!anchorEl) return;
-
-    const handleClickOutside = (event: Event) => {
-      const target = event.target as Node;
-      if (menuRef.current && !menuRef.current.contains(target)) {
-        setAnchorEl(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [anchorEl, setAnchorEl]);
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    if (!anchorEl) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setAnchorEl(null);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [anchorEl, setAnchorEl]);
-
-  if (!anchorEl || !menuPosition) return null;
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleSelectFilterMode = (option: RDT_FilterOption) => {
     const prevFilterMode = columnDef?._filterFn ?? '';
@@ -296,15 +251,15 @@ export const RDT_FilterOptionMenu = <TData extends RDT_RowData>({
       }
     }
 
-    setAnchorEl(null);
+    handleClose();
     onSelect?.();
   };
 
   const filterOption =
     !!header && columnDef ? columnDef._filterFn : globalFilterFn;
 
-  const menuItems =
-    (header && column && columnDef
+  const customMenuItems =
+    header && column && columnDef
       ? (columnDef.renderColumnFilterModeMenuItems?.({
           column: column as any,
           internalFilterOptions,
@@ -321,54 +276,65 @@ export const RDT_FilterOptionMenu = <TData extends RDT_RowData>({
           internalFilterOptions,
           onSelectFilterMode: handleSelectFilterMode,
           table,
-        })) ??
-    internalFilterOptions.map(({ divider, label, option, symbol }, index) => (
-      <RDT_ActionMenuItem
-        divider={divider}
-        icon={
-          <span
-            className={[
-              styles.filterOptionMenuItemCheck,
-              option !== filterOption && styles.filterOptionMenuItemCheckHidden,
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
-            {symbol}
-          </span>
-        }
-        key={index}
-        label={label}
-        onClick={() => handleSelectFilterMode(option as RDT_FilterOption)}
-        aria-selected={option === filterOption}
-        table={table}
-      />
-    ));
-
-  const menuClassName = [styles.menu, styles.filterOptionMenu, className]
-    .filter(Boolean)
-    .join(' ');
+        });
 
   return (
-    <>
-      <div
-        className={styles.menuBackdrop}
-        onClick={() => setAnchorEl(null)}
-        aria-hidden="true"
-      />
-      <div
-        ref={menuRef}
-        role="menu"
-        className={menuClassName}
-        style={{
-          top: menuPosition.top,
-          left: menuPosition.left,
-          ...style,
+    <MenuTrigger isOpen={!!anchorEl} onOpenChange={() => {}}>
+      {/* Hidden trigger */}
+      <button style={{ display: 'none' }} aria-hidden>
+        trigger
+      </button>
+      <Popover
+        isOpen={!!anchorEl}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) handleClose();
         }}
-        {...rest}
+        triggerRef={{ current: anchorEl }}
+        placement="end top"
+        className={clsx(styles.menu, styles.filterOptionMenu, className)}
       >
-        {menuItems}
-      </div>
-    </>
+        <Menu
+          onAction={() => {}}
+          aria-label={localization.filterMode ?? 'Filter mode'}
+          className={styles.menuInner}
+        >
+          {customMenuItems ? (
+            <>{customMenuItems}</>
+          ) : (
+            <>
+              {internalFilterOptions.map(
+                ({ divider, label, option, symbol }, index) => (
+                  <MenuItem
+                    key={index}
+                    className={clsx(
+                      styles.menuItem,
+                      isDense && styles.menuItemDense,
+                      divider && styles.menuItemDivider,
+                    )}
+                    onAction={() =>
+                      handleSelectFilterMode(option as RDT_FilterOption)
+                    }
+                    aria-selected={option === filterOption}
+                  >
+                    <span className={styles.menuItemContent}>
+                      <span
+                        className={clsx(
+                          styles.filterOptionMenuItemCheck,
+                          option !== filterOption &&
+                            styles.filterOptionMenuItemCheckHidden,
+                        )}
+                      >
+                        {symbol}
+                      </span>
+                      <span className={styles.menuItemLabel}>{label}</span>
+                    </span>
+                  </MenuItem>
+                ),
+              )}
+            </>
+          )}
+        </Menu>
+      </Popover>
+    </MenuTrigger>
   );
 };

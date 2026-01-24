@@ -140,3 +140,11 @@
   gap: 1.5rem;
   padding-top: 0.5rem;
 }
+
+/* Dialog needs to be unstyled to inherit modal styles */
+.modalDialog {
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

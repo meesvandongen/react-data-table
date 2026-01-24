@@ -1,6 +1,5 @@
-/* Menu container */
+/* Menu container (React Aria Popover) */
 .menu {
-  position: absolute;
   z-index: 1000;
   min-width: 180px;
   max-width: 320px;
@@ -15,6 +14,17 @@
   padding: 0.25rem 0;
   list-style: none;
   margin: 0;
+  outline: none;
+}
+
+/* Inner menu (React Aria Menu) */
+.menuInner {
+  outline: none;
+}
+
+/* Dialog inside popover */
+.menuDialog {
+  outline: none;
 }
 
 .menuHidden {

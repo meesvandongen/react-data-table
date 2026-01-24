@@ -8,6 +8,8 @@ import {
 import clsx from 'clsx';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
 import { parseFromValuesOrFunc } from '../../utils/utils';
+import { RDT_CellActionMenu } from '../menus/RDT_CellActionMenu';
+import { RDT_EditRowModal } from '../modals/RDT_EditRowModal';
 import { RDT_Table } from './RDT_Table';
 import { RDT_TableLoadingOverlay } from './RDT_TableLoadingOverlay';
 import styles from './table.module.css';
@@ -38,7 +40,6 @@ export const RDT_TableContainer = <TData extends RDT_RowData>({
     refs: { bottomToolbarRef, tableContainerRef, topToolbarRef },
   } = table;
   const {
-    actionCell,
     creatingRow,
     editingRow,
     isFullScreen,
@@ -109,14 +110,11 @@ export const RDT_TableContainer = <TData extends RDT_RowData>({
     >
       {loading ? <RDT_TableLoadingOverlay table={table} /> : null}
       <RDT_Table table={table} />
-      {(createModalOpen || editModalOpen) && (
-        // TODO: Replace with actual RDT_EditRowModal component
-        <div>Edit Modal Placeholder</div>
-      )}
-      {enableCellActions && actionCell && (
-        // TODO: Replace with actual RDT_CellActionMenu component
-        <div>Cell Action Menu Placeholder</div>
-      )}
+      <RDT_EditRowModal
+        open={!!(createModalOpen || editModalOpen)}
+        table={table}
+      />
+      {enableCellActions && <RDT_CellActionMenu table={table} />}
     </div>
   );
 };

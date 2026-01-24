@@ -1,20 +1,26 @@
 import { memo, type HTMLAttributes, useMemo } from 'react';
+import { type VirtualItem } from '@tanstack/react-virtual';
 import clsx from 'clsx';
+import { useRDT_RowVirtualizer } from '../../hooks/useRDT_RowVirtualizer';
+import { useRDT_Rows } from '../../hooks/useRDT_Rows';
 import {
+  type RDT_ColumnVirtualizer,
   type RDT_Row,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
 import { parseFromValuesOrFunc } from '../../utils/utils';
-import { RDT_TableBodyRow, Memo_RDT_TableBodyRow } from './RDT_TableBodyRow';
+import { Memo_RDT_TableBodyRow, RDT_TableBodyRow } from './RDT_TableBodyRow';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableBodyProps<TData extends RDT_RowData>
   extends HTMLAttributes<HTMLTableSectionElement> {
+  columnVirtualizer?: RDT_ColumnVirtualizer;
   table: RDT_TableInstance<TData>;
 }
 
 export const RDT_TableBody = <TData extends RDT_RowData>({
+  columnVirtualizer,
   table,
   className,
   ...rest
@@ -31,6 +37,7 @@ export const RDT_TableBody = <TData extends RDT_RowData>({
       layoutMode,
       localization,
       memoMode,
+      renderDetailPanel,
       renderEmptyRowsFallback,
       rowPinningDisplayMode,
       tableBodyProps,
@@ -58,10 +65,14 @@ export const RDT_TableBody = <TData extends RDT_RowData>({
       .map((r) => r.id);
   }, [rowPinning, getRowModel]);
 
-  // Get rows - simplified version without row virtualizer for now
-  const rows = getRowModel().rows as RDT_Row<TData>[];
+  const rows = useRDT_Rows(table);
+
+  const rowVirtualizer = useRDT_RowVirtualizer(table, rows);
+
+  const { virtualRows } = rowVirtualizer ?? {};
 
   const commonRowProps = {
+    columnVirtualizer,
     numRows: rows.length,
     table,
   };
@@ -107,6 +118,9 @@ export const RDT_TableBody = <TData extends RDT_RowData>({
           className,
         )}
         style={{
+          height: rowVirtualizer
+            ? `${rowVirtualizer.getTotalSize()}px`
+            : undefined,
           minHeight: !rows.length ? '100px' : undefined,
           position: 'relative',
           ...tbodyProps?.style,
@@ -138,20 +152,35 @@ export const RDT_TableBody = <TData extends RDT_RowData>({
             </td>
           </tr>
         ) : (
-          rows.map((row, staticRowIndex) => {
+          (virtualRows ?? rows).map((rowOrVirtualRow, staticRowIndex) => {
+            let row = rowOrVirtualRow as RDT_Row<TData>;
+            if (rowVirtualizer) {
+              if (renderDetailPanel) {
+                if (rowOrVirtualRow.index % 2 === 1) {
+                  return null;
+                } else {
+                  staticRowIndex = rowOrVirtualRow.index / 2;
+                }
+              } else {
+                staticRowIndex = rowOrVirtualRow.index;
+              }
+              row = rows[staticRowIndex];
+            }
             const props = {
               ...commonRowProps,
               pinnedRowIds,
               row,
+              rowVirtualizer,
               staticRowIndex,
+              virtualRow: rowVirtualizer
+                ? (rowOrVirtualRow as VirtualItem)
+                : undefined,
             };
+            const key = `${row.id}-${row.index}`;
             return memoMode === 'rows' ? (
-              <Memo_RDT_TableBodyRow
-                key={`${row.id}-${row.index}`}
-                {...props}
-              />
+              <Memo_RDT_TableBodyRow key={key} {...props} />
             ) : (
-              <RDT_TableBodyRow key={`${row.id}-${row.index}`} {...props} />
+              <RDT_TableBodyRow key={key} {...props} />
             );
           })
         )}

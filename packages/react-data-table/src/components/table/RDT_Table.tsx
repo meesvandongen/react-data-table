@@ -1,10 +1,11 @@
 import { type CSSProperties, type HTMLAttributes, useMemo } from 'react';
 import clsx from 'clsx';
+import { useRDT_ColumnVirtualizer } from '../../hooks/useRDT_ColumnVirtualizer';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
 import { parseFromValuesOrFunc } from '../../utils/utils';
-import { RDT_TableHead } from '../head/RDT_TableHead';
 import { RDT_TableBody } from '../body/RDT_TableBody';
 import { RDT_TableFooter } from '../footer/RDT_TableFooter';
+import { RDT_TableHead } from '../head/RDT_TableHead';
 import styles from './table.module.css';
 
 /** Parse column ID to valid CSS variable name */
@@ -56,11 +57,10 @@ export const RDT_Table = <TData extends RDT_RowData>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns, columnSizing, columnSizingInfo, columnVisibility]);
 
-  // TODO: Add column virtualizer support
-  // const columnVirtualizer = useRDT_ColumnVirtualizer(table);
+  const columnVirtualizer = useRDT_ColumnVirtualizer(table);
 
   const commonTableGroupProps = {
-    // columnVirtualizer,
+    columnVirtualizer,
     table,
   };
 

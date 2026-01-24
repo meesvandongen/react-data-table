@@ -1,14 +1,12 @@
 import { type ReactNode } from 'react';
+import { RDT_ExpandAllButton } from '../../components/buttons/RDT_ExpandAllButton';
+import { RDT_ExpandButton } from '../../components/buttons/RDT_ExpandButton';
 import {
   type RDT_ColumnDef,
   type RDT_RowData,
   type RDT_StatefulTableOptions,
 } from '../../types';
 import { defaultDisplayColumnProps } from '../../utils/displayColumn.utils';
-
-// TODO: Import actual components once built
-// import { RDT_ExpandAllButton } from '../../components/buttons/RDT_ExpandAllButton';
-// import { RDT_ExpandButton } from '../../components/buttons/RDT_ExpandButton';
 
 export const getRDT_RowExpandColumnDef = <TData extends RDT_RowData>(
   tableOptions: RDT_StatefulTableOptions<TData>,
@@ -17,15 +15,10 @@ export const getRDT_RowExpandColumnDef = <TData extends RDT_RowData>(
     defaultColumn,
     enableExpandAll,
     groupedColumnMode,
-    icons,
-    localization,
     positionExpandColumn,
     renderDetailPanel,
     state: { grouping },
   } = tableOptions;
-
-  const ExpandIcon = icons.ExpandMoreIcon;
-  const CollapseAllIcon = icons.KeyboardDoubleArrowDownIcon;
 
   const alignProps =
     positionExpandColumn === 'last'
@@ -35,41 +28,20 @@ export const getRDT_RowExpandColumnDef = <TData extends RDT_RowData>(
       : undefined;
 
   return {
-    Cell: ({ cell, column, row, staticRowIndex: _staticRowIndex, table }) => {
-      const isExpanded = row.getIsExpanded();
-      const canExpand = row.getCanExpand() || renderDetailPanel;
+    Cell: ({ cell, column, row, staticRowIndex, table }) => {
+      const expandButtonProps = { row, staticRowIndex, table };
       const subRowsLength = row.subRows?.length;
-
-      // TODO: Replace with actual RDT_ExpandButton component once built
-      const ExpandButton = () =>
-        canExpand ? (
-          <button
-            type="button"
-            aria-label={
-              isExpanded ? localization.collapse : localization.expand
-            }
-            onClick={() => row.toggleExpanded()}
-            style={{
-              cursor: 'pointer',
-              padding: '4px',
-              background: 'none',
-              border: 'none',
-              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.2s',
-            }}
-          >
-            <ExpandIcon />
-          </button>
-        ) : null;
 
       if (groupedColumnMode === 'remove' && row.groupingColumnId) {
         return (
           <div
             style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}
           >
-            <ExpandButton />
+            <RDT_ExpandButton {...expandButtonProps} />
             <span
-              title={table.getColumn(row.groupingColumnId).columnDef.header}
+              title={
+                table.getColumn(row.groupingColumnId).columnDef.header as string
+              }
             >
               {row.groupingValue as ReactNode}
             </span>
@@ -79,7 +51,7 @@ export const getRDT_RowExpandColumnDef = <TData extends RDT_RowData>(
       } else {
         return (
           <>
-            <ExpandButton />
+            <RDT_ExpandButton {...expandButtonProps} />
             {column.columnDef.GroupedCell?.({ cell, column, row, table })}
           </>
         );
@@ -87,31 +59,9 @@ export const getRDT_RowExpandColumnDef = <TData extends RDT_RowData>(
     },
     Header: enableExpandAll
       ? ({ table }) => {
-          // TODO: Replace with actual RDT_ExpandAllButton component once built
-          const allRowsExpanded = table.getIsAllRowsExpanded();
           return (
             <>
-              <button
-                type="button"
-                aria-label={
-                  allRowsExpanded
-                    ? localization.collapseAll
-                    : localization.expandAll
-                }
-                onClick={() => table.toggleAllRowsExpanded()}
-                style={{
-                  cursor: 'pointer',
-                  padding: '4px',
-                  background: 'none',
-                  border: 'none',
-                  transform: allRowsExpanded
-                    ? 'rotate(180deg)'
-                    : 'rotate(0deg)',
-                  transition: 'transform 0.2s',
-                }}
-              >
-                <CollapseAllIcon />
-              </button>
+              <RDT_ExpandAllButton table={table} />
               {groupedColumnMode === 'remove' &&
                 grouping
                   ?.map(

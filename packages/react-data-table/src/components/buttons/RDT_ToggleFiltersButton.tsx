@@ -1,16 +1,16 @@
-import { type HTMLAttributes } from 'react';
+import { ToggleButton } from 'react-aria-components';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import { RDT_Tooltip } from '../tooltip/RDT_Tooltip';
 import styles from './buttons.module.css';
 
-export interface RDT_ToggleFiltersButtonProps<TData extends RDT_RowData>
-  extends HTMLAttributes<HTMLButtonElement> {
+export interface RDT_ToggleFiltersButtonProps<TData extends RDT_RowData> {
   table: RDT_TableInstance<TData>;
+  title?: string;
 }
 
 export const RDT_ToggleFiltersButton = <TData extends RDT_RowData>({
   table,
   title,
-  ...rest
 }: RDT_ToggleFiltersButtonProps<TData>) => {
   const {
     getState,
@@ -22,8 +22,8 @@ export const RDT_ToggleFiltersButton = <TData extends RDT_RowData>({
   } = table;
   const { showColumnFilters } = getState();
 
-  const handleToggleShowFilters = () => {
-    setShowColumnFilters(!showColumnFilters);
+  const handleToggleShowFilters = (isSelected: boolean) => {
+    setShowColumnFilters(isSelected);
   };
 
   const label = title ?? localization.showHideFilters;
@@ -36,15 +36,15 @@ export const RDT_ToggleFiltersButton = <TData extends RDT_RowData>({
     .join(' ');
 
   return (
-    <button
-      type="button"
-      className={buttonClassName}
-      aria-label={label}
-      title={label}
-      onClick={handleToggleShowFilters}
-      {...rest}
-    >
-      {showColumnFilters ? <FilterListOffIcon /> : <FilterListIcon />}
-    </button>
+    <RDT_Tooltip content={label}>
+      <ToggleButton
+        className={buttonClassName}
+        aria-label={label}
+        isSelected={showColumnFilters}
+        onChange={handleToggleShowFilters}
+      >
+        {showColumnFilters ? <FilterListOffIcon /> : <FilterListIcon />}
+      </ToggleButton>
+    </RDT_Tooltip>
   );
 };

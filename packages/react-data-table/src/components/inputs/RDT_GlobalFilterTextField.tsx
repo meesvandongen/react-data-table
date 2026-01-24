@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import { RDT_FilterOptionMenu } from '../menus/RDT_FilterOptionMenu';
 import styles from './inputs.module.css';
 
 // Simple debounce function
@@ -46,9 +47,12 @@ export const RDT_GlobalFilterTextField = <TData extends RDT_RowData>({
   const { showGlobalFilter } = getState();
 
   const isMounted = useRef(false);
+  const filterModeButtonRef = useRef<HTMLButtonElement>(null);
   const [searchValue, setSearchValue] = useState(
     () => table.getState().globalFilter ?? '',
   );
+  const [filterModeAnchorEl, setFilterModeAnchorEl] =
+    useState<HTMLElement | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleChangeDebounced = useCallback(
@@ -70,6 +74,10 @@ export const RDT_GlobalFilterTextField = <TData extends RDT_RowData>({
   const handleClear = () => {
     setSearchValue('');
     setGlobalFilter(undefined);
+  };
+
+  const handleOpenFilterModeMenu = () => {
+    setFilterModeAnchorEl(filterModeButtonRef.current);
   };
 
   useEffect(() => {
@@ -96,11 +104,10 @@ export const RDT_GlobalFilterTextField = <TData extends RDT_RowData>({
       <div className={styles.globalFilterWrapper}>
         {enableGlobalFilterModes ? (
           <button
+            ref={filterModeButtonRef}
             type="button"
             className={styles.globalFilterIconButton}
-            onClick={() => {
-              // TODO: Open filter mode menu
-            }}
+            onClick={handleOpenFilterModeMenu}
             aria-label={localization.changeSearchMode}
             title={localization.changeSearchMode}
           >
@@ -132,6 +139,13 @@ export const RDT_GlobalFilterTextField = <TData extends RDT_RowData>({
           <CloseIcon />
         </button>
       </div>
+      {enableGlobalFilterModes && (
+        <RDT_FilterOptionMenu
+          anchorEl={filterModeAnchorEl}
+          setAnchorEl={setFilterModeAnchorEl}
+          table={table}
+        />
+      )}
     </div>
   );
 };

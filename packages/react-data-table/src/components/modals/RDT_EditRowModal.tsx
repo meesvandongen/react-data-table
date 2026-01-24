@@ -1,4 +1,10 @@
-import { type HTMLAttributes, useEffect, useRef } from 'react';
+import { type ReactNode } from 'react';
+import {
+  Dialog,
+  DialogTrigger,
+  Modal,
+  ModalOverlay,
+} from 'react-aria-components';
 import clsx from 'clsx';
 import {
   type RDT_Row,
@@ -10,8 +16,8 @@ import { RDT_EditActionButtons } from '../buttons/RDT_EditActionButtons';
 import { RDT_EditCellTextField } from '../inputs/RDT_EditCellTextField';
 import styles from './modals.module.css';
 
-export interface RDT_EditRowModalProps<TData extends RDT_RowData>
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'onClose'> {
+export interface RDT_EditRowModalProps<TData extends RDT_RowData> {
+  className?: string;
   onClose?: () => void;
   open: boolean;
   table: RDT_TableInstance<TData>;
@@ -22,7 +28,6 @@ export const RDT_EditRowModal = <TData extends RDT_RowData>({
   open,
   table,
   className,
-  ...rest
 }: RDT_EditRowModalProps<TData>) => {
   const {
     getState,
@@ -41,13 +46,10 @@ export const RDT_EditRowModal = <TData extends RDT_RowData>({
   const { creatingRow, editingRow } = getState();
   const row = (creatingRow ?? editingRow) as RDT_Row<TData>;
 
-  const modalRef = useRef<HTMLDivElement>(null);
-
   const modalProps = {
     ...parseFromValuesOrFunc(editRowModalProps, { row, table }),
     ...(creatingRow &&
       parseFromValuesOrFunc(createRowModalProps, { row, table })),
-    ...rest,
   };
 
   const handleClose = () => {
@@ -66,42 +68,7 @@ export const RDT_EditRowModal = <TData extends RDT_RowData>({
     onClose?.();
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  };
-
-  // Handle escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        handleClose();
-      }
-    };
-    if (open) {
-      document.addEventListener('keydown', handleKeyDown);
-      // Focus the modal for accessibility
-      modalRef.current?.focus();
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
-
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
-
-  if (!open || !row) {
+  if (!row) {
     return null;
   }
 
@@ -112,7 +79,7 @@ export const RDT_EditRowModal = <TData extends RDT_RowData>({
       <RDT_EditCellTextField cell={cell as any} key={cell.id} table={table} />
     ));
 
-  const customContent =
+  const customContent: ReactNode =
     (creatingRow &&
       renderCreateRowModalContent?.({
         internalEditComponents,
@@ -126,73 +93,88 @@ export const RDT_EditRowModal = <TData extends RDT_RowData>({
     });
 
   return (
-    <div
-      className={styles.modalBackdrop}
-      onClick={handleBackdropClick}
-      role="presentation"
-    >
-      <div
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="edit-row-modal-title"
-        tabIndex={-1}
-        {...modalProps}
-        className={clsx(
-          styles.modal,
-          styles.modalSmall,
-          styles.editRowModal,
-          modalProps?.className,
-          className,
-        )}
+    <DialogTrigger>
+      <ModalOverlay
+        className={styles.modalBackdrop}
+        isDismissable
+        isOpen={open}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            handleClose();
+          }
+        }}
       >
-        {customContent ?? (
-          <>
-            <div className={styles.modalHeader}>
-              <h2
-                id="edit-row-modal-title"
-                className={clsx(styles.modalTitle, styles.editRowModalTitle)}
-              >
-                {creatingRow
-                  ? (localization.create ?? 'Create')
-                  : (localization.edit ?? 'Edit')}
-              </h2>
-              <button
-                type="button"
-                className={styles.modalCloseButton}
-                onClick={handleClose}
-                aria-label={localization.close ?? 'Close'}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-            <div className={styles.modalContent}>
-              <form
-                className={styles.modalForm}
-                onSubmit={(e) => e.preventDefault()}
-              >
-                <div className={styles.editRowModalFields}>
-                  {internalEditComponents}
+        <Modal
+          className={clsx(
+            styles.modal,
+            styles.modalSmall,
+            styles.editRowModal,
+            modalProps?.className,
+            className,
+          )}
+        >
+          <Dialog
+            aria-labelledby="edit-row-modal-title"
+            className={styles.modalDialog}
+          >
+            {customContent ? (
+              <>{customContent}</>
+            ) : (
+              <>
+                <div className={styles.modalHeader}>
+                  <h2
+                    id="edit-row-modal-title"
+                    className={clsx(
+                      styles.modalTitle,
+                      styles.editRowModalTitle,
+                    )}
+                  >
+                    {creatingRow
+                      ? (localization.create ?? 'Create')
+                      : (localization.edit ?? 'Edit')}
+                  </h2>
+                  <button
+                    type="button"
+                    className={styles.modalCloseButton}
+                    onClick={handleClose}
+                    aria-label={localization.close ?? 'Close'}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
                 </div>
-              </form>
-            </div>
-            <div className={styles.modalActions}>
-              <RDT_EditActionButtons row={row} table={table} variant="text" />
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+                <div className={styles.modalContent}>
+                  <form
+                    className={styles.modalForm}
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <div className={styles.editRowModalFields}>
+                      {internalEditComponents}
+                    </div>
+                  </form>
+                </div>
+                <div className={styles.modalActions}>
+                  <RDT_EditActionButtons
+                    row={row}
+                    table={table}
+                    variant="text"
+                  />
+                </div>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
   );
 };

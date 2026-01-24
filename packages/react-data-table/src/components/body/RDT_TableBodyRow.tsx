@@ -51,7 +51,6 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
     options: {
       enableRowOrdering,
       enableRowPinning,
-      enableRowSelection,
       enableStickyFooter,
       enableStickyHeader,
       layoutMode,
@@ -120,12 +119,6 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
     e.preventDefault();
   };
 
-  const handleRowClick = () => {
-    if (enableRowSelection) {
-      row.toggleSelected();
-    }
-  };
-
   const rowRef = useRef<HTMLTableRowElement | null>(null);
 
   return (
@@ -136,7 +129,6 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
         data-selected={isRowSelected || undefined}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
-        onClick={handleRowClick}
         ref={(node: HTMLTableRowElement) => {
           if (node) {
             rowRef.current = node;
