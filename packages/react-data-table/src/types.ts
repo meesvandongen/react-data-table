@@ -330,7 +330,13 @@ export type RDT_TableInstance<TData extends RDT_RowData> = Omit<
   setEditingRow: Dispatch<SetStateAction<RDT_Row<TData> | null>>;
   setGlobalFilterFn: Dispatch<SetStateAction<RDT_FilterOption>>;
   setHoveredColumn: Dispatch<SetStateAction<Partial<RDT_Column<TData>> | null>>;
+  setHoveredColumnDropPosition: Dispatch<
+    SetStateAction<'before' | 'after' | null>
+  >;
   setHoveredRow: Dispatch<SetStateAction<Partial<RDT_Row<TData>> | null>>;
+  setHoveredRowDropPosition: Dispatch<
+    SetStateAction<'before' | 'after' | null>
+  >;
   setIsFullScreen: Dispatch<SetStateAction<boolean>>;
   setShowAlertBanner: Dispatch<SetStateAction<boolean>>;
   setShowColumnFilters: Dispatch<SetStateAction<boolean>>;
@@ -362,7 +368,9 @@ export type RDT_StatefulTableOptions<TData extends RDT_RowData> =
       | 'globalFilterFn'
       | 'grouping'
       | 'hoveredColumn'
+      | 'hoveredColumnDropPosition'
       | 'hoveredRow'
+      | 'hoveredRowDropPosition'
       | 'isFullScreen'
       | 'pagination'
       | 'showAlertBanner'
@@ -383,7 +391,9 @@ export interface RDT_TableState<TData extends RDT_RowData> extends TableState {
   editingRow: RDT_Row<TData> | null;
   globalFilterFn: RDT_FilterOption;
   hoveredColumn: Partial<RDT_Column<TData>> | null;
+  hoveredColumnDropPosition: 'before' | 'after' | null;
   hoveredRow: Partial<RDT_Row<TData>> | null;
+  hoveredRowDropPosition: 'before' | 'after' | null;
   isFullScreen: boolean;
   isLoading: boolean;
   isSaving: boolean;
@@ -903,8 +913,20 @@ export interface RDT_TableOptions<TData extends RDT_RowData>
   }) => Promise<void> | void;
   onGlobalFilterFnChange?: OnChangeFn<RDT_FilterOption>;
   onHoveredColumnChange?: OnChangeFn<Partial<RDT_Column<TData>> | null>;
+  onHoveredColumnDropPositionChange?: OnChangeFn<'before' | 'after' | null>;
   onHoveredRowChange?: OnChangeFn<Partial<RDT_Row<TData>> | null>;
+  onHoveredRowDropPositionChange?: OnChangeFn<'before' | 'after' | null>;
   onIsFullScreenChange?: OnChangeFn<boolean>;
+  /**
+   * Callback fired when row order changes via drag and drop.
+   * Provides the new index where the row should be inserted.
+   */
+  onRowOrderChange?: (props: {
+    draggedRow: RDT_Row<TData>;
+    targetRow: RDT_Row<TData>;
+    newIndex: number;
+    table: RDT_TableInstance<TData>;
+  }) => void;
   onShowAlertBannerChange?: OnChangeFn<boolean>;
   onShowColumnFiltersChange?: OnChangeFn<boolean>;
   onShowGlobalFilterChange?: OnChangeFn<boolean>;

@@ -96,6 +96,7 @@ export {
   getRDT_RowSelectionHandler,
   getRDT_Rows,
   getRDT_SelectAllHandler,
+  reorderData,
   // tanstack helpers
   createRDTColumnHelper,
   createRow,

@@ -60,10 +60,17 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
     },
     refs: { tableFooterRef, tableHeadRef },
     setHoveredRow,
+    setHoveredRowDropPosition,
   } = table;
 
-  const { density, draggingRow, hoveredRow, isFullScreen, rowPinning } =
-    getState();
+  const {
+    density,
+    draggingRow,
+    hoveredRow,
+    hoveredRowDropPosition,
+    isFullScreen,
+    rowPinning,
+  } = getState();
 
   const visibleCells = row.getVisibleCells();
 
@@ -74,6 +81,9 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
   const isRowPinned = enableRowPinning && row.getIsPinned();
   const isDraggingRow = draggingRow?.id === row.id;
   const isHoveredRow = hoveredRow?.id === row.id;
+
+  // Get drop position from table state (only relevant for the hovered row)
+  const dropPosition = isHoveredRow ? hoveredRowDropPosition : null;
 
   const rowProps = {
     ...parseFromValuesOrFunc(tableRowProps, { row, staticRowIndex, table }),
@@ -115,11 +125,30 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
     }
   };
 
-  const handleDragOver = (e: DragEvent) => {
+  const handleDragOver = (e: DragEvent<HTMLTableRowElement>) => {
     e.preventDefault();
+    if (enableRowOrdering && draggingRow && rowRef.current) {
+      const rect = rowRef.current.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      const newPosition = e.clientY < midY ? 'before' : 'after';
+      if (newPosition !== hoveredRowDropPosition) {
+        setHoveredRowDropPosition(newPosition);
+      }
+    }
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLTableRowElement>) => {
+    // Only reset if we're actually leaving the row (not entering a child)
+    const relatedTarget = e.relatedTarget as Node | null;
+    if (rowRef.current && !rowRef.current.contains(relatedTarget)) {
+      setHoveredRowDropPosition(null);
+    }
   };
 
   const rowRef = useRef<HTMLTableRowElement | null>(null);
+
+  // Show drop indicator when this row is being hovered during drag
+  const showDropIndicator = isHoveredRow && draggingRow && !isDraggingRow;
 
   return (
     <>
@@ -128,6 +157,7 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
         data-pinned={!!isRowPinned || undefined}
         data-selected={isRowSelected || undefined}
         onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         ref={(node: HTMLTableRowElement) => {
           if (node) {
@@ -143,7 +173,6 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
           isRowPinned === 'top' && styles.tableBodyRowPinnedTop,
           isRowPinned === 'bottom' && styles.tableBodyRowPinnedBottom,
           isDraggingRow && styles.tableBodyRowDragging,
-          isHoveredRow && styles.tableBodyRowDropTarget,
           layoutMode?.startsWith('grid') && styles.tableLayoutGrid,
           rowProps?.className,
           className,
@@ -172,7 +201,7 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
                   (enableStickyHeader || isFullScreen ? tableHeadHeight - 1 : 0)
                 }px`
               : undefined,
-          opacity: isRowPinned ? 0.97 : isDraggingRow || isHoveredRow ? 0.5 : 1,
+          opacity: isRowPinned ? 0.97 : isDraggingRow ? 0.5 : 1,
           zIndex:
             rowPinningDisplayMode?.includes('sticky') && isRowPinned ? 2 : 0,
           width: '100%',
@@ -192,11 +221,15 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
             }
             const props = {
               cell,
+              numRows,
               row,
               rowRef,
               staticColumnIndex,
               staticRowIndex,
               table,
+              // Pass row drag info to cells for styling
+              isRowHovered: isHoveredRow && !!draggingRow && !isDraggingRow,
+              rowDropPosition: showDropIndicator ? dropPosition : null,
             };
             const key = `${cell.id}-${staticRowIndex}`;
             return cell ? <RDT_TableBodyCell key={key} {...props} /> : null;

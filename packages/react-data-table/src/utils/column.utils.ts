@@ -102,16 +102,28 @@ export const reorderColumn = <TData extends RDT_RowData>(
   draggedColumn: RDT_Column<TData>,
   targetColumn: RDT_Column<TData>,
   columnOrder: RDT_ColumnOrderState,
+  position?: 'before' | 'after',
 ): RDT_ColumnOrderState => {
   if (draggedColumn.getCanPin()) {
     draggedColumn.pin(targetColumn.getIsPinned());
   }
   const newColumnOrder = [...columnOrder];
-  newColumnOrder.splice(
-    newColumnOrder.indexOf(targetColumn.id),
-    0,
-    newColumnOrder.splice(newColumnOrder.indexOf(draggedColumn.id), 1)[0],
-  );
+  const draggedIndex = newColumnOrder.indexOf(draggedColumn.id);
+
+  // Remove the dragged column from its current position
+  newColumnOrder.splice(draggedIndex, 1);
+
+  // Find the new target index (it may have shifted after removal)
+  let newTargetIndex = newColumnOrder.indexOf(targetColumn.id);
+
+  // Adjust insertion point based on position
+  if (position === 'after') {
+    newTargetIndex += 1;
+  }
+
+  // Insert at the correct position
+  newColumnOrder.splice(newTargetIndex, 0, draggedColumn.id);
+
   return newColumnOrder;
 };
 

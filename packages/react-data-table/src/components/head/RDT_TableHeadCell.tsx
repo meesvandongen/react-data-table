@@ -3,14 +3,17 @@ import {
   type ThHTMLAttributes,
   useCallback,
   useMemo,
+  useRef,
 } from 'react';
 import clsx from 'clsx';
 import {
+  type RDT_Column,
   type RDT_ColumnVirtualizer,
   type RDT_Header,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { reorderColumn } from '../../utils/column.utils';
 import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import { RDT_ColumnActionMenuButton } from '../buttons/RDT_ColumnActionMenuButton';
@@ -51,13 +54,18 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       localization,
     },
     refs: { tableHeadCellRefs },
+    setColumnOrder,
+    setColumnPinning,
     setHoveredColumn,
+    setHoveredColumnDropPosition,
   } = table;
 
   const {
+    columnOrder,
     draggingColumn,
     grouping,
     hoveredColumn,
+    hoveredColumnDropPosition,
     isLoading,
     showSkeletons,
     sorting,
@@ -89,6 +97,8 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
 
   const showFilterContainer =
     columnFilterDisplayMode === 'subheader' && column.getCanFilter();
+
+  const cellRef = useRef<HTMLTableCellElement | null>(null);
 
   // Sort tooltip
   const sortTooltip =
@@ -131,15 +141,33 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
     }
   };
 
-  const handleDragOver = (e: DragEvent) => {
+  const handleDragOver = (e: DragEvent<HTMLTableCellElement>) => {
     if (columnDef.enableColumnOrdering !== false) {
       e.preventDefault();
+      if (enableColumnOrdering && draggingColumn && cellRef.current) {
+        const rect = cellRef.current.getBoundingClientRect();
+        const midX = rect.left + rect.width / 2;
+        const newPosition = e.clientX < midX ? 'before' : 'after';
+        if (newPosition !== hoveredColumnDropPosition) {
+          setHoveredColumnDropPosition(newPosition);
+        }
+      }
+    }
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLTableCellElement>) => {
+    // Only reset drop position if we're actually leaving this cell
+    // (not entering a child element)
+    const relatedTarget = e.relatedTarget as Node | null;
+    if (!cellRef.current?.contains(relatedTarget)) {
+      setHoveredColumnDropPosition(null);
     }
   };
 
   const handleRef = useCallback(
     (node: HTMLTableCellElement) => {
       if (node) {
+        cellRef.current = node;
         if (tableHeadCellRefs.current) {
           tableHeadCellRefs.current[column.id] = node;
         }
@@ -159,16 +187,25 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         ? column.getAfter('right')
         : undefined;
 
-  // Dragging borders styles
-  const draggingBorders = useMemo(() => {
-    if (draggingColumn?.id === column.id) {
-      return styles.tableHeadCellDragging;
+  // Check if this column is being dragged or is a drop target
+  const isDraggingColumn = draggingColumn?.id === column.id;
+  const isHoveredColumn =
+    hoveredColumn?.id === column.id && draggingColumn && !isDraggingColumn;
+
+  // Determine CSS classes for drag state
+  const draggingClasses = useMemo(() => {
+    const classes: string[] = [];
+    if (isDraggingColumn) {
+      classes.push(styles.tableHeadCellDragging);
     }
-    if (hoveredColumn?.id === column.id) {
-      return styles.tableHeadCellDragTarget;
+    if (isHoveredColumn && hoveredColumnDropPosition === 'before') {
+      classes.push(styles.tableHeadCellDropZoneBefore);
     }
-    return undefined;
-  }, [draggingColumn, hoveredColumn, column.id]);
+    if (isHoveredColumn && hoveredColumnDropPosition === 'after') {
+      classes.push(styles.tableHeadCellDropZoneAfter);
+    }
+    return classes.join(' ');
+  }, [isDraggingColumn, isHoveredColumn, hoveredColumnDropPosition]);
 
   const HeaderElement = flexRender(
     columnDef.Header ?? (columnDef.header as any),
@@ -188,6 +225,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       data-pinned={!!isColumnPinned || undefined}
       data-sort={sortDirection || undefined}
       onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       className={clsx(
         styles.tableHeadCell,
@@ -195,7 +233,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         isPinned === 'left' && styles.tableHeadCellPinnedLeft,
         isPinned === 'right' && styles.tableHeadCellPinnedRight,
         columnDefType === 'group' && styles.tableHeadCellGroup,
-        draggingBorders,
+        draggingClasses,
         className,
       )}
       style={{
@@ -275,8 +313,35 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                       table.setDraggingColumn(column);
                     }}
                     onDragEnd={() => {
+                      // Handle grouping drop zone
+                      if (hoveredColumn?.id === 'drop-zone') {
+                        column.toggleGrouping();
+                      } else if (
+                        enableColumnOrdering &&
+                        hoveredColumn &&
+                        hoveredColumn?.id !== draggingColumn?.id
+                      ) {
+                        // Reorder columns with position awareness
+                        const reorderedColumns = reorderColumn(
+                          column,
+                          hoveredColumn as RDT_Column<TData>,
+                          columnOrder,
+                          hoveredColumnDropPosition ?? undefined,
+                        );
+                        setColumnOrder(reorderedColumns);
+                        // Update pinning to match new order
+                        setColumnPinning(({ left = [], right = [] }) => ({
+                          left: reorderedColumns.filter((header) =>
+                            left.includes(header),
+                          ),
+                          right: reorderedColumns.filter((header) =>
+                            right.includes(header),
+                          ),
+                        }));
+                      }
                       table.setDraggingColumn(null);
                       table.setHoveredColumn(null);
+                      setHoveredColumnDropPosition(null);
                     }}
                   />
                 )}

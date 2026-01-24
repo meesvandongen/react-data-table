@@ -22,6 +22,7 @@ import {
   MoreVertical,
   Pencil,
   Pin,
+  Plus,
   RefreshCcw,
   RotateCcw,
   Save,
@@ -143,6 +144,7 @@ export const RDT_Default_Icons: Record<string, IconComponent> = {
   // Dragging & Pinning
   DragHandleIcon: GripVertical,
   PushPinIcon: Pin,
+  PlusIcon: Plus,
 
   // Fullscreen
   FullscreenIcon: Maximize,

@@ -15,7 +15,10 @@ import styles from '../table/table.module.css';
 export interface RDT_TableBodyCellProps<TData extends RDT_RowData>
   extends TdHTMLAttributes<HTMLTableCellElement> {
   cell: RDT_Cell<TData>;
+  isRowHovered?: boolean;
+  numRows?: number;
   row: RDT_Row<TData>;
+  rowDropPosition?: 'before' | 'after' | null;
   rowRef?: React.RefObject<HTMLTableRowElement | null>;
   staticColumnIndex?: number;
   staticRowIndex: number;
@@ -24,7 +27,9 @@ export interface RDT_TableBodyCellProps<TData extends RDT_RowData>
 
 export const RDT_TableBodyCell = <TData extends RDT_RowData>({
   cell,
+  isRowHovered,
   row,
+  rowDropPosition,
   rowRef,
   staticColumnIndex,
   staticRowIndex,
@@ -97,6 +102,12 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         showEditField && styles.tableBodyCellEditing,
         isDraggingColumn && styles.tableBodyCellDragging,
         isHoveredColumn && styles.tableBodyCellHovered,
+        isRowHovered &&
+          rowDropPosition === 'before' &&
+          styles.tableBodyCellDropZoneBefore,
+        isRowHovered &&
+          rowDropPosition === 'after' &&
+          styles.tableBodyCellDropZoneAfter,
         cellProps?.className,
         className,
       )}

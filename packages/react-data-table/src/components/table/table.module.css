@@ -179,15 +179,39 @@
 }
 
 .tableHeadCellDragging {
-  border-left: 1px dashed var(--rdt-secondary-text-color);
-  border-right: 1px dashed var(--rdt-secondary-text-color);
-  border-top: 1px dashed var(--rdt-secondary-text-color);
+  opacity: 0.5;
 }
 
-.tableHeadCellDragTarget {
-  border-left: 2px dashed var(--rdt-primary-color);
-  border-right: 2px dashed var(--rdt-primary-color);
-  border-top: 2px dashed var(--rdt-primary-color);
+.tableHeadCellDropZoneBefore {
+  position: relative;
+}
+
+.tableHeadCellDropZoneBefore::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--rdt-primary-color);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tableHeadCellDropZoneAfter {
+  position: relative;
+}
+
+.tableHeadCellDropZoneAfter::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--rdt-primary-color);
+  z-index: 10;
+  pointer-events: none;
 }
 
 .tableHeadCellContent {
@@ -281,8 +305,12 @@
   opacity: 0.5;
 }
 
-.tableBodyRowDropTarget {
-  border: 2px dashed var(--rdt-primary-color);
+.tableBodyRowDropZoneBefore {
+  position: relative;
+}
+
+.tableBodyRowDropZoneAfter {
+  position: relative;
 }
 
 /* ============================================
@@ -324,6 +352,15 @@
 .tableBodyCellWrap {
   white-space: normal;
   word-break: break-word;
+}
+
+/* Row drop zone indicators (applied to cells) */
+.tableBodyCellDropZoneBefore {
+  border-top: 3px solid var(--rdt-primary-color);
+}
+
+.tableBodyCellDropZoneAfter {
+  border-bottom: 3px solid var(--rdt-primary-color);
 }
 
 /* ============================================

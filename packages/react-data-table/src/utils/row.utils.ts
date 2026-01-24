@@ -7,6 +7,31 @@ import {
 } from '../types';
 import { parseFromValuesOrFunc } from './utils';
 
+/**
+ * Reorders an array by moving an item from one index to another.
+ * Useful for implementing row reordering with onRowOrderChange.
+ *
+ * @example
+ * ```tsx
+ * <DataTable
+ *   enableRowOrdering
+ *   onRowOrderChange={({ draggedRow, newIndex }) => {
+ *     setData(reorderData(data, draggedRow.index, newIndex));
+ *   }}
+ * />
+ * ```
+ */
+export const reorderData = <TData>(
+  data: TData[],
+  fromIndex: number,
+  toIndex: number,
+): TData[] => {
+  const newData = [...data];
+  const [removed] = newData.splice(fromIndex, 1);
+  newData.splice(toIndex, 0, removed);
+  return newData;
+};
+
 export const getRDT_Rows = <TData extends RDT_RowData>(
   table: RDT_TableInstance<TData>,
   all?: boolean,

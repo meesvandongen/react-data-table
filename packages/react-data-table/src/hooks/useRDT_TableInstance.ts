@@ -136,9 +136,15 @@ export const useRDT_TableInstance = <TData extends RDT_RowData>(
   const [hoveredColumn, setHoveredColumn] = useState<Partial<
     RDT_Column<TData>
   > | null>(initialState.hoveredColumn ?? null);
+  const [hoveredColumnDropPosition, setHoveredColumnDropPosition] = useState<
+    'before' | 'after' | null
+  >(initialState.hoveredColumnDropPosition ?? null);
   const [hoveredRow, setHoveredRow] = useState<Partial<RDT_Row<TData>> | null>(
     initialState.hoveredRow ?? null,
   );
+  const [hoveredRowDropPosition, setHoveredRowDropPosition] = useState<
+    'before' | 'after' | null
+  >(initialState.hoveredRowDropPosition ?? null);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(
     initialState?.isFullScreen ?? false,
   );
@@ -172,7 +178,9 @@ export const useRDT_TableInstance = <TData extends RDT_RowData>(
     globalFilterFn,
     grouping,
     hoveredColumn,
+    hoveredColumnDropPosition,
     hoveredRow,
+    hoveredRowDropPosition,
     isFullScreen,
     pagination,
     showAlertBanner,
@@ -298,8 +306,14 @@ export const useRDT_TableInstance = <TData extends RDT_RowData>(
     statefulTableOptions.onGlobalFilterFnChange ?? setGlobalFilterFn;
   table.setHoveredColumn =
     statefulTableOptions.onHoveredColumnChange ?? setHoveredColumn;
+  table.setHoveredColumnDropPosition =
+    statefulTableOptions.onHoveredColumnDropPositionChange ??
+    setHoveredColumnDropPosition;
   table.setHoveredRow =
     statefulTableOptions.onHoveredRowChange ?? setHoveredRow;
+  table.setHoveredRowDropPosition =
+    statefulTableOptions.onHoveredRowDropPositionChange ??
+    setHoveredRowDropPosition;
   table.setIsFullScreen =
     statefulTableOptions.onIsFullScreenChange ?? setIsFullScreen;
   table.setShowAlertBanner =

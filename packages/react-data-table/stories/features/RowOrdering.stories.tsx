@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { type RDT_ColumnDef, type RDT_Row, DataTable } from '../../src';
+import { type RDT_ColumnDef, DataTable, reorderData } from '../../src';
 import { faker } from '@faker-js/faker';
 import { type Meta } from '@storybook/react';
 
@@ -70,29 +70,15 @@ export const RowOrderingEnabled = () => {
       data={data}
       enableRowOrdering
       enableSorting={false}
-      rowDragHandleProps={({ table }) => ({
-        onDragEnd: () => {
-          const { draggingRow, hoveredRow } = table.getState();
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              (hoveredRow as RDT_Row<Person>).index,
-              0,
-              data.splice(draggingRow.index, 1)[0],
-            );
-            setData([...data]);
-          }
-        },
-      })}
+      onRowOrderChange={({ draggedRow, newIndex }) => {
+        setData(reorderData(data, draggedRow.index, newIndex));
+      }}
     />
   );
 };
 
 export const RowOrderingWithSelect = () => {
   const [data, setData] = useState(() => initData);
-  const [draggingRow, setDraggingRow] = useState<RDT_Row<Person> | null>(null);
-  const [hoveredRow, setHoveredRow] = useState<Partial<RDT_Row<Person>> | null>(
-    null,
-  );
 
   return (
     <DataTable
@@ -103,23 +89,8 @@ export const RowOrderingWithSelect = () => {
       enableRowSelection
       enableSorting={false}
       getRowId={(row) => row.email}
-      rowDragHandleProps={{
-        onDragEnd: () => {
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              hoveredRow?.index ?? 0,
-              0,
-              data.splice(draggingRow.index, 1)[0],
-            );
-            setData([...data]);
-          }
-        },
-      }}
-      onDraggingRowChange={setDraggingRow}
-      onHoveredRowChange={setHoveredRow}
-      state={{
-        draggingRow,
-        hoveredRow,
+      onRowOrderChange={({ draggedRow, newIndex }) => {
+        setData(reorderData(data, draggedRow.index, newIndex));
       }}
     />
   );
@@ -127,10 +98,6 @@ export const RowOrderingWithSelect = () => {
 
 export const RowOrderingWithPinning = () => {
   const [data, setData] = useState(() => initData);
-  const [draggingRow, setDraggingRow] = useState<RDT_Row<Person> | null>(null);
-  const [hoveredRow, setHoveredRow] = useState<Partial<RDT_Row<Person>> | null>(
-    null,
-  );
 
   return (
     <DataTable
@@ -140,23 +107,8 @@ export const RowOrderingWithPinning = () => {
       enableColumnPinning
       enableRowOrdering
       enableSorting={false}
-      rowDragHandleProps={{
-        onDragEnd: () => {
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              hoveredRow?.index ?? 0,
-              0,
-              data.splice(draggingRow.index, 1)[0],
-            );
-            setData([...data]);
-          }
-        },
-      }}
-      onDraggingRowChange={setDraggingRow}
-      onHoveredRowChange={setHoveredRow}
-      state={{
-        draggingRow,
-        hoveredRow,
+      onRowOrderChange={({ draggedRow, newIndex }) => {
+        setData(reorderData(data, draggedRow.index, newIndex));
       }}
     />
   );
@@ -164,10 +116,6 @@ export const RowOrderingWithPinning = () => {
 
 export const RowAndColumnOrdering = () => {
   const [data, setData] = useState(() => initData);
-  const [draggingRow, setDraggingRow] = useState<RDT_Row<Person> | null>(null);
-  const [hoveredRow, setHoveredRow] = useState<Partial<RDT_Row<Person>> | null>(
-    null,
-  );
 
   return (
     <DataTable
@@ -178,23 +126,8 @@ export const RowAndColumnOrdering = () => {
       enableColumnPinning
       enableRowOrdering
       enableSorting={false}
-      rowDragHandleProps={{
-        onDragEnd: () => {
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              hoveredRow.index ?? 0,
-              0,
-              data.splice(draggingRow.index, 1)[0],
-            );
-            setData([...data]);
-          }
-        },
-      }}
-      onDraggingRowChange={setDraggingRow}
-      onHoveredRowChange={setHoveredRow}
-      state={{
-        draggingRow,
-        hoveredRow,
+      onRowOrderChange={({ draggedRow, newIndex }) => {
+        setData(reorderData(data, draggedRow.index, newIndex));
       }}
     />
   );
@@ -212,19 +145,9 @@ export const RowOrderingWithRowVirtualization = () => {
       enableRowOrdering
       enableRowVirtualization
       enableSorting={false}
-      rowDragHandleProps={({ table }) => ({
-        onDragEnd: () => {
-          const { draggingRow, hoveredRow } = table.getState();
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              (hoveredRow as RDT_Row<Person>).index,
-              0,
-              data.splice(draggingRow.index, 1)[0],
-            );
-            setData([...data]);
-          }
-        },
-      })}
+      onRowOrderChange={({ draggedRow, newIndex }) => {
+        setData(reorderData(data, draggedRow.index, newIndex));
+      }}
     />
   );
 };
@@ -260,19 +183,9 @@ export const RowOrderingWithColumnVirtualization = () => {
       enableColumnVirtualization
       enableRowOrdering
       enableSorting={false}
-      rowDragHandleProps={({ table }) => ({
-        onDragEnd: () => {
-          const { draggingRow, hoveredRow } = table.getState();
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              (hoveredRow as RDT_Row<any>).index,
-              0,
-              data.splice(draggingRow.index, 1)[0],
-            );
-            setData([...data]);
-          }
-        },
-      })}
+      onRowOrderChange={({ draggedRow, newIndex }) => {
+        setData(reorderData(data, draggedRow.index, newIndex));
+      }}
     />
   );
 };
