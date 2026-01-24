@@ -1,4 +1,5 @@
 import {
+  type ButtonHTMLAttributes,
   type Dispatch,
   type HTMLAttributes,
   type MutableRefObject,
@@ -561,6 +562,12 @@ export interface RDT_ColumnDef<TData extends RDT_RowData, TValue = unknown>
         table: RDT_TableInstance<TData>;
       }) => ButtonProps)
     | ButtonProps;
+  rowDragHandleProps?:
+    | ((props: {
+        row: RDT_Row<TData>;
+        table: RDT_TableInstance<TData>;
+      }) => ButtonProps)
+    | ButtonProps;
   copyButtonProps?:
     | ((props: {
         cell: RDT_Cell<TData, TValue>;
@@ -1056,6 +1063,20 @@ export interface RDT_TableOptions<TData extends RDT_RowData>
         table: RDT_TableInstance<TData>;
       }) => TdHTMLAttributes<HTMLTableCellElement>)
     | TdHTMLAttributes<HTMLTableCellElement>;
+
+  // Drag handle props
+  columnDragHandleProps?:
+    | ((props: {
+        column: RDT_Column<TData>;
+        table: RDT_TableInstance<TData>;
+      }) => ButtonHTMLAttributes<HTMLButtonElement>)
+    | ButtonHTMLAttributes<HTMLButtonElement>;
+  rowDragHandleProps?:
+    | ((props: {
+        row: RDT_Row<TData>;
+        table: RDT_TableInstance<TData>;
+      }) => ButtonHTMLAttributes<HTMLButtonElement>)
+    | ButtonHTMLAttributes<HTMLButtonElement>;
 
   // Component props - React Aria Components
   buttonProps?: ButtonProps;
