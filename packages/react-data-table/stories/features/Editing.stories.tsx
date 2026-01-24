@@ -91,6 +91,14 @@ export const EditingEnabledEditModeModalDefault = () => {
     exitEditingMode();
   };
 
+  const handleCreateRow: RDT_TableOptions<Person>['onCreatingRowSave'] = ({
+    exitCreatingMode,
+    values,
+  }) => {
+    setTableData([values as Person, ...tableData]);
+    exitCreatingMode();
+  };
+
   return (
     <DataTable
       columns={[
@@ -118,6 +126,7 @@ export const EditingEnabledEditModeModalDefault = () => {
       ]}
       data={tableData}
       enableEditing
+      onCreatingRowSave={handleCreateRow}
       onEditingRowSave={handleSaveRow}
       renderTopToolbarCustomActions={({ table }) => (
         <button onClick={() => table.setCreatingRow(true)}>Add</button>

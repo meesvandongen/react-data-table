@@ -340,7 +340,7 @@
 }
 
 .tableBodyCellEditing {
-  padding: 0;
+  padding: 0.25rem;
 }
 
 .tableBodyCellNoWrap {
@@ -419,14 +419,27 @@
 }
 
 .detailPanelCell {
-  padding: var(--rdt-cell-padding);
+  padding: 0;
   background-color: var(--rdt-row-background-color);
   border-bottom: 1px solid var(--rdt-border-color);
 }
 
 .detailPanelCellCollapsed {
-  padding: 0;
   border-bottom: none;
+}
+
+.detailPanelCollapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 150ms ease-in-out;
+}
+
+.detailPanelCollapseOpen {
+  grid-template-rows: 1fr;
+}
+
+.detailPanelCollapseInner {
+  overflow: hidden;
 }
 
 .detailPanelContent {

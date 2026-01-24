@@ -33,7 +33,7 @@ export const RDT_TablePaper = <TData extends RDT_RowData>({
     },
     refs: { tablePaperRef },
   } = table;
-  const { isFullScreen } = getState();
+  const { density, isFullScreen } = getState();
 
   const paperProps = {
     ...parseFromValuesOrFunc(tablePaperProps, { table }),
@@ -60,6 +60,7 @@ export const RDT_TablePaper = <TData extends RDT_RowData>({
           ).current = ref;
         }
       }}
+      data-density={density}
       className={clsx(
         'rdt-table-container',
         styles.tablePaper,

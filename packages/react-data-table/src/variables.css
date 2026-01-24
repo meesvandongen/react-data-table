@@ -61,9 +61,6 @@
   /* Functional tokens */
   --rdt-radius: 0.5rem;
 
-  /* Density multiplier - 0.5 = compact, 1 = comfortable, 1.5 = spacious */
-  --rdt-density: 1;
-
   /* Table-specific */
   --rdt-row-hover: 240 4.8% 95.9%;
   --rdt-row-selected: 240 5.9% 90%;
@@ -90,10 +87,10 @@
   --rdt-info-bg: hsl(var(--rdt-muted));
   --rdt-info-text: hsl(var(--rdt-muted-foreground));
 
-  /* Layout variables */
-  --rdt-cell-padding: calc(0.75rem * var(--rdt-density));
+  /* Layout variables - defaults (comfortable density) */
+  --rdt-cell-padding: 0.75rem;
   --rdt-border-radius: var(--rdt-radius);
-  --rdt-toolbar-height: calc(3rem * var(--rdt-density));
+  --rdt-toolbar-height: 3rem;
   --rdt-match-highlight-color: hsl(60 100% 50%);
 
   /* Pinning offsets (dynamically set by JS) */
@@ -159,15 +156,18 @@
 
 /* Density variants */
 [data-density='compact'] {
-  --rdt-density: 0.5;
+  --rdt-cell-padding: 0.375rem;
+  --rdt-toolbar-height: 1.5rem;
 }
 
 [data-density='comfortable'] {
-  --rdt-density: 1;
+  --rdt-cell-padding: 0.75rem;
+  --rdt-toolbar-height: 3rem;
 }
 
 [data-density='spacious'] {
-  --rdt-density: 1.5;
+  --rdt-cell-padding: 1.125rem;
+  --rdt-toolbar-height: 4.5rem;
 }
 
 /* Base reset for table elements */

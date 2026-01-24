@@ -131,20 +131,17 @@ export const RDT_EditActionButtons = <TData extends RDT_RowData>({
           >
             {localization.cancel}
           </button>
-          {((isCreating && onCreatingRowSave) ||
-            (isEditing && onEditingRowSave)) && (
-            <button
-              type="button"
-              className={[styles.textButton, styles.textButtonPrimary]
-                .filter(Boolean)
-                .join(' ')}
-              disabled={isSaving}
-              onClick={handleSubmitRow}
-            >
-              {isSaving && <span className={styles.spinner} />}
-              {localization.save}
-            </button>
-          )}
+          <button
+            type="button"
+            className={[styles.textButton, styles.textButtonPrimary]
+              .filter(Boolean)
+              .join(' ')}
+            disabled={isSaving}
+            onClick={handleSubmitRow}
+          >
+            {isSaving && <span className={styles.spinner} />}
+            {localization.save}
+          </button>
         </>
       )}
     </div>

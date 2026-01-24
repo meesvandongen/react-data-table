@@ -95,9 +95,6 @@ export const RDT_TableDetailPanel = <TData extends RDT_RowData>({
         )}
         style={{
           display: layoutMode?.startsWith('grid') ? 'flex' : undefined,
-          borderBottom: !isExpanded ? 'none' : undefined,
-          padding: isExpanded ? undefined : 0,
-          transition: !virtualRow ? 'all 150ms ease-in-out' : undefined,
           width: '100%',
           ...cellProps?.style,
           ...style,
@@ -107,14 +104,14 @@ export const RDT_TableDetailPanel = <TData extends RDT_RowData>({
           isExpanded && DetailPanel
         ) : (
           <div
-            className={styles.detailPanelContent}
-            style={{
-              display: isExpanded ? 'block' : 'none',
-              overflow: 'hidden',
-              transition: 'all 150ms ease-in-out',
-            }}
+            className={clsx(
+              styles.detailPanelCollapse,
+              isExpanded && styles.detailPanelCollapseOpen,
+            )}
           >
-            {DetailPanel}
+            <div className={styles.detailPanelCollapseInner}>
+              <div className={styles.detailPanelContent}>{DetailPanel}</div>
+            </div>
           </div>
         )}
       </td>
