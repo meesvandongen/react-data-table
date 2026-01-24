@@ -399,10 +399,14 @@ select.filterInput[multiple] {
 
 /* Filter range fields container */
 .filterRangeContainer {
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  gap: 0.25rem;
   width: 100%;
+}
+
+.filterRangeContainer > * {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Filter range slider container */
@@ -629,4 +633,846 @@ select.editInput {
 
 .ariaSliderThumb:hover {
   transform: scale(1.1);
+}
+
+/* ============================================
+   SELECT COMPONENT (React Aria)
+   ============================================ */
+
+.selectContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.selectLabel {
+  font-size: var(--rdt-font-size-xs);
+  font-weight: var(--rdt-font-weight-medium);
+  color: var(--rdt-secondary-text-color);
+}
+
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid hsl(var(--rdt-input));
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-xs);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.selectTrigger:hover:not(:disabled) {
+  border-color: hsl(var(--rdt-ring));
+}
+
+.selectTrigger:focus,
+.selectTrigger[data-focus-visible] {
+  outline: none;
+  border-color: hsl(var(--rdt-ring));
+  box-shadow: 0 0 0 2px hsl(var(--rdt-ring) / 0.2);
+}
+
+.selectTrigger:disabled,
+.selectTrigger[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selectValue {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selectValueText {
+  color: var(--rdt-primary-text-color);
+}
+
+.selectPlaceholder {
+  color: var(--rdt-secondary-text-color);
+}
+
+.selectActions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.selectClearButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.selectClearButton:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.selectIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--rdt-secondary-text-color);
+  transition: transform 150ms ease;
+}
+
+.selectTrigger[data-open] .selectIcon {
+  transform: rotate(180deg);
+}
+
+.selectPopover {
+  z-index: 1000;
+  min-width: var(--trigger-width, 180px);
+  max-width: 320px;
+  max-height: 280px;
+  overflow-y: auto;
+  background-color: var(--rdt-menu-bg, var(--rdt-base-background-color));
+  border: 1px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 0.25rem 0;
+  outline: none;
+}
+
+.selectListBox {
+  outline: none;
+}
+
+.selectOption {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.625rem;
+  font-size: var(--rdt-font-size-xs);
+  color: var(--rdt-primary-text-color);
+  cursor: pointer;
+  outline: none;
+  transition: background-color 100ms ease;
+}
+
+.selectOption[data-focused],
+.selectOption[data-hovered],
+.selectOption:hover {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.selectOption[data-selected] {
+  background-color: hsl(var(--rdt-primary) / 0.1);
+  font-weight: var(--rdt-font-weight-medium);
+}
+
+.selectOption[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selectOptionEmpty {
+  color: var(--rdt-secondary-text-color);
+  font-style: italic;
+}
+
+/* ============================================
+   MULTI-SELECT COMPONENT
+   ============================================ */
+
+.multiSelectContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.multiSelectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  width: 100%;
+  min-height: 1.75rem;
+  padding: 0.125rem 0.375rem;
+  border: 1px solid hsl(var(--rdt-input));
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-xs);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.multiSelectTrigger:hover:not(:disabled) {
+  border-color: hsl(var(--rdt-ring));
+}
+
+.multiSelectTrigger:focus,
+.multiSelectTrigger[data-focus-visible] {
+  outline: none;
+  border-color: hsl(var(--rdt-ring));
+  box-shadow: 0 0 0 2px hsl(var(--rdt-ring) / 0.2);
+}
+
+.multiSelectTrigger:disabled,
+.multiSelectTrigger[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.multiSelectValueContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.multiSelectChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  max-width: 100%;
+  padding: 0.0625rem 0.25rem;
+  border-radius: calc(var(--rdt-border-radius) - 2px);
+  background-color: hsl(var(--rdt-muted));
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-xs);
+  line-height: 1.25;
+}
+
+.multiSelectChipText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multiSelectChipRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 100ms ease;
+}
+
+.multiSelectChipRemove:hover {
+  color: var(--rdt-primary-text-color);
+}
+
+.multiSelectMore {
+  font-size: var(--rdt-font-size-xs);
+  color: var(--rdt-secondary-text-color);
+  white-space: nowrap;
+}
+
+.multiSelectActions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.multiSelectClear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.multiSelectClear:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.multiSelectDialog {
+  outline: none;
+}
+
+.multiSelectOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  font-size: var(--rdt-font-size-xs);
+  color: var(--rdt-primary-text-color);
+  cursor: pointer;
+  outline: none;
+  transition: background-color 100ms ease;
+}
+
+.multiSelectOption[data-focused],
+.multiSelectOption[data-hovered],
+.multiSelectOption:hover {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.multiSelectOption[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.multiSelectCheckbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 1.5px solid var(--rdt-table-border-color);
+  border-radius: calc(var(--rdt-border-radius) - 2px);
+  background-color: transparent;
+  flex-shrink: 0;
+  transition: all 100ms ease;
+}
+
+.multiSelectCheckboxChecked {
+  background-color: var(--rdt-primary-color);
+  border-color: var(--rdt-primary-color);
+  color: white;
+}
+
+.multiSelectOptionLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   DATE PICKER COMPONENT
+   ============================================ */
+
+.datePickerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.datePickerGroup {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 1.75rem;
+  border: 1px solid hsl(var(--rdt-input));
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  overflow: hidden;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.datePickerGroup:focus-within {
+  border-color: hsl(var(--rdt-ring));
+  box-shadow: 0 0 0 2px hsl(var(--rdt-ring) / 0.2);
+}
+
+.datePickerGroup[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.datePickerInput {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  font-size: var(--rdt-font-size-xs);
+  color: var(--rdt-primary-text-color);
+  outline: none;
+}
+
+.dateSegment {
+  padding: 0 0.0625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--rdt-primary-text-color);
+  outline: none;
+  border-radius: 2px;
+}
+
+.dateSegment[data-focused] {
+  background-color: var(--rdt-primary-color);
+  color: white;
+}
+
+.dateSegmentPlaceholder {
+  color: var(--rdt-secondary-text-color);
+}
+
+.datePickerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-left: 1px solid hsl(var(--rdt-input));
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.datePickerButton:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.datePickerButton:focus {
+  outline: none;
+}
+
+.datePickerPopover {
+  z-index: 1000;
+  background-color: var(--rdt-menu-bg, var(--rdt-base-background-color));
+  border: 1px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 0.5rem;
+  outline: none;
+}
+
+.datePickerDialog {
+  outline: none;
+}
+
+/* Calendar styles */
+.calendar {
+  width: auto;
+  min-width: 220px;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.calendarHeading {
+  flex: 1;
+  text-align: center;
+  font-size: var(--rdt-font-size-sm);
+  font-weight: var(--rdt-font-weight-semibold);
+  color: var(--rdt-primary-text-color);
+}
+
+.calendarNavButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.calendarNavButton:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.calendarNavButton:focus {
+  outline: none;
+}
+
+.calendarNavButton[data-disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.calendarGrid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendarGridHeader {
+  color: var(--rdt-secondary-text-color);
+  font-size: var(--rdt-font-size-xs);
+  font-weight: var(--rdt-font-weight-medium);
+}
+
+.calendarHeaderCell {
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  font-weight: var(--rdt-font-weight-medium);
+}
+
+.calendarGridBody {
+  font-size: var(--rdt-font-size-xs);
+}
+
+.calendarCell {
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  border-radius: var(--rdt-border-radius);
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.calendarCell:hover:not([data-disabled]) {
+  background-color: var(--rdt-row-hover-color);
+}
+
+.calendarCellSelected {
+  background-color: var(--rdt-primary-color) !important;
+  color: white !important;
+  font-weight: var(--rdt-font-weight-medium);
+}
+
+.calendarCellDisabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.calendarCellFocused {
+  outline: 2px solid var(--rdt-primary-color);
+  outline-offset: -2px;
+}
+
+.calendarCellRangeStart {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.calendarCellRangeEnd {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.calendarCell[data-outside-month] {
+  color: var(--rdt-secondary-text-color);
+  opacity: 0.5;
+}
+
+/* ============================================
+   DATE RANGE PICKER COMPONENT
+   ============================================ */
+
+.dateRangePickerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.dateRangePickerGroup {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 1.75rem;
+  border: 1px solid hsl(var(--rdt-input));
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  overflow: hidden;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.dateRangePickerGroup:focus-within {
+  border-color: hsl(var(--rdt-ring));
+  box-shadow: 0 0 0 2px hsl(var(--rdt-ring) / 0.2);
+}
+
+.dateRangeInput {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem 0.25rem;
+  font-size: var(--rdt-font-size-xs);
+  color: var(--rdt-primary-text-color);
+  outline: none;
+}
+
+.dateRangeSeparator {
+  color: var(--rdt-secondary-text-color);
+  font-size: var(--rdt-font-size-xs);
+  padding: 0 0.125rem;
+}
+
+.dateRangePickerPopover {
+  z-index: 1000;
+  background-color: var(--rdt-menu-bg, var(--rdt-base-background-color));
+  border: 1px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 0.5rem;
+  outline: none;
+}
+
+/* ============================================
+   TIME FIELD COMPONENT
+   ============================================ */
+
+.timeFieldContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.timeFieldInput {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid hsl(var(--rdt-input));
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  font-size: var(--rdt-font-size-xs);
+  color: var(--rdt-primary-text-color);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.timeFieldInput:focus-within {
+  border-color: hsl(var(--rdt-ring));
+  box-shadow: 0 0 0 2px hsl(var(--rdt-ring) / 0.2);
+}
+
+.timeFieldInput[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   AUTOCOMPLETE / COMBOBOX COMPONENT
+   ============================================ */
+
+.autocompleteContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.autocompleteInputWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 1.75rem;
+  border: 1px solid hsl(var(--rdt-input));
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  overflow: hidden;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.autocompleteInputWrapper:focus-within {
+  border-color: hsl(var(--rdt-ring));
+  box-shadow: 0 0 0 2px hsl(var(--rdt-ring) / 0.2);
+}
+
+.autocompleteInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background-color: transparent;
+  color: var(--rdt-primary-text-color);
+  font-size: var(--rdt-font-size-xs);
+  outline: none;
+}
+
+.autocompleteInput::placeholder {
+  color: var(--rdt-secondary-text-color);
+}
+
+.autocompleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-left: 1px solid hsl(var(--rdt-input));
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.autocompleteButton:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.autocompleteButton:focus {
+  outline: none;
+}
+
+/* ============================================
+   COMPACT FILTER INPUT ADJUSTMENTS
+   ============================================ */
+
+/* Make filter inputs more compact */
+.filterInput {
+  padding: 0.1875rem 0.375rem;
+  padding-right: 1.5rem;
+  min-height: 1.625rem;
+  font-size: var(--rdt-font-size-xs);
+}
+
+/* Global filter - slightly larger than column filters */
+.globalFilterInput {
+  padding: 0.375rem 1.75rem 0.375rem 2rem;
+  min-height: 1.875rem;
+  font-size: var(--rdt-font-size-xs);
+}
+
+.globalFilterIcon {
+  left: 0.625rem;
+}
+
+.globalFilterIcon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.globalFilterClear svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Filter mode button - smaller */
+.filterModeButton {
+  padding: 0.125rem;
+}
+
+.filterModeButton svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Filter clear button - smaller */
+.filterClearButton {
+  padding: 0.125rem;
+}
+
+.filterClearButton svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Range slider inputs - smaller */
+.filterRangeSliderInput {
+  width: 3.5rem;
+  padding: 0.125rem 0.25rem;
+  min-height: 1.5rem;
+  font-size: var(--rdt-font-size-xs);
+}
+
+/* ============================================
+   DATE FILTER WRAPPER (with clear button)
+   ============================================ */
+
+.dateFilterWrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.dateFilterWrapper > *:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.dateFilterClearButton {
+  position: absolute;
+  right: 1.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  border: none;
+  border-radius: var(--rdt-border-radius);
+  background-color: transparent;
+  color: var(--rdt-secondary-text-color);
+  cursor: pointer;
+  z-index: 1;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease;
+}
+
+.dateFilterClearButton:hover {
+  background-color: var(--rdt-row-hover-color);
+  color: var(--rdt-primary-text-color);
+}
+
+.dateFilterClearButton svg {
+  width: 0.75rem;
+  height: 0.75rem;
 }

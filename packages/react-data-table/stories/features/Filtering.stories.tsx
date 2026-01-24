@@ -606,3 +606,48 @@ export const InitialFilters = () => (
     }}
   />
 );
+
+export const DateFilterVariants = () => (
+  <DataTable
+    columns={[
+      {
+        accessorKey: 'firstName',
+        header: 'First Name',
+      },
+      {
+        accessorKey: 'lastName',
+        header: 'Last Name',
+      },
+      {
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString() ?? '',
+        accessorFn: (row) => new Date(row.birthDate),
+        filterVariant: 'date',
+        header: 'Birth Date (date)',
+        id: 'birthDate',
+      },
+      {
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleDateString() ?? '',
+        accessorFn: (row) => new Date(row.hireDate),
+        filterVariant: 'date-range',
+        header: 'Hire Date (date-range)',
+        id: 'hireDate',
+      },
+      {
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleString() ?? '',
+        accessorFn: (row) => new Date(row.arrivalTime),
+        filterVariant: 'datetime',
+        header: 'Arrival (datetime)',
+        id: 'arrivalTime',
+      },
+      {
+        Cell: ({ cell }) => cell.getValue<Date>()?.toLocaleString() ?? '',
+        accessorFn: (row) => new Date(row.departureTime),
+        filterVariant: 'datetime-range',
+        header: 'Departure (datetime-range)',
+        id: 'departureTime',
+      },
+    ]}
+    data={data}
+    initialState={{ showColumnFilters: true }}
+  />
+);

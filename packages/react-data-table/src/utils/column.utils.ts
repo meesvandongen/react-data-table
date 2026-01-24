@@ -132,6 +132,12 @@ export const getDefaultColumnFilterFn = <TData extends RDT_RowData>(
 ): RDT_FilterOption => {
   const { filterVariant } = columnDef;
   if (filterVariant === 'multi-select') return 'arrIncludesSome';
+  if (filterVariant === 'date') return 'dateEquals';
+  if (filterVariant === 'datetime') return 'datetimeEquals';
+  if (filterVariant === 'date-range') return 'dateBetweenInclusive';
+  if (filterVariant === 'datetime-range') return 'datetimeBetweenInclusive';
+  if (filterVariant === 'time' || filterVariant === 'time-range')
+    return 'betweenInclusive';
   if (filterVariant?.includes('range')) return 'betweenInclusive';
   if (filterVariant === 'select' || filterVariant === 'checkbox')
     return 'equals';

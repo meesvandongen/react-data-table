@@ -4,6 +4,7 @@ import {
   type MouseEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -18,6 +19,12 @@ import {
 } from '../../utils/column.utils';
 import { getValueAndLabel } from '../../utils/utils';
 import { RDT_FilterOptionMenu } from '../menus/RDT_FilterOptionMenu';
+import {
+  RDT_Autocomplete,
+  type RDT_AutocompleteOption,
+} from './RDT_Autocomplete';
+import { RDT_MultiSelect, type RDT_MultiSelectOption } from './RDT_MultiSelect';
+import { RDT_Select, type RDT_SelectOption } from './RDT_Select';
 import styles from './inputs.module.css';
 
 export interface RDT_FilterTextFieldProps<TData extends RDT_RowData>
@@ -68,6 +75,7 @@ export const RDT_FilterTextField = <TData extends RDT_RowData>({
     allowedColumnFilterOptions,
     currentFilterOption,
     facetedUniqueValues,
+    isAutocompleteFilter,
     isMultiSelectFilter,
     isRangeFilter,
     isSelectFilter,
@@ -139,18 +147,6 @@ export const RDT_FilterTextField = <TData extends RDT_RowData>({
     handleChange(event.target.value);
   };
 
-  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    if (isMultiSelectFilter) {
-      const selectedOptions = Array.from(
-        event.target.selectedOptions,
-        (option) => option.value,
-      );
-      handleChange(selectedOptions);
-    } else {
-      handleChange(event.target.value);
-    }
-  };
-
   const handleClear = () => {
     if (isMultiSelectFilter) {
       setFilterValue([]);
@@ -197,6 +193,32 @@ export const RDT_FilterTextField = <TData extends RDT_RowData>({
     isMounted.current = true;
   }, [column.getFilterValue()]);
 
+  // Convert dropdown options to component format
+  const selectOptions = useMemo((): RDT_SelectOption[] => {
+    return (
+      dropdownOptions?.map((option) => {
+        const { label, value } = getValueAndLabel(option);
+        const count = facetedUniqueValues.get(value);
+        const displayLabel =
+          !columnDef.filterSelectOptions && count !== undefined
+            ? `${label} (${count})`
+            : label;
+        return {
+          label: displayLabel,
+          value: String(value),
+        };
+      }) ?? []
+    );
+  }, [dropdownOptions, facetedUniqueValues, columnDef.filterSelectOptions]);
+
+  const multiSelectOptions = useMemo((): RDT_MultiSelectOption[] => {
+    return selectOptions;
+  }, [selectOptions]);
+
+  const autocompleteOptions = useMemo((): RDT_AutocompleteOption[] => {
+    return selectOptions;
+  }, [selectOptions]);
+
   // Custom filter component
   if (columnDef.Filter) {
     return (
@@ -242,67 +264,64 @@ export const RDT_FilterTextField = <TData extends RDT_RowData>({
         {/* Input field */}
         {!filterChipLabel && (
           <>
-            {isSelectFilter || isMultiSelectFilter ? (
-              <select
-                className={inputClassName}
-                value={
-                  isMultiSelectFilter
-                    ? Array.isArray(filterValue)
-                      ? filterValue
-                      : []
-                    : (filterValue as string)
-                }
-                onChange={handleSelectChange}
-                multiple={isMultiSelectFilter}
+            {isMultiSelectFilter ? (
+              <RDT_MultiSelect
                 aria-label={filterPlaceholder}
-                {...(rest as any)}
-              >
-                <option value="" disabled>
-                  {filterPlaceholder}
-                </option>
-                {dropdownOptions?.map((option, index) => {
-                  const { label, value } = getValueAndLabel(option);
-                  return (
-                    <option key={`${index}-${value}`} value={value}>
-                      {label}
-                      {!columnDef.filterSelectOptions &&
-                        ` (${facetedUniqueValues.get(value)})`}
-                    </option>
-                  );
-                })}
-              </select>
-            ) : (
-              <input
-                ref={(inputRef) => {
-                  if (inputRef && filterInputRefs.current) {
-                    filterInputRefs.current[
-                      `${column.id}-${rangeFilterIndex ?? 0}`
-                    ] = inputRef;
-                  }
-                }}
-                type="text"
-                className={inputClassName}
-                value={filterValue as string}
-                onChange={handleInputChange}
+                onChange={handleChange}
+                options={multiSelectOptions}
                 placeholder={filterPlaceholder}
-                aria-label={filterPlaceholder}
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-                {...rest}
+                value={Array.isArray(filterValue) ? filterValue : []}
               />
-            )}
+            ) : isSelectFilter ? (
+              <RDT_Select
+                aria-label={filterPlaceholder}
+                onChange={handleChange}
+                options={selectOptions}
+                placeholder={filterPlaceholder}
+                value={filterValue as string}
+              />
+            ) : isAutocompleteFilter ? (
+              <RDT_Autocomplete
+                aria-label={filterPlaceholder}
+                onChange={handleChange}
+                options={autocompleteOptions}
+                placeholder={filterPlaceholder}
+                value={filterValue as string}
+              />
+            ) : (
+              <>
+                <input
+                  ref={(inputRef) => {
+                    if (inputRef && filterInputRefs.current) {
+                      filterInputRefs.current[
+                        `${column.id}-${rangeFilterIndex ?? 0}`
+                      ] = inputRef;
+                    }
+                  }}
+                  type="text"
+                  className={inputClassName}
+                  value={filterValue as string}
+                  onChange={handleInputChange}
+                  placeholder={filterPlaceholder}
+                  aria-label={filterPlaceholder}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  {...rest}
+                />
 
-            {/* Clear button */}
-            {(filterValue?.toString()?.length ?? 0) > 0 && (
-              <button
-                type="button"
-                className={styles.filterClearButton}
-                onClick={handleClear}
-                aria-label={localization.clearFilter}
-                title={localization.clearFilter}
-              >
-                <CloseIcon />
-              </button>
+                {/* Clear button */}
+                {(filterValue?.toString()?.length ?? 0) > 0 && (
+                  <button
+                    type="button"
+                    className={styles.filterClearButton}
+                    onClick={handleClear}
+                    aria-label={localization.clearFilter}
+                    title={localization.clearFilter}
+                  >
+                    <CloseIcon />
+                  </button>
+                )}
+              </>
             )}
           </>
         )}
