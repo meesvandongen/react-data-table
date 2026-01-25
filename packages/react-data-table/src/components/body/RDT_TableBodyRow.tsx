@@ -79,6 +79,7 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
 
   const isRowSelected = getIsRowSelected({ row, table });
   const isRowPinned = enableRowPinning && row.getIsPinned();
+  const isRowGrouped = row.getIsGrouped();
   const isDraggingRow = draggingRow?.id === row.id;
   const isHoveredRow = hoveredRow?.id === row.id;
 
@@ -172,6 +173,7 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
           isRowPinned && styles.tableBodyRowPinned,
           isRowPinned === 'top' && styles.tableBodyRowPinnedTop,
           isRowPinned === 'bottom' && styles.tableBodyRowPinnedBottom,
+          isRowGrouped && styles.tableBodyRowGrouped,
           isDraggingRow && styles.tableBodyRowDragging,
           layoutMode?.startsWith('grid') && styles.tableLayoutGrid,
           rowProps?.className,

@@ -134,6 +134,9 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
           table={table}
         />
       )}
+      {cell.getIsGrouped() && !columnDef.GroupedCell && (
+        <> ({row.subRows?.length})</>
+      )}
     </td>
   );
 };

@@ -315,6 +315,28 @@
    Table Body Cells
    ============================================ */
 
+.tableBodyRowGrouped {
+  background-color: var(
+    --rdt-grouped-row-background-color,
+    var(--rdt-base-background-color)
+  );
+  font-weight: var(--rdt-font-weight-semibold);
+}
+
+.tableBodyRowStickyGrouped {
+  position: sticky;
+  background-color: var(
+    --rdt-grouped-row-background-color,
+    var(--rdt-base-background-color)
+  );
+  opacity: 0.97;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   Table Body Cells
+   ============================================ */
+
 .tableBodyCell {
   background-color: inherit;
   border-bottom: 1px solid var(--rdt-border-color);
@@ -394,6 +416,13 @@
 
 .tableFooter {
   display: table-footer-group;
+}
+
+.tableFooterSticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  opacity: 0.97;
 }
 
 .tableFooterRow {

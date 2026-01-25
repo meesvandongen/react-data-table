@@ -23,14 +23,19 @@ export const RDT_TableFooter = <TData extends RDT_RowData>({
 }: RDT_TableFooterProps<TData>) => {
   const {
     getFooterGroups,
+    getState,
     options: { enableStickyFooter, layoutMode, tableFooterProps },
     refs: { tableFooterRef },
   } = table;
+  const { isFullScreen } = getState();
 
   const tfootProps = {
     ...parseFromValuesOrFunc(tableFooterProps, { table }),
     ...rest,
   };
+
+  const stickFooter =
+    (isFullScreen || enableStickyFooter) && enableStickyFooter !== false;
 
   return (
     <tfoot
@@ -47,7 +52,7 @@ export const RDT_TableFooter = <TData extends RDT_RowData>({
       }}
       className={clsx(
         styles.tableFooter,
-        enableStickyFooter && styles.tableFooterSticky,
+        stickFooter && styles.tableFooterSticky,
         layoutMode?.startsWith('grid') && styles.tableLayoutGrid,
         tfootProps?.className,
         className,

@@ -80,6 +80,7 @@
   --rdt-row-hover-color: hsl(var(--rdt-row-hover));
   --rdt-selected-row-color: hsl(var(--rdt-row-selected));
   --rdt-pinned-row-background-color: hsl(var(--rdt-cell-pinned));
+  --rdt-grouped-row-background-color: hsl(var(--rdt-muted));
 
   /* Menu and toolbar backgrounds */
   --rdt-menu-bg: hsl(var(--rdt-background));
@@ -143,6 +144,7 @@
   --rdt-row-hover-color: hsl(var(--rdt-row-hover));
   --rdt-selected-row-color: hsl(var(--rdt-row-selected));
   --rdt-pinned-row-background-color: hsl(var(--rdt-cell-pinned));
+  --rdt-grouped-row-background-color: hsl(var(--rdt-muted));
 
   /* Menu and toolbar backgrounds */
   --rdt-menu-bg: hsl(var(--rdt-background));
