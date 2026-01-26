@@ -56,26 +56,6 @@ const expandingData = [...Array(5)].map(() => ({
   })),
 }));
 
-const buttonStyle = {
-  backgroundColor: 'var(--rdt-color-primary)',
-  border: 'none',
-  borderRadius: '4px',
-  color: 'white',
-  cursor: 'pointer',
-  padding: '8px 16px',
-};
-
-const iconButtonStyle = {
-  alignItems: 'center',
-  background: 'none',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '4px',
-};
-
 export const CreateRowIndexTop = () => {
   const [tableData, setTableData] = useState(data);
 
@@ -122,7 +102,7 @@ export const CreateRowIndexTop = () => {
       onEditingRowSave={handleSaveRow}
       positionCreatingRow="top"
       renderTopToolbarCustomActions={({ table }) => (
-        <button onClick={() => table.setCreatingRow(true)} style={buttonStyle}>
+        <button onClick={() => table.setCreatingRow(true)} >
           Add
         </button>
       )}
@@ -176,7 +156,7 @@ export const CreateRowIndexBottom = () => {
       onEditingRowSave={handleSaveRow}
       positionCreatingRow="bottom"
       renderTopToolbarCustomActions={({ table }) => (
-        <button onClick={() => table.setCreatingRow(true)} style={buttonStyle}>
+        <button onClick={() => table.setCreatingRow(true)} >
           Add
         </button>
       )}
@@ -230,7 +210,7 @@ export const CreateRowIndexIndex = () => {
       onEditingRowSave={handleSaveRow}
       positionCreatingRow={5}
       renderTopToolbarCustomActions={({ table }) => (
-        <button onClick={() => table.setCreatingRow(true)} style={buttonStyle}>
+        <button onClick={() => table.setCreatingRow(true)} >
           Add
         </button>
       )}
@@ -285,7 +265,7 @@ export const CreateRowIndexIndexVirtualized = () => {
       onEditingRowSave={handleSaveRow}
       positionCreatingRow={5}
       renderTopToolbarCustomActions={({ table }) => (
-        <button onClick={() => table.setCreatingRow(true)} style={buttonStyle}>
+        <button onClick={() => table.setCreatingRow(true)} >
           Add
         </button>
       )}
@@ -347,7 +327,6 @@ export const CreateRowIndexIndexExpanding = () => {
                 ),
               );
             }}
-            style={iconButtonStyle}
           >
             <Plus size={18} />
           </button>
@@ -359,7 +338,7 @@ export const CreateRowIndexIndexExpanding = () => {
             setCreatingRowIndex(0);
             table.setCreatingRow(true);
           }}
-          style={buttonStyle}
+          
         >
           Add
         </button>
@@ -424,7 +403,7 @@ export const CreateWithCustomEditCell = () => {
       onEditingRowSave={handleSaveRow}
       positionCreatingRow="top"
       renderTopToolbarCustomActions={({ table }) => (
-        <button onClick={() => table.setCreatingRow(true)} style={buttonStyle}>
+        <button onClick={() => table.setCreatingRow(true)} >
           Add
         </button>
       )}
