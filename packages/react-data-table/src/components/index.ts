@@ -19,6 +19,7 @@ export * from './body/RDT_TableBodyRow';
 export * from './body/RDT_TableBodyCell';
 export * from './body/RDT_TableBodyCellValue';
 export * from './body/RDT_TableDetailPanel';
+export * from './body/RDT_Skeleton';
 
 // Footer components
 export * from './footer/RDT_TableFooter';

@@ -1,4 +1,9 @@
-import { type MouseEvent, type TdHTMLAttributes } from 'react';
+import {
+  type MouseEvent,
+  type TdHTMLAttributes,
+  useEffect,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import {
   type RDT_Cell,
@@ -10,6 +15,7 @@ import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { parseFromValuesOrFunc } from '../../utils/utils';
 import { RDT_CopyButton } from '../buttons/RDT_CopyButton';
 import { RDT_EditCellTextField } from '../inputs/RDT_EditCellTextField';
+import { RDT_Skeleton } from './RDT_Skeleton';
 import { RDT_TableBodyCellValue } from './RDT_TableBodyCellValue';
 import styles from '../table/table.module.css';
 
@@ -54,8 +60,32 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
     refs: { actionCellRef },
     setActionCell,
   } = table;
-  const { actionCell, creatingRow, density, draggingColumn, editingCell, editingRow } =
-    getState();
+  const {
+    actionCell,
+    creatingRow,
+    density,
+    draggingColumn,
+    editingCell,
+    editingRow,
+    isLoading,
+    showSkeletons,
+  } = getState();
+
+  // Skeleton width calculation similar to MRT
+  const [skeletonWidth, setSkeletonWidth] = useState(100);
+  useEffect(() => {
+    if ((!isLoading && !showSkeletons) || skeletonWidth !== 100) return;
+    const size = column.getSize();
+    setSkeletonWidth(
+      columnDef.columnDefType === 'display'
+        ? size / 2
+        : Math.round(Math.random() * (size - size / 3) + size / 3),
+    );
+  }, [isLoading, showSkeletons]);
+
+  // Determine if skeleton should be shown
+  const shouldShowSkeleton =
+    showSkeletons !== false && (isLoading || showSkeletons);
 
   const cellProps = {
     ...parseFromValuesOrFunc(tableCellProps, { cell, column, row, table }),
@@ -170,8 +200,27 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         ...style,
       }}
     >
-      {showEditField ? (
+      {cell.getIsPlaceholder() ? (
+        (columnDef.PlaceholderCell?.({ cell, column, row, table }) ?? null)
+      ) : shouldShowSkeleton ? (
+        <RDT_Skeleton width={skeletonWidth} />
+      ) : showEditField ? (
         <RDT_EditCellTextField cell={cell} table={table} />
+      ) : columnDefType === 'display' &&
+        (['rdt-row-expand', 'rdt-row-numbers', 'rdt-row-select'].includes(
+          column.id,
+        ) ||
+          !row.getIsGrouped()) ? (
+        columnDef.Cell?.({
+          cell,
+          column,
+          renderedCellValue: cell.renderValue() as any,
+          row,
+          rowRef,
+          staticColumnIndex,
+          staticRowIndex,
+          table,
+        })
       ) : showClickToCopyButton ? (
         <RDT_CopyButton cell={cell} table={table}>
           <RDT_TableBodyCellValue
