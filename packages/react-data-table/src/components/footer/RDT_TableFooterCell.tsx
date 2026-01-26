@@ -29,6 +29,12 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
 
   const isPinned = column.getIsPinned();
 
+  // Detect if this column is the last left-pinned or first right-pinned (for shadow)
+  const isLastLeftPinnedColumn =
+    isPinned === 'left' && column.getIsLastColumn('left');
+  const isFirstRightPinnedColumn =
+    isPinned === 'right' && column.getIsFirstColumn('right');
+
   // Get the pinned position offset
   const pinnedOffset =
     isPinned === 'left'
@@ -44,9 +50,11 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
       data-index={staticColumnIndex}
       className={clsx(
         styles.tableFooterCell,
-        isPinned && styles.tableHeadCellPinned, // reuse head pinned styles
-        isPinned === 'left' && styles.tableHeadCellPinnedLeft,
-        isPinned === 'right' && styles.tableHeadCellPinnedRight,
+        isPinned && styles.tableFooterCellPinned,
+        isPinned === 'left' && styles.tableFooterCellPinnedLeft,
+        isPinned === 'right' && styles.tableFooterCellPinnedRight,
+        isLastLeftPinnedColumn && styles.tableFooterCellPinnedLeftLast,
+        isFirstRightPinnedColumn && styles.tableFooterCellPinnedRightFirst,
         className,
       )}
       style={{

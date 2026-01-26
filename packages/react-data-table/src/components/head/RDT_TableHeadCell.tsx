@@ -82,6 +82,12 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
   const isColumnPinned =
     enableColumnPinning && columnDefType !== 'group' && column.getIsPinned();
 
+  // Detect if this column is the last left-pinned or first right-pinned (for shadow)
+  const isLastLeftPinnedColumn =
+    isPinned === 'left' && column.getIsLastColumn('left');
+  const isFirstRightPinnedColumn =
+    isPinned === 'right' && column.getIsFirstColumn('right');
+
   const showColumnActionButton =
     (enableColumnActions || columnDef.enableColumnActions) &&
     columnDef.enableColumnActions !== false;
@@ -232,6 +238,8 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         isPinned && styles.tableHeadCellPinned,
         isPinned === 'left' && styles.tableHeadCellPinnedLeft,
         isPinned === 'right' && styles.tableHeadCellPinnedRight,
+        isLastLeftPinnedColumn && styles.tableHeadCellPinnedLeftLast,
+        isFirstRightPinnedColumn && styles.tableHeadCellPinnedRightFirst,
         columnDefType === 'group' && styles.tableHeadCellGroup,
         draggingClasses,
         className,

@@ -66,6 +66,12 @@
   --rdt-row-selected: 240 5.9% 90%;
   --rdt-cell-pinned: 240 4.8% 97%;
 
+  /* Pinned column shadow color (for edge shadows) */
+  --rdt-pinned-column-shadow-color: rgba(0, 0, 0, 0.3);
+
+  /* Pinned column background - slightly darker than base for visual distinction */
+  --rdt-pinned-column-background-color: hsl(240 4.8% 98%);
+
   /* Functional color variables used by components */
   --rdt-base-background-color: hsl(var(--rdt-background));
   --rdt-row-background-color: hsl(var(--rdt-background));
@@ -129,6 +135,12 @@
   --rdt-row-hover: 240 3.7% 12%;
   --rdt-row-selected: 240 3.7% 18%;
   --rdt-cell-pinned: 240 5% 8%;
+
+  /* Pinned column shadow color (for edge shadows) - more visible in dark mode */
+  --rdt-pinned-column-shadow-color: rgba(0, 0, 0, 0.5);
+
+  /* Pinned column background - slightly lighter than base for dark mode */
+  --rdt-pinned-column-background-color: hsl(240 5% 6%);
 
   /* Functional color variables - inherit from dark HSL values */
   --rdt-base-background-color: hsl(var(--rdt-background));

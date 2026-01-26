@@ -72,6 +72,12 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
   const isEditable =
     parseFromValuesOrFunc(columnDef.enableEditing, row) !== false;
 
+  // Detect if this column is the last left-pinned or first right-pinned (for shadow)
+  const isLastLeftPinnedColumn =
+    isPinned === 'left' && column.getIsLastColumn('left');
+  const isFirstRightPinnedColumn =
+    isPinned === 'right' && column.getIsFirstColumn('right');
+
   const isCreating = creatingRow?.id === row.id;
   const isEditing = editingRow?.id === row.id || editingCell?.id === cell.id;
 
@@ -127,6 +133,8 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         isPinned && styles.tableBodyCellPinned,
         isPinned === 'left' && styles.tableBodyCellPinnedLeft,
         isPinned === 'right' && styles.tableBodyCellPinnedRight,
+        isLastLeftPinnedColumn && styles.tableBodyCellPinnedLeftLast,
+        isFirstRightPinnedColumn && styles.tableBodyCellPinnedRightFirst,
         showEditField && styles.tableBodyCellEditing,
         isDraggingColumn && styles.tableBodyCellDragging,
         isHoveredColumn && styles.tableBodyCellHovered,

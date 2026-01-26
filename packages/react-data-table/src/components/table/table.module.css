@@ -169,6 +169,7 @@
 .tableHeadCellPinned {
   position: sticky;
   z-index: 1;
+  background-color: var(--rdt-pinned-column-background-color);
 }
 
 .tableHeadCellPinnedLeft {
@@ -177,6 +178,16 @@
 
 .tableHeadCellPinnedRight {
   right: var(--rdt-pinned-right-offset, 0);
+}
+
+/* Shadow on the last left-pinned column (shows shadow on right edge, casting inward) */
+.tableHeadCellPinnedLeftLast {
+  box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+}
+
+/* Shadow on the first right-pinned column (shows shadow on left edge, casting inward) */
+.tableHeadCellPinnedRightFirst {
+  box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
 }
 
 .tableHeadCellGroup {
@@ -350,7 +361,7 @@
 .tableBodyCellPinned {
   position: sticky;
   z-index: 1;
-  background-color: var(--rdt-base-background-color);
+  background-color: var(--rdt-pinned-column-background-color);
 }
 
 .tableBodyCellPinnedLeft {
@@ -359,6 +370,16 @@
 
 .tableBodyCellPinnedRight {
   right: var(--rdt-pinned-right-offset, 0);
+}
+
+/* Shadow on the last left-pinned column (shows shadow on right edge, casting inward) */
+.tableBodyCellPinnedLeftLast {
+  box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+}
+
+/* Shadow on the first right-pinned column (shows shadow on left edge, casting inward) */
+.tableBodyCellPinnedRightFirst {
+  box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
 }
 
 .tableBodyCellEditing {
@@ -451,6 +472,31 @@
   line-height: var(--rdt-line-height-tight);
   padding: var(--rdt-cell-padding);
   vertical-align: middle;
+}
+
+/* Footer cell pinned styles */
+.tableFooterCellPinned {
+  position: sticky;
+  z-index: 1;
+  background-color: var(--rdt-pinned-column-background-color);
+}
+
+.tableFooterCellPinnedLeft {
+  left: var(--rdt-pinned-left-offset, 0);
+}
+
+.tableFooterCellPinnedRight {
+  right: var(--rdt-pinned-right-offset, 0);
+}
+
+/* Shadow on the last left-pinned footer column (shows shadow on right edge, casting inward) */
+.tableFooterCellPinnedLeftLast {
+  box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+}
+
+/* Shadow on the first right-pinned footer column (shows shadow on left edge, casting inward) */
+.tableFooterCellPinnedRightFirst {
+  box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
 }
 
 /* ============================================
