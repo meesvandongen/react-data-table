@@ -313,34 +313,37 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
               )}
             </div>
 
-            {/* Actions section - next to labels, no extra spacing */}
-            {columnDefType !== 'group' &&
-              (showDragHandle || showColumnActionButton) && (
-                <div className={styles.tableHeadCellActions}>
-                  {showDragHandle && (
-                    <RDT_TableHeadCellGrabHandle
-                      column={column}
-                      table={table}
-                      tableHeadCellRef={cellRef}
-                    />
-                  )}
-                  {showColumnActionButton && (
-                    <RDT_ColumnActionMenuButton header={header} table={table} />
-                  )}
-                </div>
-              )}
+            {/* Column action button - next to labels */}
+            {columnDefType !== 'group' && showColumnActionButton && (
+              <div className={styles.tableHeadCellActions}>
+                <RDT_ColumnActionMenuButton header={header} table={table} />
+              </div>
+            )}
 
-            {/* Resize handle */}
+            {/* Drag handle - aligned to the right, next to resize */}
+            {columnDefType !== 'group' && showDragHandle && (
+              <div className={styles.tableHeadCellDragHandle}>
+                <RDT_TableHeadCellGrabHandle
+                  column={column}
+                  table={table}
+                  tableHeadCellRef={cellRef}
+                />
+              </div>
+            )}
+
+            {/* Resize handle - uses negative margin to position on cell border (like MRT) */}
             {enableColumnResizing && column.getCanResize() && (
               <div
                 className={clsx(
-                  styles.resizeHandle,
-                  column.getIsResizing() && styles.resizeHandleActive,
+                  styles.resizeHandleWrapper,
+                  column.getIsResizing() && styles.resizeHandleWrapperActive,
                 )}
                 onMouseDown={header.getResizeHandler()}
                 onTouchStart={header.getResizeHandler()}
                 onDoubleClick={() => column.resetSize()}
-              />
+              >
+                <div className={styles.resizeHandleDivider} />
+              </div>
             )}
           </div>
 

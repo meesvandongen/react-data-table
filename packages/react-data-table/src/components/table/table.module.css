@@ -307,6 +307,13 @@
   flex-shrink: 0;
 }
 
+.tableHeadCellDragHandle {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 /* Show actions on hover */
 .tableHeadCell:hover .tableHeadCellActions button {
   opacity: 1;
@@ -626,36 +633,33 @@
    Column Resize Handle
    ============================================ */
 
-.resizeHandle {
+/* Wrapper - positioned at right edge with negative margin to sit on cell border (like MRT) */
+.resizeHandleWrapper {
   position: absolute;
-  right: -4px;
-  top: 0;
-  bottom: 0;
-  width: 8px;
+  right: 0;
+  margin-right: calc(-1 * var(--rdt-cell-padding));
+  padding-inline: 4px;
   cursor: col-resize;
   touch-action: none;
   user-select: none;
   z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+
+/* Highlight divider on wrapper hover or when active */
+.resizeHandleWrapper:hover .resizeHandleDivider,
+.resizeHandleWrapperActive .resizeHandleDivider,
+.resizeHandleWrapper:active .resizeHandleDivider {
+  background-color: var(--rdt-primary-color);
 }
 
 /* The visible divider line inside the handle */
-.resizeHandle::after {
-  content: '';
+.resizeHandleDivider {
   width: 2px;
   height: 24px;
   border-radius: 2px;
   background-color: var(--rdt-border-color);
+  transform: translateX(4px);
   transition: background-color 150ms ease-in-out;
-}
-
-/* Highlight divider on handle hover or when active */
-.resizeHandle:hover::after,
-.resizeHandleActive::after,
-.resizeHandle:active::after {
-  background-color: var(--rdt-primary-color);
 }
 
 /* ============================================
