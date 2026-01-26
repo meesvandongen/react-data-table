@@ -54,7 +54,7 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
     refs: { actionCellRef },
     setActionCell,
   } = table;
-  const { actionCell, creatingRow, draggingColumn, editingCell, editingRow } =
+  const { actionCell, creatingRow, density, draggingColumn, editingCell, editingRow } =
     getState();
 
   const cellProps = {
@@ -96,6 +96,13 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
 
   const isRightClickable = parseFromValuesOrFunc(enableCellActions, cell);
   const isActionCellActive = actionCell?.id === cell.id;
+
+  // Match MRT behavior for column type styling
+  const { columnDefType } = columnDef;
+  const isDataColumn = columnDefType !== 'display';
+
+  // Match MRT: nowrap when row is pinned or density is compact, otherwise normal
+  const shouldNoWrap = row.getIsPinned() || density === 'compact';
 
   const showClickToCopyButton =
     (parseFromValuesOrFunc(enableClickToCopy, cell) === true ||
@@ -140,6 +147,8 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         isHoveredColumn && styles.tableBodyCellHovered,
         isRightClickable && styles.tableBodyCellRightClickable,
         isActionCellActive && styles.tableBodyCellActionActive,
+        isDataColumn && styles.tableBodyCellTruncate,
+        shouldNoWrap ? styles.tableBodyCellNoWrap : styles.tableBodyCellWrap,
         isRowHovered &&
           rowDropPosition === 'before' &&
           styles.tableBodyCellDropZoneBefore,

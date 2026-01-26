@@ -371,8 +371,6 @@
   border-bottom: 1px solid var(--rdt-border-color);
   padding: var(--rdt-cell-padding);
   vertical-align: middle;
-  overflow: hidden;
-  text-overflow: ellipsis;
   line-height: var(--rdt-line-height);
 }
 
@@ -426,7 +424,12 @@
 
 .tableBodyCellWrap {
   white-space: normal;
-  word-break: break-word;
+}
+
+/* Apply text overflow ellipsis only to data columns (not display columns) */
+.tableBodyCellTruncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tableBodyCellRightClickable {
