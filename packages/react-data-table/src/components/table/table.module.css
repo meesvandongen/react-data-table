@@ -37,6 +37,8 @@
   max-width: 100%;
   overflow: auto;
   position: relative;
+  /* Enable scroll-state container queries for pinned column shadows */
+  container-type: scroll-state;
 }
 
 .tableContainerSticky {
@@ -62,7 +64,7 @@
   border-spacing: 0;
   position: relative;
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .tableLayoutGrid {
@@ -180,14 +182,30 @@
   right: var(--rdt-pinned-right-offset, 0);
 }
 
-/* Shadow on the last left-pinned column (shows shadow on right edge, casting inward) */
+/* Shadow on the last left-pinned column (shows shadow on right edge, casting inward) 
+   Only show when there's content scrolled to the left (can scroll back left) */
 .tableHeadCellPinnedLeftLast {
-  box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  box-shadow: none;
 }
 
-/* Shadow on the first right-pinned column (shows shadow on left edge, casting inward) */
+/* Shadow on the first right-pinned column (shows shadow on left edge, casting inward)
+   Only show when there's content to scroll to on the right */
 .tableHeadCellPinnedRightFirst {
-  box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  box-shadow: none;
+}
+
+/* Show left pinned shadow when content exists to the left (scrolled away from start) */
+@container scroll-state(scrollable: left) {
+  .tableHeadCellPinnedLeftLast {
+    box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  }
+}
+
+/* Show right pinned shadow when content exists to the right (not at end) */
+@container scroll-state(scrollable: right) {
+  .tableHeadCellPinnedRightFirst {
+    box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  }
 }
 
 .tableHeadCellGroup {
@@ -372,14 +390,30 @@
   right: var(--rdt-pinned-right-offset, 0);
 }
 
-/* Shadow on the last left-pinned column (shows shadow on right edge, casting inward) */
+/* Shadow on the last left-pinned column (shows shadow on right edge, casting inward)
+   Only show when there's content scrolled to the left (can scroll back left) */
 .tableBodyCellPinnedLeftLast {
-  box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  box-shadow: none;
 }
 
-/* Shadow on the first right-pinned column (shows shadow on left edge, casting inward) */
+/* Shadow on the first right-pinned column (shows shadow on left edge, casting inward)
+   Only show when there's content to scroll to on the right */
 .tableBodyCellPinnedRightFirst {
-  box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  box-shadow: none;
+}
+
+/* Show left pinned shadow when content exists to the left (scrolled away from start) */
+@container scroll-state(scrollable: left) {
+  .tableBodyCellPinnedLeftLast {
+    box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  }
+}
+
+/* Show right pinned shadow when content exists to the right (not at end) */
+@container scroll-state(scrollable: right) {
+  .tableBodyCellPinnedRightFirst {
+    box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  }
 }
 
 .tableBodyCellEditing {
@@ -489,14 +523,30 @@
   right: var(--rdt-pinned-right-offset, 0);
 }
 
-/* Shadow on the last left-pinned footer column (shows shadow on right edge, casting inward) */
+/* Shadow on the last left-pinned footer column (shows shadow on right edge, casting inward)
+   Only show when there's content scrolled to the left (can scroll back left) */
 .tableFooterCellPinnedLeftLast {
-  box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  box-shadow: none;
 }
 
-/* Shadow on the first right-pinned footer column (shows shadow on left edge, casting inward) */
+/* Shadow on the first right-pinned footer column (shows shadow on left edge, casting inward)
+   Only show when there's content to scroll to on the right */
 .tableFooterCellPinnedRightFirst {
-  box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  box-shadow: none;
+}
+
+/* Show left pinned shadow when content exists to the left (scrolled away from start) */
+@container scroll-state(scrollable: left) {
+  .tableFooterCellPinnedLeftLast {
+    box-shadow: -4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  }
+}
+
+/* Show right pinned shadow when content exists to the right (not at end) */
+@container scroll-state(scrollable: right) {
+  .tableFooterCellPinnedRightFirst {
+    box-shadow: 4px 0 4px -4px var(--rdt-pinned-column-shadow-color) inset;
+  }
 }
 
 /* ============================================
