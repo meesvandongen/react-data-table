@@ -175,11 +175,11 @@ export const RDT_TableBodyRow = <TData extends RDT_RowData>({
           isRowPinned === 'bottom' && styles.tableBodyRowPinnedBottom,
           isRowGrouped && styles.tableBodyRowGrouped,
           isDraggingRow && styles.tableBodyRowDragging,
-          layoutMode?.startsWith('grid') && styles.tableLayoutGrid,
           rowProps?.className,
           className,
         )}
         style={{
+          display: layoutMode?.startsWith('grid') ? 'flex' : undefined,
           transform: virtualRow
             ? `translateY(${virtualRow.start}px)`
             : undefined,

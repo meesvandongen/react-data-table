@@ -66,11 +66,7 @@ export const RDT_TableDetailPanel = <TData extends RDT_RowData>({
         }
       }}
       {...rowProps}
-      className={clsx(
-        styles.detailPanel,
-        layoutMode?.startsWith('grid') && styles.tableLayoutGrid,
-        rowProps?.className,
-      )}
+      className={clsx(styles.detailPanel, rowProps?.className)}
       style={{
         display: layoutMode?.startsWith('grid') ? 'flex' : undefined,
         position: virtualRow ? 'absolute' : undefined,
