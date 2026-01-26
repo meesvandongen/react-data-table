@@ -24,6 +24,9 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
   style,
   ...rest
 }: RDT_TableFooterCellProps<TData>) => {
+  const {
+    options: { layoutMode },
+  } = table;
   const { column } = footer;
   const { columnDef } = column;
 
@@ -50,6 +53,7 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
       data-index={staticColumnIndex}
       className={clsx(
         styles.tableFooterCell,
+        layoutMode?.startsWith('grid') && styles.tableLayoutGridCell,
         isPinned && styles.tableFooterCellPinned,
         isPinned === 'left' && styles.tableFooterCellPinnedLeft,
         isPinned === 'right' && styles.tableFooterCellPinnedRight,

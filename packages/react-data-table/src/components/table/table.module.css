@@ -77,6 +77,12 @@
   width: 100%;
 }
 
+/* Grid layout for cells - makes them flex items with internal flex layout */
+.tableLayoutGridCell {
+  display: flex;
+  align-items: center;
+}
+
 /* ============================================
    Loading Overlay
    ============================================ */

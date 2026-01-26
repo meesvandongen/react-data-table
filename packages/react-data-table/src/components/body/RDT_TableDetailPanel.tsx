@@ -88,12 +88,12 @@ export const RDT_TableDetailPanel = <TData extends RDT_RowData>({
         {...cellProps}
         className={clsx(
           styles.detailPanelCell,
+          layoutMode?.startsWith('grid') && styles.tableLayoutGridCell,
           !isExpanded && styles.detailPanelCellCollapsed,
           cellProps?.className,
           className,
         )}
         style={{
-          display: layoutMode?.startsWith('grid') ? 'flex' : undefined,
           width: '100%',
           ...cellProps?.style,
           ...style,

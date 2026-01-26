@@ -51,6 +51,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       enableMultiSort,
       enableSorting,
       icons: { ArrowDownwardIcon, SortIcon },
+      layoutMode,
       localization,
     },
     refs: { tableHeadCellRefs },
@@ -235,6 +236,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       onDragOver={handleDragOver}
       className={clsx(
         styles.tableHeadCell,
+        layoutMode?.startsWith('grid') && styles.tableLayoutGridCell,
         isPinned && styles.tableHeadCellPinned,
         isPinned === 'left' && styles.tableHeadCellPinnedLeft,
         isPinned === 'right' && styles.tableHeadCellPinnedRight,

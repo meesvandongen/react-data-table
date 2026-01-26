@@ -55,6 +55,7 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
       enableCellActions,
       enableClickToCopy,
       enableColumnOrdering,
+      layoutMode,
       tableCellProps,
     },
     refs: { actionCellRef },
@@ -167,6 +168,7 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
       onContextMenu={handleContextMenu}
       className={clsx(
         styles.tableBodyCell,
+        layoutMode?.startsWith('grid') && styles.tableLayoutGridCell,
         isPinned && styles.tableBodyCellPinned,
         isPinned === 'left' && styles.tableBodyCellPinnedLeft,
         isPinned === 'right' && styles.tableBodyCellPinnedRight,
