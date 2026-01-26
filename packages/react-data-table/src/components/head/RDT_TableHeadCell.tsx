@@ -303,53 +303,54 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
               )}
             </div>
 
-            {/* Actions section */}
-            {columnDefType !== 'group' && (
-              <div className={styles.tableHeadCellActions}>
-                {showDragHandle && (
-                  <RDT_GrabHandleButton
-                    table={table}
-                    onDragStart={() => {
-                      table.setDraggingColumn(column);
-                    }}
-                    onDragEnd={() => {
-                      // Handle grouping drop zone
-                      if (hoveredColumn?.id === 'drop-zone') {
-                        column.toggleGrouping();
-                      } else if (
-                        enableColumnOrdering &&
-                        hoveredColumn &&
-                        hoveredColumn?.id !== draggingColumn?.id
-                      ) {
-                        // Reorder columns with position awareness
-                        const reorderedColumns = reorderColumn(
-                          column,
-                          hoveredColumn as RDT_Column<TData>,
-                          columnOrder,
-                          hoveredColumnDropPosition ?? undefined,
-                        );
-                        setColumnOrder(reorderedColumns);
-                        // Update pinning to match new order
-                        setColumnPinning(({ left = [], right = [] }) => ({
-                          left: reorderedColumns.filter((header) =>
-                            left.includes(header),
-                          ),
-                          right: reorderedColumns.filter((header) =>
-                            right.includes(header),
-                          ),
-                        }));
-                      }
-                      table.setDraggingColumn(null);
-                      table.setHoveredColumn(null);
-                      setHoveredColumnDropPosition(null);
-                    }}
-                  />
-                )}
-                {showColumnActionButton && (
-                  <RDT_ColumnActionMenuButton header={header} table={table} />
-                )}
-              </div>
-            )}
+            {/* Actions section - next to labels, no extra spacing */}
+            {columnDefType !== 'group' &&
+              (showDragHandle || showColumnActionButton) && (
+                <div className={styles.tableHeadCellActions}>
+                  {showDragHandle && (
+                    <RDT_GrabHandleButton
+                      table={table}
+                      onDragStart={() => {
+                        table.setDraggingColumn(column);
+                      }}
+                      onDragEnd={() => {
+                        // Handle grouping drop zone
+                        if (hoveredColumn?.id === 'drop-zone') {
+                          column.toggleGrouping();
+                        } else if (
+                          enableColumnOrdering &&
+                          hoveredColumn &&
+                          hoveredColumn?.id !== draggingColumn?.id
+                        ) {
+                          // Reorder columns with position awareness
+                          const reorderedColumns = reorderColumn(
+                            column,
+                            hoveredColumn as RDT_Column<TData>,
+                            columnOrder,
+                            hoveredColumnDropPosition ?? undefined,
+                          );
+                          setColumnOrder(reorderedColumns);
+                          // Update pinning to match new order
+                          setColumnPinning(({ left = [], right = [] }) => ({
+                            left: reorderedColumns.filter((header) =>
+                              left.includes(header),
+                            ),
+                            right: reorderedColumns.filter((header) =>
+                              right.includes(header),
+                            ),
+                          }));
+                        }
+                        table.setDraggingColumn(null);
+                        table.setHoveredColumn(null);
+                        setHoveredColumnDropPosition(null);
+                      }}
+                    />
+                  )}
+                  {showColumnActionButton && (
+                    <RDT_ColumnActionMenuButton header={header} table={table} />
+                  )}
+                </div>
+              )}
 
             {/* Resize handle */}
             {enableColumnResizing && column.getCanResize() && (

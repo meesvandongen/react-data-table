@@ -223,7 +223,7 @@
 .tableHeadCellContent {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 4px;
   width: 100%;
   position: relative;
@@ -372,6 +372,20 @@
 .tableBodyCellWrap {
   white-space: normal;
   word-break: break-word;
+}
+
+.tableBodyCellRightClickable {
+  cursor: context-menu;
+}
+
+.tableBodyCellRightClickable:hover {
+  outline: 1px solid var(--rdt-border-color);
+  outline-offset: -1px;
+}
+
+.tableBodyCellActionActive {
+  outline: 1px solid var(--rdt-border-color);
+  outline-offset: -1px;
 }
 
 /* Row drop zone indicators (applied to cells using pseudo-elements) */
