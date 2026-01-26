@@ -7,16 +7,17 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import {
+  type RDT_Column,
   type RDT_ColumnVirtualizer,
   type RDT_Header,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { reorderColumn } from '../../utils/column.utils';
 import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import { RDT_ColumnActionMenuButton } from '../buttons/RDT_ColumnActionMenuButton';
 import { RDT_TableHeadCellFilterContainer } from './RDT_TableHeadCellFilterContainer';
-import { RDT_TableHeadCellGrabHandle } from './RDT_TableHeadCellGrabHandle';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableHeadCellProps<TData extends RDT_RowData>
@@ -53,11 +54,15 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       localization,
     },
     refs: { tableHeadCellRefs },
+    setColumnOrder,
+    setColumnPinning,
+    setDraggingColumn,
     setHoveredColumn,
     setHoveredColumnDropPosition,
   } = table;
 
   const {
+    columnOrder,
     draggingColumn,
     grouping,
     hoveredColumn,
@@ -88,7 +93,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
     (enableColumnActions || columnDef.enableColumnActions) &&
     columnDef.enableColumnActions !== false;
 
-  const showDragHandle =
+  const enableDragging =
     enableColumnDragging !== false &&
     columnDef.enableColumnDragging !== false &&
     (enableColumnDragging ||
@@ -166,6 +171,40 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
     }
   };
 
+  const handleDragStart = (e: DragEvent<HTMLTableCellElement>) => {
+    setDraggingColumn(column);
+    try {
+      e.dataTransfer.setDragImage(cellRef.current as HTMLElement, 0, 0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDragEnd = (_e: DragEvent<HTMLTableCellElement>) => {
+    if (hoveredColumn?.id === 'drop-zone') {
+      column.toggleGrouping();
+    } else if (
+      enableColumnOrdering &&
+      hoveredColumn &&
+      hoveredColumn?.id !== draggingColumn?.id
+    ) {
+      const reorderedColumns = reorderColumn(
+        column,
+        hoveredColumn as RDT_Column<TData>,
+        columnOrder,
+        hoveredColumnDropPosition ?? undefined,
+      );
+      setColumnOrder(reorderedColumns);
+      setColumnPinning(({ left = [], right = [] }) => ({
+        left: reorderedColumns.filter((col) => left.includes(col)),
+        right: reorderedColumns.filter((col) => right.includes(col)),
+      }));
+    }
+    setDraggingColumn(null);
+    setHoveredColumn(null);
+    setHoveredColumnDropPosition(null);
+  };
+
   const handleRef = useCallback(
     (node: HTMLTableCellElement) => {
       if (node) {
@@ -221,6 +260,8 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
   // Check if this column is being resized
   const isResizing = column.getIsResizing();
 
+  const isDraggable = enableDragging && columnDefType !== 'group';
+
   return (
     <th
       ref={handleRef}
@@ -230,6 +271,9 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       data-pinned={!!isColumnPinned || undefined}
       data-sort={sortDirection || undefined}
       data-resizing={isResizing || undefined}
+      draggable={isDraggable}
+      onDragStart={isDraggable ? handleDragStart : undefined}
+      onDragEnd={isDraggable ? handleDragEnd : undefined}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -243,6 +287,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         isFirstRightPinnedColumn && styles.tableHeadCellPinnedRightFirst,
         columnDefType === 'group' && styles.tableHeadCellGroup,
         isResizing && styles.tableHeadCellResizing,
+        isDraggable && styles.tableHeadCellDraggable,
         draggingClasses,
         className,
       )}
@@ -320,17 +365,6 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
               </div>
             )}
 
-            {/* Drag handle - aligned to the right, next to resize */}
-            {columnDefType !== 'group' && showDragHandle && (
-              <div className={styles.tableHeadCellDragHandle}>
-                <RDT_TableHeadCellGrabHandle
-                  column={column}
-                  table={table}
-                  tableHeadCellRef={cellRef}
-                />
-              </div>
-            )}
-
             {/* Resize handle - uses negative margin to position on cell border (like MRT) */}
             {enableColumnResizing && column.getCanResize() && (
               <div
@@ -338,6 +372,8 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                   styles.resizeHandleWrapper,
                   column.getIsResizing() && styles.resizeHandleWrapperActive,
                 )}
+                draggable
+                onDragStart={(e) => e.preventDefault()}
                 onMouseDown={header.getResizeHandler()}
                 onTouchStart={header.getResizeHandler()}
                 onDoubleClick={() => column.resetSize()}
