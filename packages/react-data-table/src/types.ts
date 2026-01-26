@@ -1104,6 +1104,12 @@ export interface RDT_TableOptions<TData extends RDT_RowData>
   buttonProps?: ButtonProps;
   checkboxProps?: CheckboxProps;
   dialogProps?: DialogProps;
+  linearProgressProps?:
+    | ((props: {
+        isTopToolbar: boolean;
+        table: RDT_TableInstance<TData>;
+      }) => HTMLAttributes<HTMLDivElement>)
+    | HTMLAttributes<HTMLDivElement>;
   menuProps?: MenuProps<object>;
   progressBarProps?: ProgressBarProps;
   searchFieldProps?: SearchFieldProps;

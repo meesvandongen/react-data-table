@@ -1,5 +1,7 @@
 import { type HTMLAttributes } from 'react';
+import clsx from 'clsx';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import { parseFromValuesOrFunc } from '../../utils/utils';
 import styles from './toolbar.module.css';
 
 export interface RDT_LinearProgressBarProps<TData extends RDT_RowData>
@@ -13,29 +15,37 @@ export const RDT_LinearProgressBar = <TData extends RDT_RowData>({
   table,
   ...rest
 }: RDT_LinearProgressBarProps<TData>) => {
-  const { getState } = table;
+  const {
+    getState,
+    options: { linearProgressProps },
+  } = table;
   const { isSaving, showProgressBars } = getState();
 
   const isVisible =
     showProgressBars !== false && (showProgressBars || isSaving);
 
-  const containerClassName = [
-    styles.progressBarContainer,
-    isTopToolbar
-      ? styles.progressBarContainerTop
-      : styles.progressBarContainerBottom,
-    !isVisible && styles.progressBarHidden,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const progressProps = {
+    ...parseFromValuesOrFunc(linearProgressProps, {
+      isTopToolbar,
+      table,
+    }),
+    ...rest,
+  };
 
   return (
     <div
-      className={containerClassName}
+      {...progressProps}
+      className={clsx(
+        styles.progressBarContainer,
+        isTopToolbar
+          ? styles.progressBarContainerTop
+          : styles.progressBarContainerBottom,
+        !isVisible && styles.progressBarHidden,
+        progressProps?.className,
+      )}
       role="progressbar"
       aria-busy={isVisible}
       aria-label="Loading"
-      {...rest}
     >
       <div className={styles.progressBar}>
         <div className={styles.progressBarIndicator} />

@@ -135,3 +135,14 @@ export const SkeletonDisplayColumns = () => (
 export const ReloadingExample = () => (
   <DataTable columns={columns} data={data} state={{ showProgressBars: true }} />
 );
+
+export const OnlyTopProgressBar = () => (
+  <DataTable
+    columns={columns}
+    data={data}
+    linearProgressProps={({ isTopToolbar }) => ({
+      style: { display: isTopToolbar ? 'block' : 'none' },
+    })}
+    state={{ showProgressBars: true }}
+  />
+);
