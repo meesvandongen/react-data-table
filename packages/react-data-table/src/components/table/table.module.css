@@ -225,6 +225,10 @@
   vertical-align: middle;
 }
 
+.tableHeadCellResizing {
+  border-right: 2px solid var(--rdt-primary-color);
+}
+
 .tableHeadCellDragging {
   opacity: 0.5;
 }
@@ -458,6 +462,10 @@
   outline-offset: -1px;
 }
 
+.tableBodyCellResizing {
+  border-right: 2px solid var(--rdt-primary-color);
+}
+
 /* Row drop zone indicators (applied to cells using pseudo-elements) */
 .tableBodyCellDropZoneBefore {
   position: relative;
@@ -620,17 +628,33 @@
 
 .resizeHandle {
   position: absolute;
-  right: 0;
+  right: -4px;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 8px;
   cursor: col-resize;
   touch-action: none;
   user-select: none;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.resizeHandle:hover,
-.resizeHandleActive {
+/* The visible divider line inside the handle */
+.resizeHandle::after {
+  content: '';
+  width: 2px;
+  height: 24px;
+  border-radius: 2px;
+  background-color: var(--rdt-border-color);
+  transition: background-color 150ms ease-in-out;
+}
+
+/* Highlight divider on handle hover or when active */
+.resizeHandle:hover::after,
+.resizeHandleActive::after,
+.resizeHandle:active::after {
   background-color: var(--rdt-primary-color);
 }
 

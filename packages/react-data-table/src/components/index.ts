@@ -12,6 +12,7 @@ export * from './head/RDT_TableHead';
 export * from './head/RDT_TableHeadRow';
 export * from './head/RDT_TableHeadCell';
 export * from './head/RDT_TableHeadCellFilterContainer';
+export * from './head/RDT_TableHeadCellGrabHandle';
 
 // Body components
 export * from './body/RDT_TableBody';

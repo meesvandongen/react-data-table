@@ -7,18 +7,16 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import {
-  type RDT_Column,
   type RDT_ColumnVirtualizer,
   type RDT_Header,
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
-import { reorderColumn } from '../../utils/column.utils';
 import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import { RDT_ColumnActionMenuButton } from '../buttons/RDT_ColumnActionMenuButton';
-import { RDT_GrabHandleButton } from '../buttons/RDT_GrabHandleButton';
 import { RDT_TableHeadCellFilterContainer } from './RDT_TableHeadCellFilterContainer';
+import { RDT_TableHeadCellGrabHandle } from './RDT_TableHeadCellGrabHandle';
 import styles from '../table/table.module.css';
 
 export interface RDT_TableHeadCellProps<TData extends RDT_RowData>
@@ -55,14 +53,11 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       localization,
     },
     refs: { tableHeadCellRefs },
-    setColumnOrder,
-    setColumnPinning,
     setHoveredColumn,
     setHoveredColumnDropPosition,
   } = table;
 
   const {
-    columnOrder,
     draggingColumn,
     grouping,
     hoveredColumn,
@@ -223,6 +218,9 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
     },
   );
 
+  // Check if this column is being resized
+  const isResizing = column.getIsResizing();
+
   return (
     <th
       ref={handleRef}
@@ -231,6 +229,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
       data-index={staticColumnIndex}
       data-pinned={!!isColumnPinned || undefined}
       data-sort={sortDirection || undefined}
+      data-resizing={isResizing || undefined}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -243,6 +242,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         isLastLeftPinnedColumn && styles.tableHeadCellPinnedLeftLast,
         isFirstRightPinnedColumn && styles.tableHeadCellPinnedRightFirst,
         columnDefType === 'group' && styles.tableHeadCellGroup,
+        isResizing && styles.tableHeadCellResizing,
         draggingClasses,
         className,
       )}
@@ -318,42 +318,10 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
               (showDragHandle || showColumnActionButton) && (
                 <div className={styles.tableHeadCellActions}>
                   {showDragHandle && (
-                    <RDT_GrabHandleButton
+                    <RDT_TableHeadCellGrabHandle
+                      column={column}
                       table={table}
-                      onDragStart={() => {
-                        table.setDraggingColumn(column);
-                      }}
-                      onDragEnd={() => {
-                        // Handle grouping drop zone
-                        if (hoveredColumn?.id === 'drop-zone') {
-                          column.toggleGrouping();
-                        } else if (
-                          enableColumnOrdering &&
-                          hoveredColumn &&
-                          hoveredColumn?.id !== draggingColumn?.id
-                        ) {
-                          // Reorder columns with position awareness
-                          const reorderedColumns = reorderColumn(
-                            column,
-                            hoveredColumn as RDT_Column<TData>,
-                            columnOrder,
-                            hoveredColumnDropPosition ?? undefined,
-                          );
-                          setColumnOrder(reorderedColumns);
-                          // Update pinning to match new order
-                          setColumnPinning(({ left = [], right = [] }) => ({
-                            left: reorderedColumns.filter((header) =>
-                              left.includes(header),
-                            ),
-                            right: reorderedColumns.filter((header) =>
-                              right.includes(header),
-                            ),
-                          }));
-                        }
-                        table.setDraggingColumn(null);
-                        table.setHoveredColumn(null);
-                        setHoveredColumnDropPosition(null);
-                      }}
+                      tableHeadCellRef={cellRef}
                     />
                   )}
                   {showColumnActionButton && (
