@@ -68,7 +68,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: space-between;
+  justify-content: flex-end;
+  justify-self: flex-end;
   padding: 0.75rem 0.5rem;
   position: relative;
   z-index: 2;
@@ -82,28 +83,6 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.paginationRowsPerPageLabel {
-  font-size: var(--rdt-font-size-sm);
-  color: var(--rdt-secondary-text-color);
-  white-space: nowrap;
-}
-
-.paginationRowsPerPageSelect {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--rdt-table-border-color);
-  border-radius: var(--rdt-border-radius);
-  background-color: var(--rdt-base-background-color);
-  color: var(--rdt-primary-text-color);
-  font-size: var(--rdt-font-size-sm);
-  cursor: pointer;
-  min-width: 4rem;
-}
-
-.paginationRowsPerPageSelect:focus {
-  outline: 2px solid var(--rdt-primary-color);
-  outline-offset: 1px;
 }
 
 .paginationInfo {

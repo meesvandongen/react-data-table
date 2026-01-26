@@ -646,6 +646,16 @@ select.editInput {
   width: 100%;
 }
 
+.selectContainerInline {
+  flex-direction: row;
+  align-items: center;
+  width: auto;
+}
+
+.selectContainerInline .selectLabel {
+  white-space: nowrap;
+}
+
 .selectLabel {
   font-size: var(--rdt-font-size-xs);
   font-weight: var(--rdt-font-weight-medium);
@@ -759,6 +769,7 @@ select.editInput {
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   padding: 0.25rem 0;
   outline: none;
+  font-family: var(--rdt-font-family);
 }
 
 .selectListBox {
@@ -1077,6 +1088,7 @@ select.editInput {
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   padding: 0.5rem;
   outline: none;
+  font-family: var(--rdt-font-family);
 }
 
 .datePickerDialog {
@@ -1262,6 +1274,7 @@ select.editInput {
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   padding: 0.5rem;
   outline: none;
+  font-family: var(--rdt-font-family);
 }
 
 /* ============================================

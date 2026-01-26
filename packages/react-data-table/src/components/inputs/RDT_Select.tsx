@@ -21,6 +21,7 @@ export interface RDT_SelectProps {
   className?: string;
   disabled?: boolean;
   label?: ReactNode;
+  labelPosition?: 'top' | 'left';
   onChange?: (value: string) => void;
   onClear?: () => void;
   options: RDT_SelectOption[];
@@ -34,6 +35,7 @@ export const RDT_Select = ({
   className,
   disabled,
   label,
+  labelPosition = 'top',
   onChange,
   onClear,
   options,
@@ -53,7 +55,11 @@ export const RDT_Select = ({
     onChange?.('');
   };
 
-  const containerClassName = [styles.selectContainer, className]
+  const containerClassName = [
+    styles.selectContainer,
+    labelPosition === 'left' && styles.selectContainerInline,
+    className,
+  ]
     .filter(Boolean)
     .join(' ');
 

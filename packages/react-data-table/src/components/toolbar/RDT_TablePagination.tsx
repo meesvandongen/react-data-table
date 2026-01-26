@@ -1,5 +1,6 @@
-import { type ChangeEvent, type HTMLAttributes } from 'react';
+import { type HTMLAttributes } from 'react';
 import { type RDT_RowData, type RDT_TableInstance } from '../../types';
+import { RDT_Select } from '../inputs/RDT_Select';
 import styles from './toolbar.module.css';
 
 const defaultRowsPerPage = [5, 10, 15, 20, 25, 30, 50, 100];
@@ -33,7 +34,6 @@ export const RDT_TablePagination = <TData extends RDT_RowData>({
         ChevronLeftPipeIcon,
         ChevronRightPipeIcon,
       },
-      id,
       localization,
       paginationDisplayMode,
     },
@@ -52,9 +52,16 @@ export const RDT_TablePagination = <TData extends RDT_RowData>({
   const disableBack = pageIndex <= 0 || disabled;
   const disableNext = lastRowIndex >= totalRowCount || disabled;
 
-  const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    table.setPageSize(Number(event.target.value));
+  const handlePageSizeChange = (value: string) => {
+    table.setPageSize(Number(value));
   };
+
+  // Convert rowsPerPageOptions to RDT_Select options format
+  const rowsPerPageSelectOptions = rowsPerPageOptions.map((option) => {
+    const value = typeof option === 'number' ? option : option.value;
+    const label = typeof option === 'number' ? `${option}` : option.label;
+    return { label, value: String(value) };
+  });
 
   const paginationClassName = [
     styles.pagination,
@@ -104,31 +111,16 @@ export const RDT_TablePagination = <TData extends RDT_RowData>({
     <div className={paginationClassName} {...rest}>
       {showRowsPerPage && (
         <div className={styles.paginationRowsPerPage}>
-          <label
-            htmlFor={`rdt-rows-per-page-${id}`}
-            className={styles.paginationRowsPerPageLabel}
-          >
-            {localization.rowsPerPage}
-          </label>
-          <select
-            id={`rdt-rows-per-page-${id}`}
-            className={styles.paginationRowsPerPageSelect}
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            disabled={disabled}
+          <RDT_Select
             aria-label={localization.rowsPerPage}
-          >
-            {rowsPerPageOptions.map((option) => {
-              const value = typeof option === 'number' ? option : option.value;
-              const label =
-                typeof option === 'number' ? `${option}` : option.label;
-              return (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              );
-            })}
-          </select>
+            disabled={disabled}
+            label={localization.rowsPerPage}
+            labelPosition="left"
+            onChange={handlePageSizeChange}
+            options={rowsPerPageSelectOptions}
+            showClear={false}
+            value={String(pageSize)}
+          />
         </div>
       )}
 
