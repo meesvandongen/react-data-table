@@ -1,4 +1,4 @@
-import { type TdHTMLAttributes } from 'react';
+import { type MouseEvent, type TdHTMLAttributes } from 'react';
 import clsx from 'clsx';
 import {
   type RDT_Cell,
@@ -8,6 +8,7 @@ import {
 } from '../../types';
 import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { parseFromValuesOrFunc } from '../../utils/utils';
+import { RDT_CopyButton } from '../buttons/RDT_CopyButton';
 import { RDT_EditCellTextField } from '../inputs/RDT_EditCellTextField';
 import { RDT_TableBodyCellValue } from './RDT_TableBodyCellValue';
 import styles from '../table/table.module.css';
@@ -45,11 +46,16 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
     options: {
       createDisplayMode,
       editDisplayMode,
+      enableCellActions,
+      enableClickToCopy,
       enableColumnOrdering,
       tableCellProps,
     },
+    refs: { actionCellRef },
+    setActionCell,
   } = table;
-  const { creatingRow, draggingColumn, editingCell, editingRow } = getState();
+  const { actionCell, creatingRow, draggingColumn, editingCell, editingRow } =
+    getState();
 
   const cellProps = {
     ...parseFromValuesOrFunc(tableCellProps, { cell, column, row, table }),
@@ -82,6 +88,27 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
     draggingColumn?.id !== column.id &&
     row.getIsSelected();
 
+  const isRightClickable = parseFromValuesOrFunc(enableCellActions, cell);
+  const isActionCellActive = actionCell?.id === cell.id;
+
+  const showClickToCopyButton =
+    (parseFromValuesOrFunc(enableClickToCopy, cell) === true ||
+      parseFromValuesOrFunc(columnDef.enableClickToCopy, cell) === true) &&
+    !['context-menu', false].includes(
+      parseFromValuesOrFunc(columnDef.enableClickToCopy, cell) as
+        | 'context-menu'
+        | boolean,
+    );
+
+  const handleContextMenu = (e: MouseEvent<HTMLTableCellElement>) => {
+    cellProps?.onContextMenu?.(e);
+    if (isRightClickable) {
+      e.preventDefault();
+      setActionCell(cell);
+      actionCellRef.current = e.currentTarget;
+    }
+  };
+
   // Get the pinned position offset
   const pinnedOffset =
     isPinned === 'left'
@@ -94,6 +121,7 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
     <td
       {...cellProps}
       data-pinned={isPinned || undefined}
+      onContextMenu={handleContextMenu}
       className={clsx(
         styles.tableBodyCell,
         isPinned && styles.tableBodyCellPinned,
@@ -102,6 +130,8 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         showEditField && styles.tableBodyCellEditing,
         isDraggingColumn && styles.tableBodyCellDragging,
         isHoveredColumn && styles.tableBodyCellHovered,
+        isRightClickable && styles.tableBodyCellRightClickable,
+        isActionCellActive && styles.tableBodyCellActionActive,
         isRowHovered &&
           rowDropPosition === 'before' &&
           styles.tableBodyCellDropZoneBefore,
@@ -125,6 +155,16 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
     >
       {showEditField ? (
         <RDT_EditCellTextField cell={cell} table={table} />
+      ) : showClickToCopyButton ? (
+        <RDT_CopyButton cell={cell} table={table}>
+          <RDT_TableBodyCellValue
+            cell={cell}
+            rowRef={rowRef}
+            staticColumnIndex={staticColumnIndex}
+            staticRowIndex={staticRowIndex}
+            table={table}
+          />
+        </RDT_CopyButton>
       ) : (
         <RDT_TableBodyCellValue
           cell={cell}

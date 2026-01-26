@@ -37,6 +37,22 @@ export const RDT_TableFooter = <TData extends RDT_RowData>({
   const stickFooter =
     (isFullScreen || enableStickyFooter) && enableStickyFooter !== false;
 
+  const footerGroups = getFooterGroups();
+
+  // If no footer cells at all, skip footer
+  if (
+    !footerGroups.some((footerGroup) =>
+      footerGroup.headers?.some(
+        (header) =>
+          (typeof header.column.columnDef.footer === 'string' &&
+            !!header.column.columnDef.footer) ||
+          header.column.columnDef.Footer,
+      ),
+    )
+  ) {
+    return null;
+  }
+
   return (
     <tfoot
       {...tfootProps}
@@ -58,7 +74,7 @@ export const RDT_TableFooter = <TData extends RDT_RowData>({
         className,
       )}
     >
-      {getFooterGroups().map((footerGroup) => (
+      {footerGroups.map((footerGroup) => (
         <RDT_TableFooterRow
           columnVirtualizer={columnVirtualizer}
           footerGroup={footerGroup}
