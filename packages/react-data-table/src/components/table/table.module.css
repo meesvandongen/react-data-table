@@ -71,6 +71,12 @@
   display: grid;
 }
 
+/* Grid layout for rows - uses flex to allow cells to grow */
+.tableLayoutGridRow {
+  display: flex;
+  width: 100%;
+}
+
 /* ============================================
    Loading Overlay
    ============================================ */
@@ -151,7 +157,7 @@
 }
 
 .tableHeadRow {
-  display: table-row;
+  /* display: table-row is the browser default for <tr> */
 }
 
 .tableHeadCell {
@@ -310,7 +316,7 @@
 }
 
 .tableBodyRow {
-  display: table-row;
+  /* display: table-row is the browser default for <tr> */
   transition: background-color 150ms ease-in-out;
 }
 
@@ -498,7 +504,7 @@
 }
 
 .tableFooterRow {
-  display: table-row;
+  /* display: table-row is the browser default for <tr> */
 }
 
 .tableFooterCell {
@@ -557,7 +563,7 @@
    ============================================ */
 
 .detailPanel {
-  display: table-row;
+  /* display: table-row is the browser default for <tr> */
 }
 
 .detailPanelCell {

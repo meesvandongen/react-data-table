@@ -35,11 +35,11 @@ export const RDT_TableFooterRow = <TData extends RDT_RowData>({
   return (
     <tr
       {...rest}
-      className={clsx(styles.tableFooterRow, className)}
-      style={{
-        display: layoutMode?.startsWith('grid') ? 'flex' : undefined,
-        width: layoutMode?.startsWith('grid') ? '100%' : undefined,
-      }}
+      className={clsx(
+        styles.tableFooterRow,
+        layoutMode?.startsWith('grid') && styles.tableLayoutGridRow,
+        className,
+      )}
     >
       {virtualPaddingLeft ? (
         <th style={{ display: 'flex', width: virtualPaddingLeft }} />
