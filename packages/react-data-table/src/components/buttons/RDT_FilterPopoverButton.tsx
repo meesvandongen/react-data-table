@@ -28,7 +28,11 @@ export const RDT_FilterPopoverButton = <TData extends RDT_RowData>({
     setAnchorEl(event.currentTarget);
   };
 
-  const buttonClassName = [styles.iconButton, className]
+  const buttonClassName = [
+    styles.iconButton,
+    styles.columnActionButton,
+    className,
+  ]
     .filter(Boolean)
     .join(' ');
 

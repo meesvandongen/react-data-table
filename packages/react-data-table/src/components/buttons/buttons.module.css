@@ -409,13 +409,20 @@
   height: 1rem;
 }
 
-/* Filter popover */
+/* Filter popover - matches other popovers/menus styling */
 .filterPopover {
-  z-index: 10;
+  z-index: 1000;
+  background-color: var(--rdt-menu-bg, var(--rdt-base-background-color));
+  border: 1px solid var(--rdt-table-border-color);
+  border-radius: var(--rdt-border-radius);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  outline: none;
+  font-family: var(--rdt-font-family);
 }
 
 .filterPopoverContent {
-  padding: 1rem;
-  background-color: var(--rdt-base-background-color);
-  min-width: 200px;
+  padding: 0.25rem 0;
+  min-width: 180px;
 }
