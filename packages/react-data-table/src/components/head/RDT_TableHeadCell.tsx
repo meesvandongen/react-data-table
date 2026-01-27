@@ -21,8 +21,9 @@ import { RDT_FilterPopoverButton } from '../buttons/RDT_FilterPopoverButton';
 import { RDT_TableHeadCellFilterContainer } from './RDT_TableHeadCellFilterContainer';
 import styles from '../table/table.module.css';
 
-export interface RDT_TableHeadCellProps<TData extends RDT_RowData>
-  extends ThHTMLAttributes<HTMLTableCellElement> {
+export interface RDT_TableHeadCellProps<
+  TData extends RDT_RowData,
+> extends ThHTMLAttributes<HTMLTableCellElement> {
   columnVirtualizer?: RDT_ColumnVirtualizer;
   header: RDT_Header<TData>;
   staticColumnIndex?: number;
@@ -347,13 +348,17 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                   styles.tableHeadCellLabelsSortable,
               )}
               onClick={handleSort}
-              title={sortTooltip}
+              title={
+                isColumnSortable && columnDefType !== 'group'
+                  ? sortTooltip
+                  : undefined
+              }
             >
               {/* Header text */}
               <span className={styles.tableHeadCellLabel}>{HeaderElement}</span>
 
               {/* Sort indicator */}
-              {isColumnSortable && (
+              {isColumnSortable && columnDefType !== 'group' && (
                 <span
                   className={clsx(
                     styles.sortIcon,
