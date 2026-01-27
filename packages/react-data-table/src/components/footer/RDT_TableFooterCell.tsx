@@ -9,8 +9,9 @@ import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import styles from '../table/table.module.css';
 
-export interface RDT_TableFooterCellProps<TData extends RDT_RowData>
-  extends ThHTMLAttributes<HTMLTableCellElement> {
+export interface RDT_TableFooterCellProps<
+  TData extends RDT_RowData,
+> extends ThHTMLAttributes<HTMLTableCellElement> {
   footer: RDT_Header<TData>;
   staticColumnIndex?: number;
   table: RDT_TableInstance<TData>;
@@ -31,6 +32,7 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
   const { columnDef } = column;
 
   const isPinned = column.getIsPinned();
+  const { columnDefType } = columnDef;
 
   // Detect if this column is the last left-pinned or first right-pinned (for shadow)
   const isLastLeftPinnedColumn =
@@ -53,6 +55,7 @@ export const RDT_TableFooterCell = <TData extends RDT_RowData>({
       data-index={staticColumnIndex}
       className={clsx(
         styles.tableFooterCell,
+        columnDefType === 'group' && styles.tableFooterCellGroup,
         layoutMode?.startsWith('grid') && styles.tableLayoutGridCell,
         isPinned && styles.tableFooterCellPinned,
         isPinned === 'left' && styles.tableFooterCellPinnedLeft,
