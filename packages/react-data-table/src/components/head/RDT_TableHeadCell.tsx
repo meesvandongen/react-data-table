@@ -6,6 +6,7 @@ import {
   useRef,
 } from 'react';
 import clsx from 'clsx';
+import { Popover } from 'react-aria-components';
 import {
   type RDT_Column,
   type RDT_ColumnVirtualizer,
@@ -379,6 +380,26 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                   )}
                 </span>
               )}
+
+              {/* Filter icon for popover mode */}
+              {column.getCanFilter() &&
+                columnFilterDisplayMode === 'popover' && (
+                  <button
+                    ref={(el) => {
+                      if (
+                        table.refs.filterPopoverAnchorEls.current?.[
+                          column.id
+                        ] !== el
+                      ) {
+                        table.setFilterPopoverAnchorEl(column.id, el);
+                      }
+                    }}
+                    type="button"
+                    className={styles.filterIconButton}
+                  >
+                    <table.options.icons.FilterAltIcon />
+                  </button>
+                )}
             </div>
 
             {/* Column action button - next to labels */}
@@ -418,6 +439,23 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
             <RDT_TableHeadCellFilterContainer header={header} table={table} />
           )}
         </>
+      )}
+
+      {/* Filter popover */}
+      {column.getCanFilter() && columnFilterDisplayMode === 'popover' && (
+        <Popover
+          isOpen={!!table.refs.filterPopoverAnchorEls.current?.[column.id]}
+          onOpenChange={() => table.setFilterPopoverAnchorEl(column.id, null)}
+          triggerRef={{
+            current: table.refs.filterPopoverAnchorEls.current?.[column.id],
+          }}
+          placement="bottom start"
+          className={styles.filterPopover}
+        >
+          <div className={styles.filterPopoverContent}>
+            <RDT_TableHeadCellFilterContainer header={header} table={table} />
+          </div>
+        </Popover>
       )}
     </th>
   );

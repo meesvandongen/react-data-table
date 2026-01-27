@@ -311,6 +311,7 @@ export type RDT_TableInstance<TData extends RDT_RowData> = Omit<
     bottomToolbarRef: RefObject<HTMLDivElement | null>;
     editInputRefs: RefObject<Record<string, HTMLInputElement> | null>;
     filterInputRefs: RefObject<Record<string, HTMLInputElement> | null>;
+    filterPopoverAnchorEls: RefObject<Record<string, HTMLElement | null>>;
     lastSelectedRowId: MutableRefObject<null | string>;
     searchInputRef: RefObject<HTMLInputElement | null>;
     tableContainerRef: RefObject<HTMLDivElement | null>;
@@ -342,6 +343,10 @@ export type RDT_TableInstance<TData extends RDT_RowData> = Omit<
   setShowColumnFilters: Dispatch<SetStateAction<boolean>>;
   setShowGlobalFilter: Dispatch<SetStateAction<boolean>>;
   setShowToolbarDropZone: Dispatch<SetStateAction<boolean>>;
+  setFilterPopoverAnchorEl: (
+    columnId: string,
+    anchorEl: HTMLElement | null,
+  ) => void;
 };
 
 export type RDT_DefinedTableOptions<TData extends RDT_RowData> = Omit<
