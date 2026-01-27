@@ -226,18 +226,20 @@
 }
 
 .tableHeadCellResizing {
-  border-right: 2px solid var(--rdt-primary-color);
+  box-shadow: -2px 0 0 0 var(--rdt-primary-color) inset;
+}
+
+/* LTR: shadow on right (negative offset), RTL: shadow on right (positive offset) */
+[data-column-resize-direction='rtl'] .tableHeadCellResizing {
+  box-shadow: 2px 0 0 0 var(--rdt-primary-color) inset;
 }
 
 .tableHeadCellDraggable {
   cursor: grab;
 }
 
-.tableHeadCellDraggable:active {
-  cursor: grabbing;
-}
-
 .tableHeadCellDragging {
+  cursor: grabbing;
   opacity: 0.8;
 }
 
@@ -471,7 +473,12 @@
 }
 
 .tableBodyCellResizing {
-  border-right: 2px solid var(--rdt-primary-color);
+  box-shadow: -2px 0 0 0 var(--rdt-primary-color) inset;
+}
+
+/* LTR: shadow on right (negative offset), RTL: shadow on right (positive offset) */
+[data-column-resize-direction='rtl'] .tableBodyCellResizing {
+  box-shadow: 2px 0 0 0 var(--rdt-primary-color) inset;
 }
 
 /* Row drop zone indicators (applied to cells using pseudo-elements) */
@@ -637,13 +644,20 @@
 /* Wrapper - positioned at right edge with negative margin to sit on cell border (like MRT) */
 .resizeHandleWrapper {
   position: absolute;
-  right: 0;
-  margin-right: calc(-1 * var(--rdt-cell-padding));
-  padding-inline: 4px;
+  inset-inline-end: 0;
+  margin-inline-end: calc(-1 * var(--rdt-cell-padding) + 1px);
+  padding-inline-start: 4px;
   cursor: col-resize;
   touch-action: none;
   user-select: none;
   z-index: 4;
+}
+
+/* RTL: Handle on left side (inset-inline-end flips to left), negative margin to pull back from border */
+[data-column-resize-direction='rtl'] .resizeHandleWrapper {
+  inset-inline-end: 0;
+  margin-inline-end: calc(-1 * var(--rdt-cell-padding) + 1px);
+  padding-inline-start: 4px;
 }
 
 /* Highlight divider on wrapper hover or when active */
@@ -655,11 +669,10 @@
 
 /* The visible divider line inside the handle */
 .resizeHandleDivider {
-  width: 2px;
+  width: 3px;
   height: 24px;
-  border-radius: 2px;
+  border-radius: 3px;
   background-color: var(--rdt-border-color);
-  transform: translateX(4px);
   transition: background-color 150ms ease-in-out;
 }
 

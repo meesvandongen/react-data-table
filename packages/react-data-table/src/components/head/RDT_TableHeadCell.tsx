@@ -41,6 +41,8 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
     getState,
     options: {
       columnFilterDisplayMode,
+      columnResizeDirection,
+      columnResizeMode,
       enableColumnActions,
       enableColumnDragging,
       enableColumnOrdering,
@@ -63,6 +65,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
 
   const {
     columnOrder,
+    columnSizingInfo,
     draggingColumn,
     grouping,
     hoveredColumn,
@@ -138,6 +141,10 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
   };
 
   const handleDragEnter = (_e: DragEvent) => {
+    // Don't process drag enter while any column is being resized
+    if (columnSizingInfo?.isResizingColumn) {
+      return;
+    }
     if (enableGrouping && hoveredColumn?.id === 'drop-zone') {
       setHoveredColumn(null);
     }
@@ -149,6 +156,10 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
   };
 
   const handleDragOver = (e: DragEvent<HTMLTableCellElement>) => {
+    // Don't process drag over while any column is being resized
+    if (columnSizingInfo?.isResizingColumn) {
+      return;
+    }
     if (columnDef.enableColumnOrdering !== false) {
       e.preventDefault();
       if (enableColumnOrdering && draggingColumn && cellRef.current) {
@@ -163,6 +174,10 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
   };
 
   const handleDragLeave = (e: DragEvent<HTMLTableCellElement>) => {
+    // Don't process drag leave while any column is being resized
+    if (columnSizingInfo?.isResizingColumn) {
+      return;
+    }
     // Only reset drop position if we're actually leaving this cell
     // (not entering a child element)
     const relatedTarget = e.relatedTarget as Node | null;
@@ -172,6 +187,12 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
   };
 
   const handleDragStart = (e: DragEvent<HTMLTableCellElement>) => {
+    e.stopPropagation();
+    // Prevent drag if interacting with resize handle
+    if (column.getIsResizing()) {
+      e.preventDefault();
+      return;
+    }
     setDraggingColumn(column);
     try {
       e.dataTransfer.setDragImage(cellRef.current as HTMLElement, 0, 0);
@@ -286,7 +307,9 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
         isLastLeftPinnedColumn && styles.tableHeadCellPinnedLeftLast,
         isFirstRightPinnedColumn && styles.tableHeadCellPinnedRightFirst,
         columnDefType === 'group' && styles.tableHeadCellGroup,
-        isResizing && styles.tableHeadCellResizing,
+        isResizing &&
+          columnResizeMode === 'onChange' &&
+          styles.tableHeadCellResizing,
         isDraggable && styles.tableHeadCellDraggable,
         draggingClasses,
         className,
@@ -372,11 +395,18 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                   styles.resizeHandleWrapper,
                   column.getIsResizing() && styles.resizeHandleWrapperActive,
                 )}
-                draggable
-                onDragStart={(e) => e.preventDefault()}
+                style={{
+                  transform:
+                    column.getIsResizing() && columnResizeMode === 'onEnd'
+                      ? `translateX(${
+                          (columnResizeDirection === 'rtl' ? -1 : 1) *
+                          (columnSizingInfo.deltaOffset ?? 0)
+                        }px)`
+                      : undefined,
+                }}
                 onMouseDown={header.getResizeHandler()}
                 onTouchStart={header.getResizeHandler()}
-                onDoubleClick={() => column.resetSize()}
+                onDoubleClick={column.resetSize}
               >
                 <div className={styles.resizeHandleDivider} />
               </div>

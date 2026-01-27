@@ -31,6 +31,7 @@ export const RDT_TableContainer = <TData extends RDT_RowData>({
   const {
     getState,
     options: {
+      columnResizeDirection,
       createDisplayMode,
       editDisplayMode,
       enableCellActions,
@@ -102,6 +103,7 @@ export const RDT_TableContainer = <TData extends RDT_RowData>({
         containerProps?.className,
         className,
       )}
+      data-column-resize-direction={columnResizeDirection}
       style={
         {
           '--rdt-toolbar-height': `${totalToolbarHeight}px`,

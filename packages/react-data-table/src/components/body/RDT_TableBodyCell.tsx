@@ -50,6 +50,8 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
   const {
     getState,
     options: {
+      columnResizeDirection,
+      columnResizeMode,
       createDisplayMode,
       editDisplayMode,
       enableCellActions,
@@ -183,7 +185,9 @@ export const RDT_TableBodyCell = <TData extends RDT_RowData>({
         isHoveredColumn && styles.tableBodyCellHovered,
         isRightClickable && styles.tableBodyCellRightClickable,
         isActionCellActive && styles.tableBodyCellActionActive,
-        isResizing && styles.tableBodyCellResizing,
+        isResizing &&
+          columnResizeMode === 'onChange' &&
+          styles.tableBodyCellResizing,
         isDataColumn && styles.tableBodyCellTruncate,
         shouldNoWrap ? styles.tableBodyCellNoWrap : styles.tableBodyCellWrap,
         isRowHovered &&
