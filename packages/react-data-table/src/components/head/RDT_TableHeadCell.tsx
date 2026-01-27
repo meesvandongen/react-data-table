@@ -6,7 +6,6 @@ import {
   useRef,
 } from 'react';
 import clsx from 'clsx';
-import { Popover } from 'react-aria-components';
 import {
   type RDT_Column,
   type RDT_ColumnVirtualizer,
@@ -18,6 +17,7 @@ import { reorderColumn } from '../../utils/column.utils';
 import { getRDT_CellWidthStyles } from '../../utils/style.utils';
 import { flexRender } from '../../utils/tanstack.helpers';
 import { RDT_ColumnActionMenuButton } from '../buttons/RDT_ColumnActionMenuButton';
+import { RDT_FilterPopoverButton } from '../buttons/RDT_FilterPopoverButton';
 import { RDT_TableHeadCellFilterContainer } from './RDT_TableHeadCellFilterContainer';
 import styles from '../table/table.module.css';
 
@@ -384,21 +384,7 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
               {/* Filter icon for popover mode */}
               {column.getCanFilter() &&
                 columnFilterDisplayMode === 'popover' && (
-                  <button
-                    ref={(el) => {
-                      if (
-                        table.refs.filterPopoverAnchorEls.current?.[
-                          column.id
-                        ] !== el
-                      ) {
-                        table.setFilterPopoverAnchorEl(column.id, el);
-                      }
-                    }}
-                    type="button"
-                    className={styles.filterIconButton}
-                  >
-                    <table.options.icons.FilterAltIcon />
-                  </button>
+                  <RDT_FilterPopoverButton header={header} table={table} />
                 )}
             </div>
 
@@ -439,23 +425,6 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
             <RDT_TableHeadCellFilterContainer header={header} table={table} />
           )}
         </>
-      )}
-
-      {/* Filter popover */}
-      {column.getCanFilter() && columnFilterDisplayMode === 'popover' && (
-        <Popover
-          isOpen={!!table.refs.filterPopoverAnchorEls.current?.[column.id]}
-          onOpenChange={() => table.setFilterPopoverAnchorEl(column.id, null)}
-          triggerRef={{
-            current: table.refs.filterPopoverAnchorEls.current?.[column.id],
-          }}
-          placement="bottom start"
-          className={styles.filterPopover}
-        >
-          <div className={styles.filterPopoverContent}>
-            <RDT_TableHeadCellFilterContainer header={header} table={table} />
-          </div>
-        </Popover>
       )}
     </th>
   );

@@ -408,3 +408,14 @@
   width: 1rem;
   height: 1rem;
 }
+
+/* Filter popover */
+.filterPopover {
+  z-index: 10;
+}
+
+.filterPopoverContent {
+  padding: 1rem;
+  background-color: var(--rdt-base-background-color);
+  min-width: 200px;
+}

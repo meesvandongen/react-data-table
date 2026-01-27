@@ -3,6 +3,7 @@ export * from './RDT_CopyButton';
 export * from './RDT_EditActionButtons';
 export * from './RDT_ExpandAllButton';
 export * from './RDT_ExpandButton';
+export * from './RDT_FilterPopoverButton';
 export * from './RDT_GrabHandleButton';
 export * from './RDT_RowPinButton';
 export * from './RDT_ShowHideColumnsButton';

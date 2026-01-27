@@ -756,33 +756,6 @@
   padding: 4px 0;
 }
 
-/* Filter icon button for popover mode */
-.filterIconButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  color: inherit;
-  padding: 4px;
-  opacity: 0.3;
-  transition: opacity 150ms ease-in-out;
-  cursor: pointer;
-}
-
-.filterIconButton:hover {
-  opacity: 0.8;
-}
-
-.filterPopover {
-  z-index: 10;
-}
-
-.filterPopoverContent {
-  padding: 1rem;
-  background-color: var(--rdt-base-background-color);
-}
-
 /* ============================================
    Skeleton Loading
    ============================================ */

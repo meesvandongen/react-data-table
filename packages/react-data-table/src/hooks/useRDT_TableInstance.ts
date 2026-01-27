@@ -58,7 +58,6 @@ export const useRDT_TableInstance = <TData extends RDT_RowData>(
   const bottomToolbarRef = useRef<HTMLDivElement>(null);
   const editInputRefs = useRef<Record<string, HTMLInputElement>>({});
   const filterInputRefs = useRef<Record<string, HTMLInputElement>>({});
-  const filterPopoverAnchorEls = useRef<Record<string, HTMLElement | null>>({});
   const searchInputRef = useRef<HTMLInputElement>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const tableHeadCellRefs = useRef<Record<string, HTMLTableCellElement>>({});
@@ -271,7 +270,6 @@ export const useRDT_TableInstance = <TData extends RDT_RowData>(
     bottomToolbarRef,
     editInputRefs,
     filterInputRefs,
-    filterPopoverAnchorEls,
     lastSelectedRowId,
     searchInputRef,
     tableContainerRef,
@@ -326,12 +324,6 @@ export const useRDT_TableInstance = <TData extends RDT_RowData>(
     statefulTableOptions.onShowGlobalFilterChange ?? setShowGlobalFilter;
   table.setShowToolbarDropZone =
     statefulTableOptions.onShowToolbarDropZoneChange ?? setShowToolbarDropZone;
-  table.setFilterPopoverAnchorEl = (
-    columnId: string,
-    anchorEl: HTMLElement | null,
-  ) => {
-    filterPopoverAnchorEls.current[columnId] = anchorEl;
-  };
 
   useRDT_Effects(table);
 
