@@ -1,12 +1,12 @@
-import { type ReactNode, useRef } from 'react';
+import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import {
   Button,
+  Dialog,
+  DialogTrigger,
   Label,
   ListBox,
   ListBoxItem,
   Popover,
-  Select,
-  SelectValue,
 } from 'react-aria-components';
 import styles from './inputs.module.css';
 
@@ -44,16 +44,37 @@ export const RDT_Select = ({
   value,
 }: RDT_SelectProps) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const selectedKey = value ?? null;
+  const selectedOption = useMemo(
+    () => options.find((opt) => opt.value === value),
+    [options, value],
+  );
+
   const hasValue = Boolean(value);
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    onClear?.();
-    onChange?.('');
-  };
+  const handleClear = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      onClear?.();
+      onChange?.('');
+    },
+    [onChange, onClear],
+  );
+
+  const handleSelectionChange = useCallback(
+    (keys: 'all' | Set<React.Key>) => {
+      if (keys !== 'all') {
+        const selectedKey = keys.values().next().value;
+        if (selectedKey) {
+          onChange?.(String(selectedKey));
+          setIsOpen(false);
+        }
+      }
+    },
+    [onChange],
+  );
 
   const containerClassName = [
     styles.selectContainer,
@@ -64,61 +85,76 @@ export const RDT_Select = ({
     .join(' ');
 
   return (
-    <Select
-      aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
-      className={containerClassName}
-      isDisabled={disabled}
-      onSelectionChange={(key) => {
-        if (key) {
-          onChange?.(key as string);
-        }
-      }}
-      selectedKey={selectedKey}
-    >
+    <div className={containerClassName}>
       {/* @ts-expect-error - React 19 types incompatibility with react-aria-components */}
       {label ? <Label className={styles.selectLabel}>{label}</Label> : null}
-      <Button ref={triggerRef} className={styles.selectTrigger}>
-        <SelectValue className={styles.selectValue}>
-          {({ selectedText }) =>
-            selectedText ? (
-              <span className={styles.selectValueText}>{selectedText}</span>
+      <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <Button
+          ref={triggerRef}
+          className={styles.selectTrigger}
+          isDisabled={disabled}
+          aria-label={
+            ariaLabel ?? (typeof label === 'string' ? label : 'Select option')
+          }
+        >
+          <span className={styles.selectValue}>
+            {selectedOption ? (
+              <span className={styles.selectValueText}>
+                {selectedOption.label}
+              </span>
             ) : (
               <span className={styles.selectPlaceholder}>{placeholder}</span>
-            )
-          }
-        </SelectValue>
-        <span className={styles.selectActions}>
-          {showClear && hasValue && (
-            <button
-              type="button"
-              className={styles.selectClearButton}
-              onClick={handleClear}
-              aria-label="Clear selection"
-            >
-              <CloseIcon />
-            </button>
-          )}
-          <span className={styles.selectIcon}>
-            <ChevronDownIcon />
+            )}
           </span>
-        </span>
-      </Button>
-      <Popover className={styles.selectPopover}>
-        <ListBox className={styles.selectListBox}>
-          {options.map((option) => (
-            <ListBoxItem
-              key={option.value}
-              id={option.value}
-              className={styles.selectOption}
-              isDisabled={option.disabled}
-              textValue={option.label}
+          <span className={styles.selectActions}>
+            {showClear && hasValue && (
+              <button
+                type="button"
+                className={styles.selectClearButton}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={handleClear}
+                aria-label="Clear selection"
+              >
+                <CloseIcon />
+              </button>
+            )}
+            <span className={styles.selectIcon}>
+              <ChevronDownIcon />
+            </span>
+          </span>
+        </Button>
+        <Popover className={styles.selectPopover}>
+          <Dialog className={styles.multiSelectDialog}>
+            <ListBox
+              aria-label={
+                ariaLabel ??
+                (typeof label === 'string' ? label : 'Select option')
+              }
+              selectionMode="single"
+              selectedKeys={
+                value !== undefined && value !== null
+                  ? new Set([String(value)])
+                  : new Set()
+              }
+              onSelectionChange={handleSelectionChange}
+              className={styles.selectListBox}
             >
-              {option.label}
-            </ListBoxItem>
-          ))}
-        </ListBox>
-      </Popover>
-    </Select>
+              {options.map((option) => (
+                <ListBoxItem
+                  key={option.value}
+                  id={option.value}
+                  className={styles.selectOption}
+                  isDisabled={option.disabled}
+                  textValue={option.label}
+                >
+                  {option.label}
+                </ListBoxItem>
+              ))}
+            </ListBox>
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    </div>
   );
 };
 
