@@ -5,10 +5,12 @@ import {
   type RDT_RowData,
   type RDT_TableInstance,
 } from '../../types';
+import { RDT_FilterOptionMenu } from '../menus/RDT_FilterOptionMenu';
 import styles from './inputs.module.css';
 
-export interface RDT_FilterRangeSliderProps<TData extends RDT_RowData>
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+export interface RDT_FilterRangeSliderProps<
+  TData extends RDT_RowData,
+> extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   header: RDT_Header<TData>;
   table: RDT_TableInstance<TData>;
 }
@@ -20,13 +22,22 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
   ...rest
 }: RDT_FilterRangeSliderProps<TData>) => {
   const {
-    options: { enableColumnFilterModes, localization },
+    options: {
+      enableColumnFilterModes,
+      icons: { FilterListIcon },
+      localization,
+    },
     refs: { filterInputRefs },
   } = table;
   const { column } = header;
   const { columnDef } = column;
 
   const currentFilterOption = columnDef._filterFn;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handleFilterMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const showChangeModeButton =
     enableColumnFilterModes && columnDef.enableColumnFilterModes !== false;
@@ -100,97 +111,119 @@ export const RDT_FilterRangeSlider = <TData extends RDT_RowData>({
   }, [columnFilterValue, min, max]);
 
   return (
-    <div className={styles.filterRangeSliderContainer}>
-      <div className={styles.filterRangeSliderInputs}>
-        <input
-          ref={(node) => {
-            if (node && filterInputRefs.current) {
-              filterInputRefs.current[`${column.id}-0`] = node;
-            }
-          }}
-          type="number"
-          className={styles.filterRangeSliderInput}
-          value={filterValues[0]}
-          min={min}
-          max={max}
-          onChange={handleMinInputChange}
-          onBlur={handleInputCommit}
-          onKeyDown={(e) => {
-            handleKeyDown(e);
-            if (e.key === 'Enter') handleInputCommit();
-          }}
-          aria-label={localization.min}
-          placeholder={localization.min}
-          {...rest}
-        />
-        <Slider
-          className={styles.ariaSlider}
-          minValue={min}
-          maxValue={max}
-          value={filterValues}
-          onChange={handleChange}
-          onChangeEnd={handleChangeEnd}
-          aria-label={`${localization.min} - ${localization.max}`}
-        >
-          <SliderTrack className={styles.ariaSliderTrack}>
-            {({ state }) => (
-              <>
-                <div
-                  className={styles.ariaSliderFill}
-                  style={{
-                    left: `${state.getThumbPercent(0) * 100}%`,
-                    width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`,
-                  }}
-                />
-                <SliderThumb
-                  className={styles.ariaSliderThumb}
-                  index={0}
-                  aria-label={localization.min}
-                />
-                <SliderThumb
-                  className={styles.ariaSliderThumb}
-                  index={1}
-                  aria-label={localization.max}
-                />
-              </>
-            )}
-          </SliderTrack>
-        </Slider>
-        <input
-          ref={(node) => {
-            if (node && filterInputRefs.current) {
-              filterInputRefs.current[`${column.id}-1`] = node;
-            }
-          }}
-          type="number"
-          className={styles.filterRangeSliderInput}
-          value={filterValues[1]}
-          min={min}
-          max={max}
-          onChange={handleMaxInputChange}
-          onBlur={handleInputCommit}
-          onKeyDown={(e) => {
-            handleKeyDown(e);
-            if (e.key === 'Enter') handleInputCommit();
-          }}
-          aria-label={localization.max}
-          placeholder={localization.max}
-          {...rest}
-        />
-      </div>
-      {showChangeModeButton && (
-        <span className={styles.filterHelperText}>
-          {localization.filterMode.replace(
-            '{filterType}',
-            localization[
-              `filter${
-                currentFilterOption?.charAt(0)?.toUpperCase() +
-                currentFilterOption?.slice(1)
-              }` as keyof typeof localization
-            ] as string,
+    <>
+      <div className={styles.filterRangeSliderContainer}>
+        <div className={styles.filterRangeSliderInputs}>
+          {showChangeModeButton && (
+            <button
+              type="button"
+              className={styles.filterModeButton}
+              onClick={handleFilterMenuOpen}
+              aria-label={localization.changeFilterMode}
+              title={localization.changeFilterMode}
+            >
+              <FilterListIcon />
+            </button>
           )}
-        </span>
-      )}
-    </div>
+
+          <input
+            ref={(node) => {
+              if (node && filterInputRefs.current) {
+                filterInputRefs.current[`${column.id}-0`] = node;
+              }
+            }}
+            type="number"
+            className={styles.filterRangeSliderInput}
+            value={filterValues[0]}
+            min={min}
+            max={max}
+            onChange={handleMinInputChange}
+            onBlur={handleInputCommit}
+            onKeyDown={(e) => {
+              handleKeyDown(e);
+              if (e.key === 'Enter') handleInputCommit();
+            }}
+            aria-label={localization.min}
+            placeholder={localization.min}
+            {...rest}
+          />
+          <Slider
+            className={styles.ariaSlider}
+            minValue={min}
+            maxValue={max}
+            value={filterValues}
+            onChange={handleChange}
+            onChangeEnd={handleChangeEnd}
+            aria-label={`${localization.min} - ${localization.max}`}
+          >
+            <SliderTrack className={styles.ariaSliderTrack}>
+              {({ state }) => (
+                <>
+                  <div
+                    className={styles.ariaSliderFill}
+                    style={{
+                      left: `${state.getThumbPercent(0) * 100}%`,
+                      width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`,
+                    }}
+                  />
+                  <SliderThumb
+                    className={styles.ariaSliderThumb}
+                    index={0}
+                    aria-label={localization.min}
+                  />
+                  <SliderThumb
+                    className={styles.ariaSliderThumb}
+                    index={1}
+                    aria-label={localization.max}
+                  />
+                </>
+              )}
+            </SliderTrack>
+          </Slider>
+          <input
+            ref={(node) => {
+              if (node && filterInputRefs.current) {
+                filterInputRefs.current[`${column.id}-1`] = node;
+              }
+            }}
+            type="number"
+            className={styles.filterRangeSliderInput}
+            value={filterValues[1]}
+            min={min}
+            max={max}
+            onChange={handleMaxInputChange}
+            onBlur={handleInputCommit}
+            onKeyDown={(e) => {
+              handleKeyDown(e);
+              if (e.key === 'Enter') handleInputCommit();
+            }}
+            aria-label={localization.max}
+            placeholder={localization.max}
+            {...rest}
+          />
+        </div>
+        {showChangeModeButton && (
+          <span className={styles.filterHelperText}>
+            {localization.filterMode.replace(
+              '{filterType}',
+              localization[
+                `filter${
+                  currentFilterOption?.charAt(0)?.toUpperCase() +
+                  currentFilterOption?.slice(1)
+                }` as keyof typeof localization
+              ] as string,
+            )}
+          </span>
+        )}
+      </div>
+
+      <RDT_FilterOptionMenu
+        anchorEl={anchorEl}
+        header={header}
+        setAnchorEl={setAnchorEl}
+        setFilterValue={() => {}}
+        table={table}
+      />
+    </>
   );
 };
