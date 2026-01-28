@@ -117,6 +117,7 @@ export const RDT_MultiSelect = ({
               <button
                 type="button"
                 className={styles.multiSelectClear}
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={handleClearAll}
                 aria-label="Clear all"
               >
