@@ -27,11 +27,13 @@ import { RDT_MultiSelect, type RDT_MultiSelectOption } from './RDT_MultiSelect';
 import { RDT_Select, type RDT_SelectOption } from './RDT_Select';
 import styles from './inputs.module.css';
 
-export interface RDT_FilterTextFieldProps<TData extends RDT_RowData>
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+export interface RDT_FilterTextFieldProps<
+  TData extends RDT_RowData,
+> extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   header: RDT_Header<TData>;
   rangeFilterIndex?: number;
   table: RDT_TableInstance<TData>;
+  hideFilterModeUI?: boolean;
 }
 
 // Simple debounce implementation
@@ -55,6 +57,7 @@ export const RDT_FilterTextField = <TData extends RDT_RowData>({
   rangeFilterIndex,
   table,
   className,
+  hideFilterModeUI,
   ...rest
 }: RDT_FilterTextFieldProps<TData>) => {
   const {
@@ -104,6 +107,7 @@ export const RDT_FilterTextField = <TData extends RDT_RowData>({
   const showChangeModeButton = !!(
     enableColumnFilterModes &&
     columnDef.enableColumnFilterModes !== false &&
+    !hideFilterModeUI &&
     !rangeFilterIndex &&
     (allowedColumnFilterOptions === undefined ||
       !!allowedColumnFilterOptions?.length)
