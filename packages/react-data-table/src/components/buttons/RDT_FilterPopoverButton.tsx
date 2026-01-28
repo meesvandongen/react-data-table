@@ -1,5 +1,5 @@
 import { type ButtonHTMLAttributes, type MouseEvent, useState } from 'react';
-import { DialogTrigger, Popover } from 'react-aria-components';
+import { Popover } from 'react-aria-components';
 import {
   type RDT_Header,
   type RDT_RowData,
@@ -8,8 +8,9 @@ import {
 import { RDT_TableHeadCellFilterContainer } from '../head/RDT_TableHeadCellFilterContainer';
 import styles from './buttons.module.css';
 
-export interface RDT_FilterPopoverButtonProps<TData extends RDT_RowData>
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface RDT_FilterPopoverButtonProps<
+  TData extends RDT_RowData,
+> extends ButtonHTMLAttributes<HTMLButtonElement> {
   header: RDT_Header<TData>;
   table: RDT_TableInstance<TData>;
 }
