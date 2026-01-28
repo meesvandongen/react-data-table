@@ -385,18 +385,17 @@ export const RDT_TableHeadCell = <TData extends RDT_RowData>({
                   )}
                 </span>
               )}
-
-              {/* Filter icon for popover mode */}
-              {column.getCanFilter() &&
-                columnFilterDisplayMode === 'popover' && (
-                  <RDT_FilterPopoverButton header={header} table={table} />
-                )}
             </div>
-
             {/* Column action button - next to labels */}
-            {columnDefType !== 'group' && showColumnActionButton && (
+            {columnDefType !== 'group' && (
               <div className={styles.tableHeadCellActions}>
-                <RDT_ColumnActionMenuButton header={header} table={table} />
+                {column.getCanFilter() &&
+                  columnFilterDisplayMode === 'popover' && (
+                    <RDT_FilterPopoverButton header={header} table={table} />
+                  )}
+                {showColumnActionButton && (
+                  <RDT_ColumnActionMenuButton header={header} table={table} />
+                )}
               </div>
             )}
 
