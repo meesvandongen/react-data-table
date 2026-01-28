@@ -301,7 +301,11 @@
 }
 
 .tableHeadCellLabelsSortable:hover .sortIcon {
-  opacity: 0.8;
+  opacity: 1;
+}
+
+.tableHeadCell:hover .sortIcon {
+  opacity: 1;
 }
 
 .tableHeadCellLabel {
@@ -728,8 +732,8 @@
   justify-content: center;
   position: relative;
   flex-shrink: 0;
-  transition: opacity 150ms ease-in-out;
-  opacity: 0.3;
+  transition: opacity 150ms ease;
+  opacity: 0.5;
 }
 
 .sortIcon svg {

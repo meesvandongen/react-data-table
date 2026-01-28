@@ -256,6 +256,7 @@
   align-items: center;
   gap: 0.25rem;
   width: 100%;
+  padding: 0;
 }
 
 .filterInput {
@@ -415,7 +416,6 @@ select.filterInput[multiple] {
   flex-direction: column;
   gap: 0.25rem;
   width: 100%;
-  padding: 0.25rem 0;
 }
 
 .filterRangeSliderInputs {
